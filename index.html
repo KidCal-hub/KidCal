@@ -2,32 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>KidCal – One Calendar for Every Kid’s To-Dos</title>
+  <title>KidCal – Kids’ Signups in One Place</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta
     name="description"
-    content="KidCal helps busy families stay ahead of school, sports, camp and activity deadlines by putting every kid-related date in one simple place."
+    content="KidCal helps parents see all kids’ signups and events in one simple list."
   />
-
   <style>
     :root {
+      --blue: #1d4ed8;
+      --blue-dark: #1e3a8a;
+      --blue-soft: #dbeafe;
+      --yellow: #facc15;
       --bg: #f3f4ff;
-      --bg-deep: #0f172a;
       --card-bg: #ffffff;
-      --accent: #2563eb;
-      --accent-soft: #dbeafe;
-      --accent-soft-2: #eef2ff;
-      --accent-contrast: #1d4ed8;
       --text-main: #0f172a;
       --text-muted: #6b7280;
       --border: #e5e7eb;
-      --danger: #b91c1c;
-      --radius-lg: 16px;
-      --radius-md: 12px;
-      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.18);
-      --shadow-subtle: 0 10px 24px rgba(15, 23, 42, 0.10);
-      --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --shadow-soft: 0 10px 25px rgba(15, 23, 42, 0.15);
+      --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
     * {
@@ -37,35 +32,26 @@
     body {
       margin: 0;
       font-family: var(--font-main);
-      background:
-        radial-gradient(circle at top left, #eef2ff 0, #eef2ff 30%, #f9fafb 80%),
-        linear-gradient(135deg, #0f172a 0, #0f172a 22%, transparent 22%);
+      background: #ffffff;
       color: var(--text-main);
-      min-height: 100vh;
     }
 
     .page {
-      max-width: 1200px;
+      max-width: 1100px;
       margin: 0 auto;
-      padding: 24px 16px 40px;
+      padding: 16px 16px 32px;
     }
 
-    header.site-header {
+    header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 12px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       flex-wrap: wrap;
     }
 
-    .brand-wrap {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .logo-wrap {
+    .brand {
       display: flex;
       flex-direction: column;
       gap: 2px;
@@ -74,336 +60,220 @@
     .logo {
       font-weight: 800;
       font-size: 1.6rem;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: #ffffff;
+      letter-spacing: 0.04em;
+      color: var(--blue-dark);
     }
 
     .logo span {
-      color: #a5b4fc;
+      color: var(--yellow);
     }
 
-    .tagline-mini {
+    .tagline {
       font-size: 0.9rem;
-      color: #e5e7eb;
+      color: var(--text-muted);
     }
 
-    .mini-pill {
-      font-size: 0.75rem;
-      color: #c7d2fe;
-      background: rgba(79, 70, 229, 0.25);
+    .badge {
+      background: var(--blue-soft);
+      color: var(--blue-dark);
       border-radius: 999px;
-      padding: 3px 8px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .mini-pill span {
-      font-size: 0.95rem;
-    }
-
-    .prototype-pill {
-      background: #2563eb;
-      color: white;
-      padding: 5px 12px;
-      border-radius: 999px;
+      padding: 4px 10px;
       font-size: 0.8rem;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.45);
     }
 
-    .prototype-pill span {
-      font-size: 1.1rem;
+    .badge span {
+      font-size: 1rem;
     }
 
     main {
-      margin-top: 6px;
       display: grid;
-      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1.3fr);
-      gap: 22px;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.4fr);
+      gap: 16px;
       align-items: flex-start;
     }
 
-    @media (max-width: 960px) {
-      body {
-        background:
-          radial-gradient(circle at top, #eef2ff 0, #eef2ff 18%, #f9fafb 80%),
-          linear-gradient(180deg, #0f172a 0, #0f172a 18%, transparent 18%);
-      }
+    @media (max-width: 880px) {
       main {
         grid-template-columns: 1fr;
       }
     }
 
-    /* HERO LAYOUT */
-
-    .hero-shell {
-      position: relative;
-    }
-
-    .hero-card {
-      background: linear-gradient(135deg, #ffffff 0, #eef2ff 100%);
+    .card {
+      background: var(--card-bg);
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-soft);
-      padding: 22px 20px 20px;
-      margin-bottom: 18px;
-      position: relative;
-      overflow: hidden;
+      padding: 16px 16px 14px;
     }
 
-    .hero-card::before {
-      content: "";
-      position: absolute;
-      right: -40px;
-      top: -40px;
-      width: 160px;
-      height: 160px;
-      background: radial-gradient(circle, rgba(129, 140, 248, 0.35), transparent 60%);
-      opacity: 0.9;
-      pointer-events: none;
-    }
-
-    .hero-eyebrow {
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #4b5563;
-      margin-bottom: 2px;
-    }
-
-    .hero-title {
-      font-size: 1.9rem;
-      margin: 0 0 8px;
-      color: #111827;
-    }
-
-    .hero-title span {
-      color: var(--accent-contrast);
-    }
-
-    .hero-subtitle {
-      margin: 0 0 10px;
-      color: var(--text-muted);
-      font-size: 0.99rem;
-      line-height: 1.55;
-    }
-
-    .highlight-text {
-      font-weight: 600;
-      color: #111827;
-    }
-
-    .hero-list {
-      margin: 10px 0 12px;
-      padding-left: 20px;
-      color: var(--text-muted);
-      font-size: 0.92rem;
-    }
-
-    .hero-list li {
-      margin-bottom: 4px;
-    }
-
-    .pill-hint {
-      background: var(--accent-soft);
-      border-radius: 999px;
-      padding: 6px 12px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.82rem;
-      color: #1d4ed8;
-      margin-bottom: 10px;
-    }
-
-    .pill-hint span {
-      font-size: 0.95rem;
-    }
-
-    .city-input-label {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-
-    .city-input-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 4px;
-    }
-
-    .city-input-row input {
-      flex: 1;
-      padding: 9px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      font-size: 0.95rem;
-      background: #f9fafb;
-      transition: border-color 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
-    }
-
-    .city-input-row input:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.4);
-      background: #ffffff;
-    }
-
-    .cta-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+    .card + .card {
       margin-top: 12px;
     }
 
+    .hero-title {
+      font-size: 1.5rem;
+      margin: 0 0 4px;
+      color: var(--blue-dark);
+    }
+
+    .hero-sub {
+      margin: 0 0 10px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .hero-sub strong {
+      color: var(--text-main);
+    }
+
+    .controls {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .controls label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .search-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .search-row input {
+      flex: 1 1 180px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      font-size: 0.95rem;
+    }
+
+    .search-row input:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.35);
+    }
+
+    .filters-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+      align-items: center;
+    }
+
+    .filters-left {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .filters-right {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    select {
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      font-size: 0.85rem;
+      background: #f9fafb;
+    }
+
     .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      border: none;
-      border-radius: 999px;
-      padding: 9px 16px;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition:
-        transform 0.06s ease,
-        box-shadow 0.12s ease,
-        background-color 0.15s ease,
-        color 0.15s ease;
       font-weight: 500;
       text-decoration: none;
+      white-space: nowrap;
     }
 
     .btn-primary {
-      background: var(--accent);
-      color: white;
-      box-shadow: 0 12px 22px rgba(37, 99, 235, 0.4);
+      background: var(--blue);
+      color: #ffffff;
     }
 
     .btn-secondary {
-      background: #f3f4f6;
+      background: #e5e7eb;
       color: var(--text-main);
-      box-shadow: 0 6px 12px rgba(148, 163, 184, 0.35);
     }
 
-    .btn:active {
-      transform: translateY(1px) scale(0.99);
-      box-shadow: none;
+    .btn-danger {
+      background: #fee2e2;
+      color: #b91c1c;
     }
 
-    .how-it-steps {
-      background: rgba(15, 23, 42, 0.95);
-      color: #e5e7eb;
-      border-radius: var(--radius-lg);
-      padding: 14px 14px 12px;
-      box-shadow: var(--shadow-subtle);
-    }
-
-    .how-it-steps-title {
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin: 0 0 6px;
-      color: #a5b4fc;
-    }
-
-    .how-it-steps ol {
-      margin: 0;
-      padding-left: 20px;
-      font-size: 0.85rem;
-      color: #e5e7eb;
-    }
-
-    .how-it-steps li {
-      margin-bottom: 4px;
-    }
-
-    /* LEFT: EVENT LIST PANEL */
-
-    .section-card {
-      background: var(--card-bg);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-subtle);
-      padding: 14px 14px 12px;
-      margin-bottom: 14px;
-    }
-
-    .section-header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin-bottom: 6px;
-    }
-
-    .section-title {
-      font-size: 1.02rem;
-      margin: 0;
-    }
-
-    .section-subtitle {
-      margin: 2px 0 8px;
-      color: var(--text-muted);
-      font-size: 0.88rem;
-    }
-
-    .label-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.78rem;
-      padding: 4px 9px;
-      border-radius: 999px;
-      background: var(--accent-soft-2);
-      color: #4f46e5;
-    }
-
-    .label-chip span {
-      font-size: 0.95rem;
-    }
-
-    .filter-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.82rem;
-      color: var(--text-muted);
-    }
-
-    .filter-row select {
-      border-radius: 999px;
+    .btn-outline {
+      background: transparent;
       border: 1px solid var(--border);
-      padding: 4px 9px;
-      font-size: 0.82rem;
-      background: #f9fafb;
+      color: var(--text-main);
     }
 
-    .filter-row .tiny {
-      font-size: 0.78rem;
-      color: #9ca3af;
+    .btn-small {
+      padding: 6px 10px;
+      font-size: 0.8rem;
+    }
+
+    /* Mobile tweaks */
+    @media (max-width: 600px) {
+      .search-row {
+        flex-direction: column;
+      }
+
+      .filters-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .filters-right {
+        width: 100%;
+      }
+
+      .filters-right .btn {
+        flex: 1 1 auto;
+        width: 100%;
+      }
+
+      .btn {
+        width: 100%;
+      }
     }
 
     .status-line {
+      margin-top: 8px;
       font-size: 0.8rem;
       color: var(--text-muted);
-      margin-bottom: 6px;
       display: flex;
-      align-items: center;
-      gap: 6px;
       flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
     }
 
     .status-pill {
-      padding: 2px 8px;
+      padding: 3px 8px;
       border-radius: 999px;
-      font-size: 0.76rem;
-      background: #eff6ff;
-      color: #1d4ed8;
+      font-size: 0.78rem;
+      background: var(--blue-soft);
+      color: var(--blue-dark);
     }
 
     .status-pill.loading {
@@ -411,16 +281,22 @@
       color: #b91c1c;
     }
 
-    .status-pill.dot::before {
-      content: "•";
-      margin-right: 4px;
+    .list-title {
+      font-size: 1rem;
+      margin: 0 0 4px;
+    }
+
+    .list-sub {
+      margin: 0 0 10px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
     }
 
     .events-list {
       list-style: none;
       padding: 0;
       margin: 0;
-      max-height: 430px;
+      max-height: 380px;
       overflow-y: auto;
     }
 
@@ -432,16 +308,6 @@
       display: grid;
       grid-template-columns: minmax(0, 3fr) auto;
       gap: 8px;
-      background: #ffffff;
-      transition: transform 0.08s ease, box-shadow 0.12s ease,
-        border-color 0.12s ease, background 0.12s ease;
-    }
-
-    .event-item:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 10px 18px rgba(15, 23, 42, 0.12);
-      border-color: #c7d2fe;
-      background: #f9fafb;
     }
 
     @media (max-width: 600px) {
@@ -456,47 +322,41 @@
 
     .event-title {
       font-weight: 600;
-      margin-bottom: 2px;
-      color: #111827;
+      margin-bottom: 4px;
     }
 
-    .event-meta-line {
+    .event-meta {
       font-size: 0.8rem;
       color: var(--text-muted);
-      margin-bottom: 2px;
+      margin-bottom: 4px;
     }
 
-    .event-city-chip {
+    .city-tag {
       display: inline-flex;
       align-items: center;
       gap: 4px;
       padding: 2px 8px;
       border-radius: 999px;
-      background: #eef2ff;
-      color: #4f46e5;
+      background: #eff6ff;
+      color: var(--blue-dark);
       font-size: 0.75rem;
       margin-right: 6px;
     }
 
-    .event-provider {
-      font-weight: 500;
-    }
-
     .event-deadline {
       font-size: 0.8rem;
-      color: #4b5563;
       margin-bottom: 2px;
     }
 
     .event-notes {
-      font-size: 0.77rem;
-      color: #6b7280;
-      margin-top: 3px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 2px;
     }
 
     .event-link a {
       font-size: 0.8rem;
-      color: var(--accent-contrast);
+      color: var(--blue);
       text-decoration: none;
     }
 
@@ -513,128 +373,34 @@
       text-align: right;
     }
 
-    .chip-type {
+    .type-pill {
       font-size: 0.75rem;
       padding: 3px 8px;
       border-radius: 999px;
-      background: #f3f4f6;
-      color: #4b5563;
+      background: #e5e7eb;
+      color: #374151;
       text-transform: capitalize;
     }
 
-    .chip-type.school {
-      background: #eef2ff;
-      color: #4f46e5;
+    .type-pill.school {
+      background: #dbeafe;
+      color: #1e3a8a;
     }
 
-    .chip-type.sports {
+    .type-pill.sports {
       background: #dcfce7;
-      color: #15803d;
+      color: #166534;
     }
 
-    .chip-type.camp {
-      background: #fef3c7;
-      color: #92400e;
-    }
-
-    .chip-type.other {
-      background: #e5e7eb;
-      color: #374151;
-    }
-
-    .btn-small {
-      padding: 5px 10px;
-      font-size: 0.8rem;
-      border-radius: 999px;
-      border: none;
-      cursor: pointer;
-      background: #f3f4f6;
-      color: #111827;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      transition: background 0.12s ease, transform 0.05s ease;
-    }
-
-    .btn-small:hover {
-      background: #e5e7eb;
-      transform: translateY(-1px);
-    }
-
-    .btn-small span {
-      font-size: 0.9rem;
+    .type-pill.camp {
+      background: #fef9c3;
+      color: #854d0e;
     }
 
     .no-events {
       font-size: 0.9rem;
       color: var(--text-muted);
-      padding: 6px 4px 2px;
-    }
-
-    /* RIGHT COLUMN: REMINDERS + PROVIDER CARD */
-
-    .reminders-card {
-      background: #020617;
-      color: #e5e7eb;
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-soft);
-      padding: 14px 14px 12px;
-      margin-bottom: 14px;
-    }
-
-    .reminders-card .section-title {
-      color: #f3f4ff;
-    }
-
-    .reminders-card .section-subtitle {
-      color: #9ca3af;
-    }
-
-    .reminders-header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 8px;
-    }
-
-    .label-chip.dark {
-      background: rgba(37, 99, 235, 0.2);
-      color: #bfdbfe;
-    }
-
-    .reminders-actions {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      font-size: 0.8rem;
-    }
-
-    .btn-ghost,
-    .btn-ghost-danger {
-      background: transparent;
-      border: 1px solid rgba(156, 163, 175, 0.7);
-      box-shadow: none;
-      padding: 5px 10px;
-      border-radius: 999px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      color: #e5e7eb;
-      font-size: 0.8rem;
-      transition: background 0.12s ease, border-color 0.12s ease;
-    }
-
-    .btn-ghost-danger {
-      border-color: #fecaca;
-      color: #fecaca;
-    }
-
-    .btn-ghost:hover,
-    .btn-ghost-danger:hover {
-      background: rgba(15, 23, 42, 0.8);
+      margin-top: 4px;
     }
 
     .reminders-list {
@@ -647,15 +413,15 @@
     }
 
     .reminder-item {
-      border-radius: 10px;
-      border: 1px solid rgba(55, 65, 81, 0.8);
-      padding: 8px 8px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      padding: 8px 9px;
       margin-bottom: 6px;
       display: flex;
       justify-content: space-between;
       gap: 8px;
       align-items: center;
-      background: rgba(15, 23, 42, 0.9);
+      background: #f9fafb;
     }
 
     .reminder-main {
@@ -666,101 +432,65 @@
 
     .reminder-title {
       font-weight: 600;
-      color: #e5e7eb;
     }
 
     .reminder-meta {
-      font-size: 0.78rem;
-      color: #9ca3af;
+      font-size: 0.8rem;
+      color: var(--text-muted);
     }
 
-    .btn-icon-only {
+    .btn-icon {
       border-radius: 999px;
-      border: 1px solid rgba(75, 85, 99, 0.9);
-      background: transparent;
+      border: 1px solid var(--border);
+      background: #ffffff;
       font-size: 0.8rem;
       cursor: pointer;
       padding: 4px 8px;
-      color: #e5e7eb;
-      transition: background 0.12s ease, transform 0.05s ease;
     }
 
-    .btn-icon-only:hover {
-      background: rgba(15, 23, 42, 0.9);
-      transform: translateY(-1px);
-    }
-
-    .empty-state {
+    .empty-hint {
       font-size: 0.9rem;
-      color: #9ca3af;
+      color: var(--text-muted);
     }
 
-    .provider-card {
-      background: #ffffff;
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-subtle);
-      padding: 14px 14px 12px;
-      margin-bottom: 10px;
+    .provider-list {
+      margin: 6px 0 0;
+      padding-left: 18px;
+      font-size: 0.86rem;
+      color: var(--text-muted);
     }
 
-    .provider-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.8rem;
-      padding: 4px 9px;
-      border-radius: 999px;
-      background: #ecfeff;
-      color: #0369a1;
+    .provider-list li {
       margin-bottom: 4px;
     }
 
-    ol.info-list {
-      margin: 6px 0 0;
-      padding-left: 18px;
-      color: var(--text-muted);
-      font-size: 0.88rem;
-    }
-
-    ol.info-list li {
-      margin-bottom: 6px;
-    }
-
-    ol.info-list a {
-      color: var(--accent-contrast);
+    .provider-list a {
+      color: var(--blue);
       text-decoration: none;
     }
 
-    ol.info-list a:hover {
+    .provider-list a:hover {
       text-decoration: underline;
     }
 
     footer {
-      margin-top: 16px;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      text-align: left;
-    }
-
-    .disclaimer {
-      margin-top: 6px;
+      margin-top: 14px;
       font-size: 0.8rem;
       color: var(--text-muted);
     }
 
-    /* TOAST */
-
+    /* Toast */
     .toast {
       position: fixed;
-      bottom: 16px;
+      bottom: 14px;
       left: 50%;
       transform: translateX(-50%) translateY(20px);
-      background: #111827;
+      background: var(--blue-dark);
       color: #f9fafb;
       padding: 8px 16px;
       border-radius: 999px;
       font-size: 0.86rem;
-      box-shadow: 0 12px 26px rgba(15, 23, 42, 0.45);
+      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.4);
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.2s ease, transform 0.2s ease;
@@ -771,315 +501,196 @@
       opacity: 1;
       transform: translateX(-50%) translateY(0);
     }
-    /* Mobile tweaks */
-@media (max-width: 600px) {
-  /* Stack the search bar and buttons nicely */
-  .city-input-row {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .cta-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .cta-row .btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  /* Slightly larger tap targets on small screens */
-  .city-input-row input {
-    padding: 11px 14px;
-    font-size: 1rem;
-  }
-
-  .btn {
-    padding: 11px 16px;
-    font-size: 1rem;
-  }
-
-  /* Event list: more spacing so it feels less cramped */
-  .events-list {
-    max-height: none;
-  }
-
-  .event-item {
-    padding: 12px 10px;
-  }
-
-  /* Reminders card spacing on mobile */
-  .reminders-card {
-    margin-top: 10px;
-  }
-}
-
   </style>
 </head>
 <body>
   <div class="page">
-    <header class="site-header">
-      <div class="brand-wrap">
-        <div class="logo-wrap">
-          <div class="logo">KidCal<span>.</span></div>
-          <div class="tagline-mini">One calendar for every kid’s to-dos</div>
-          <div class="mini-pill">
-            <span>⚡</span> Built for busy families
-          </div>
-        </div>
+    <header>
+      <div class="brand">
+        <div class="logo">KidCal<span>.</span></div>
+        <div class="tagline">All your kids’ signups in one place.</div>
       </div>
-      <div class="prototype-pill">
-        <span>📍</span> Serving San Luis Obispo County families
+      <div class="badge">
+        <span>📍</span> San Luis Obispo County
       </div>
     </header>
 
     <main>
-      <!-- LEFT COLUMN: HERO + FINDER -->
-      <section class="hero-shell">
-        <div class="hero-card">
-          <div class="hero-eyebrow">For families</div>
-          <h1 class="hero-title">
-            Stay ahead of <span>every</span> kid deadline.
-          </h1>
-          <p class="hero-subtitle">
-            <span class="highlight-text">
-              All your child’s registrations, events & deadlines — organized in one place so you never miss a moment.
-            </span>
-            <br /><br />
-            Type your city or ZIP to see school, sports, camp, and activity sign-ups in your area. Tap “Add to my reminders” and sync it to your calendar.
+      <!-- LEFT: Search + Event list -->
+      <section>
+        <div class="card">
+          <h1 class="hero-title">See what’s open for your kids.</h1>
+          <p class="hero-sub">
+            Type a city or ZIP to see school, sports, camp and activity dates near you.
+            <strong>Add a reminder in one tap.</strong>
           </p>
 
-          <ul class="hero-list">
-            <li>School enrollment & key school dates</li>
-            <li>Youth sports leagues & teams</li>
-            <li>Camps, classes & community youth programs</li>
-          </ul>
-
-          <div class="pill-hint">
-            <span>💡</span>
-            Try: “Atascadero”, “San Luis Obispo”, “Paso Robles”, “Nipomo”, “Templeton”… ZIP codes work too.
-          </div>
-
-          <div class="city-input-label">Step 1 — Tell KidCal where you are:</div>
-          <div class="city-input-row">
-            <input
-              id="cityInput"
-              type="text"
-              placeholder="Enter city or ZIP in San Luis Obispo County"
-              autocomplete="off"
-            />
-          </div>
-
-          <div class="cta-row">
-            <button class="btn btn-primary" id="btnFind">
-              🔍 Find my kids’ deadlines
-            </button>
-            <button class="btn btn-secondary" id="btnSample">
-              ✨ Show everything
-            </button>
-          </div>
-        </div>
-
-        <div class="how-it-steps">
-          <p class="how-it-steps-title">How KidCal works</p>
-          <ol>
-            <li>Enter your city or ZIP.</li>
-            <li>Filter by school, sports, camps, or other programs.</li>
-            <li>Add must-not-miss dates to your reminder list.</li>
-            <li>Download an .ics file and drop it into your calendar.</li>
-          </ol>
-        </div>
-
-        <!-- Registration finder section -->
-        <div class="section-card" style="margin-top: 14px;">
-          <div class="section-header-row">
-            <div>
-              <p class="section-title">Registration finder</p>
-              <p class="section-subtitle">
-                This page pulls from a shared sheet of youth programs in San Luis Obispo County.
-              </p>
+          <div class="controls">
+            <label for="cityInput">Step 1: Choose your area</label>
+            <div class="search-row">
+              <input
+                id="cityInput"
+                type="text"
+                placeholder="Try: Atascadero, SLO, Paso Robles, Nipomo…"
+                autocomplete="off"
+              />
+              <button class="btn btn-primary" id="btnFind">Show my area</button>
+              <button class="btn btn-secondary" id="btnSample">Show everything</button>
             </div>
-            <div class="label-chip" id="eventsStatusChip">
-              <span>🗂</span> Browsing events
-            </div>
-          </div>
 
-          <div class="section-header-row">
+            <div class="filters-row">
+              <div class="filters-left">
+                <span>Step 2: Filter type</span>
+                <select id="typeFilter">
+                  <option value="all">All</option>
+                  <option value="school">School</option>
+                  <option value="sports">Sports</option>
+                  <option value="camp">Camps / activities</option>
+                  <option value="other">Other / directories</option>
+                </select>
+              </div>
+              <div class="filters-right">
+                <span class="badge" style="background:#fef9c3;">
+                  <span>⭐</span> Tap “Add reminder” to save
+                </span>
+              </div>
+            </div>
+
             <div class="status-line">
-              <span id="eventsCounter" class="status-pill dot">Loading events…</span>
+              <span id="eventsCounter" class="status-pill">Loading events…</span>
               <span id="cityFilterLabel" class="status-pill" style="display:none;"></span>
             </div>
-            <div class="filter-row">
-              <span>Filter by type:</span>
-              <select id="typeFilter">
-                <option value="all">All</option>
-                <option value="school">School</option>
-                <option value="sports">Sports</option>
-                <option value="camp">Camps & activities</option>
-                <option value="other">Other / directories</option>
-              </select>
-              <span class="tiny">(Step 2)</span>
-            </div>
           </div>
+        </div>
 
-          <p class="section-subtitle">
-            Step 3 — Tap “Add to my reminders” for any date you want on your calendar.
-          </p>
+        <div class="card">
+          <p class="list-title">Kids’ signups & events</p>
+          <p class="list-sub">Step 3: Add things you don’t want to miss.</p>
 
           <ul id="eventsList" class="events-list"></ul>
-          <p id="eventsEmpty" class="no-events" style="display: none;">
-            No events match your filters yet. Try a different city, widen the type filter, or tap “Show everything”.
+          <p id="eventsEmpty" class="no-events" style="display:none;">
+            No matches right now. Try a different area or “Show everything”.
           </p>
         </div>
       </section>
 
-      <!-- RIGHT COLUMN: REMINDERS + HOW-TO CARD -->
+      <!-- RIGHT: Reminders + provider info -->
       <section>
-        <div class="reminders-card">
-          <div class="reminders-header-row">
-            <div>
-              <p class="section-title">My reminder calendar</p>
-              <p class="section-subtitle">
-                Step 4 — Save on this device and download an .ics file for your Google, Apple, or Outlook calendar.
-              </p>
-            </div>
-          </div>
+        <div class="card">
+          <p class="list-title">My reminders</p>
+          <p class="list-sub">
+            Saved on this device. Download a calendar file when you’re ready.
+          </p>
 
-          <div class="reminders-header-row">
-            <div class="label-chip dark">
-              <span>📅</span> Saved reminders
+          <div class="filters-row" style="margin-top:0;">
+            <div class="filters-left">
+              <span class="badge">
+                <span>📅</span> Step 4: Download .ics
+              </span>
             </div>
-            <div class="reminders-actions">
-              <button class="btn-ghost-danger" id="btnClearReminders">
-                🧹 Clear
-              </button>
-              <button class="btn-ghost" id="btnDownloadIcs">
+            <div class="filters-right">
+              <button class="btn btn-outline btn-small" id="btnDownloadIcs">
                 ⬇️ Download .ics
+              </button>
+              <button class="btn btn-danger btn-small" id="btnClearReminders">
+                🧹 Clear
               </button>
             </div>
           </div>
 
           <ul id="remindersList" class="reminders-list"></ul>
-          <p id="remindersEmpty" class="empty-state">
-            No reminders yet. Add a school, sports, camp, or activity registration from the list to see it here.
+          <p id="remindersEmpty" class="empty-hint">
+            No reminders yet. Add one from the list on the left.
           </p>
         </div>
 
-        <div class="provider-card">
-          <div class="provider-pill">
-            <span>🏫</span> For schools & youth programs
-          </div>
-          <p class="section-title" style="margin-top:4px;">How to add your program to KidCal</p>
-          <p class="section-subtitle">
-            Local schools, sports leagues, camps, and youth programs can add dates into the shared KidCal sheet.
-            Once added, they show up here for families.
+        <div class="card">
+          <p class="list-title">For schools & youth programs</p>
+          <p class="list-sub">
+            Add your programs so local families can find you.
           </p>
-
-          <ol class="info-list">
+          <ul class="provider-list">
             <li>
-              Open the shared KidCal programs sheet:
+              Open the shared sheet:
               <a
                 href="https://docs.google.com/spreadsheets/d/1vSTGyzF9lGXW8a1--CtEYzaQFhZnkU0Ye8InlnVPgbmyYaiYzy8wPEgGp2dVodt-GEbonPHKGRKQJwl/edit"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 KidCal programs sheet
-              </a>.
+              </a>
             </li>
+            <li>One row per program or season.</li>
             <li>
-              Add one row per program or season with your
-              <strong>location</strong>, <strong>title</strong>, <strong>type</strong>,
-              <strong>registration dates</strong>, <strong>event date</strong>, <strong>organization</strong>,
-              and a direct <strong>registration or info link</strong>.
+              Fill in your location, title, type, dates, org name and a direct link.
             </li>
-            <li>
-              The website reads columns like
-              <code>location_label</code>, <code>org</code>, <code>type</code>,
-              <code>registration_open</code>, <code>registration_close</code>,
-              <code>event_date</code>, <code>url</code>, <code>notes</code>,
-              plus optional <code>age_range</code> and <code>cost</code>.
-            </li>
-            <li>
-              Save your changes. Updates appear in KidCal once the sheet syncs — no web edits needed.
-            </li>
-          </ol>
+            <li>KidCal reads from columns like <code>location_label</code>, <code>org</code>, <code>type</code>, <code>registration_open</code>, <code>registration_close</code>, <code>event_date</code>, <code>url</code>, <code>notes</code>.</li>
+          </ul>
         </div>
 
         <footer>
-          <div>
-            KidCal helps parents stay organized by collecting local kids’ activity deadlines in one place.
-          </div>
-          <div class="disclaimer">
-            Dates and offerings change each season as local providers update their programs.
-          </div>
+          KidCal collects local kids’ signups and events in one place so parents
+          don’t have to dig through flyers, emails and websites.
         </footer>
       </section>
     </main>
   </div>
 
-  <!-- Toast for dynamic feedback -->
   <div id="toast" class="toast"></div>
 
   <script>
-    // --- Google Sheet CSV URL (published CSV) ---
+    // Google Sheet CSV URL
     const SHEET_URL =
       "https://docs.google.com/spreadsheets/d/e/2PACX-1vSTGyzF9lGXW8a1--CtEYzaQFhZnkU0Ye8InlnVPgbmyYaiYzy8wPEgGp2dVodt-GEbonPHKGRKQJwl/pub?gid=0&single=true&output=csv";
 
-    // --- Fallback sample events for SLO County ---
+    // Fallback sample events
     const SAMPLE_EVENTS = [
       {
-        id: 1,
+        id: "sample-1",
         city: "Atascadero CA 93422",
         type: "school",
-        title: "AUSD TK and Kindergarten Enrollment 2025-26",
+        title: "AUSD TK & Kinder Enrollment 2025–26",
         date: "2025-03-31",
-        deadlineLabel: "Register between Mar 1 2025 and Mar 31 2025",
+        deadlineLabel: "Register between Mar 1 and Mar 31 2025",
         provider: "Atascadero Unified School District",
         link: "https://atascaderousd.aeries.net/air/",
-        notes:
-          "Online enrollment for new TK and Kindergarten students for 2025-26. Requires Aeries account plus residency and immunization documents."
+        notes: "Online enrollment for new TK and Kindergarten students."
       },
       {
-        id: 2,
+        id: "sample-2",
         city: "Atascadero CA 93422",
         type: "sports",
         title: "Atascadero Youth Soccer League Fall 2025",
         date: "2025-06-16",
-        deadlineLabel: "Register between Apr 8 2025 and Jun 16 2025",
+        deadlineLabel: "Register between Apr 8 and Jun 16 2025",
         provider: "Atascadero Youth Soccer League",
         link: "https://www.atascaderosoccer.org/",
-        notes:
-          "Fall 2025 schedule with early bird registration opening April 8 and final closing June 16. First games planned for September 6 2025."
+        notes: "Games start in early September."
       }
     ];
 
-    // This will be replaced by sheet data if available
     let EVENTS = [...SAMPLE_EVENTS];
+    let currentEvents = [...EVENTS];
 
+    const STORAGE_KEY = "kidcal-reminders-v1";
+    let reminders = loadRemindersFromStorage();
+    let isLoadingEvents = false;
+
+    // DOM elements
     const cityInput = document.getElementById("cityInput");
     const typeFilter = document.getElementById("typeFilter");
+    const btnFind = document.getElementById("btnFind");
+    const btnSample = document.getElementById("btnSample");
     const eventsList = document.getElementById("eventsList");
     const eventsEmpty = document.getElementById("eventsEmpty");
     const eventsCounter = document.getElementById("eventsCounter");
     const cityFilterLabel = document.getElementById("cityFilterLabel");
-    const eventsStatusChip = document.getElementById("eventsStatusChip");
-
-    const btnFind = document.getElementById("btnFind");
-    const btnSample = document.getElementById("btnSample");
 
     const remindersList = document.getElementById("remindersList");
     const remindersEmpty = document.getElementById("remindersEmpty");
     const btnClearReminders = document.getElementById("btnClearReminders");
     const btnDownloadIcs = document.getElementById("btnDownloadIcs");
 
-    const STORAGE_KEY = "kidcal-reminders-v1";
-
-    let currentEvents = [...EVENTS];
-    let reminders = loadRemindersFromStorage();
-    let isLoadingEvents = false;
-
-    // --- Toast helper ---
     function showToast(message) {
       const toast = document.getElementById("toast");
       if (!toast) return;
@@ -1088,10 +699,10 @@
       clearTimeout(window._kidcalToastTimeout);
       window._kidcalToastTimeout = setTimeout(() => {
         toast.classList.remove("toast--visible");
-      }, 2200);
+      }, 2000);
     }
 
-    // Simple CSV parser assuming no commas inside cells
+    // CSV parser (simple, no commas inside cells)
     function parseCsv(text) {
       const lines = text.trim().split(/\r?\n/);
       if (!lines.length) return { headers: [], rows: [] };
@@ -1109,7 +720,6 @@
       return { headers, rows };
     }
 
-    // Pick the main date for calendar use: registration_close > registration_open > event_date
     function pickPrimaryDate(row) {
       return (
         row.registration_close ||
@@ -1119,7 +729,6 @@
       );
     }
 
-    // Turn "2025-03-01" into "Mar 1 2025"
     function formatDate(iso) {
       if (!iso) return "";
       const parts = iso.split("-");
@@ -1135,7 +744,6 @@
       return `${monthName} ${day} ${y}`;
     }
 
-    // Build a friendly deadline label from open/close/event_date/notes
     function buildDeadlineLabel(row) {
       const open = row.registration_open;
       const close = row.registration_close;
@@ -1161,7 +769,6 @@
       return notes || "";
     }
 
-    // Normalize type so "event" becomes "other"
     function normalizeType(raw) {
       const t = (raw || "").toLowerCase().trim();
       if (!t) return "other";
@@ -1180,7 +787,7 @@
         const parsed = parseCsv(text);
 
         if (!parsed.rows || !parsed.rows.length) {
-          console.warn("Sheet has no rows; keeping sample events.");
+          console.warn("Sheet has no rows; using sample events.");
           isLoadingEvents = false;
           updateStatusUi();
           return;
@@ -1191,12 +798,9 @@
             const title = row.title;
             const url = row.url;
 
-            // Require at least title and url to show an event
             if (!title || !url) return null;
 
-            const cityLabel =
-              row.location_label || row.location_id || "";
-
+            const cityLabel = row.location_label || row.location_id || "";
             const eventType = normalizeType(row.type);
             const date = pickPrimaryDate(row);
             const deadlineLabel = buildDeadlineLabel(row);
@@ -1221,8 +825,7 @@
           EVENTS = mapped;
           currentEvents = [...EVENTS];
           renderEvents();
-          showToast(`Loaded ${mapped.length} programs from local partners`);
-          console.info(`Loaded ${mapped.length} events from sheet (KidCal schema).`);
+          showToast(`Loaded ${mapped.length} programs`);
         } else {
           console.warn("Sheet rows did not have required fields; using samples.");
         }
@@ -1242,7 +845,7 @@
         const parsed = JSON.parse(raw);
         return Array.isArray(parsed) ? parsed : [];
       } catch (e) {
-        console.warn("Could not load reminders from storage", e);
+        console.warn("Could not load reminders", e);
         return [];
       }
     }
@@ -1263,9 +866,9 @@
         case "sports":
           return "Sports";
         case "camp":
-          return "Camp / Activity";
+          return "Camp / activity";
         case "other":
-          return "Other / Directory";
+          return "Other / directory";
         default:
           return t.charAt(0).toUpperCase() + t.slice(1);
       }
@@ -1278,7 +881,6 @@
       if (isLoadingEvents) {
         eventsCounter.textContent = "Loading events…";
         eventsCounter.classList.add("loading");
-        eventsStatusChip.textContent = "⏳ Loading from KidCal sheet…";
       } else {
         eventsCounter.classList.remove("loading");
         if (visible === total) {
@@ -1286,13 +888,13 @@
         } else {
           eventsCounter.textContent = `Showing ${visible} of ${total} program${total === 1 ? "" : "s"}`;
         }
-        eventsStatusChip.innerHTML = '<span>🗂</span> Browsing events';
       }
     }
 
     function renderEvents() {
       eventsList.innerHTML = "";
       const filterType = typeFilter.value;
+
       const list = currentEvents.filter((ev) => {
         if (filterType === "all") return true;
         return (ev.type || "other").toLowerCase() === filterType;
@@ -1300,11 +902,10 @@
 
       updateStatusUi();
 
-      if (list.length === 0) {
+      if (!list.length) {
         eventsEmpty.style.display = "block";
         return;
       }
-
       eventsEmpty.style.display = "none";
 
       list.forEach((ev) => {
@@ -1318,30 +919,29 @@
         title.className = "event-title";
         title.textContent = ev.title || "(No title)";
 
-        const metaLine = document.createElement("div");
-        metaLine.className = "event-meta-line";
+        const meta = document.createElement("div");
+        meta.className = "event-meta";
 
-        const cityChip = document.createElement("span");
-        cityChip.className = "event-city-chip";
-        cityChip.textContent = ev.city || "Unknown location";
+        const cityTag = document.createElement("span");
+        cityTag.className = "city-tag";
+        cityTag.textContent = ev.city || "Unknown area";
 
-        const providerSpan = document.createElement("span");
-        providerSpan.className = "event-provider";
-        providerSpan.textContent = ev.provider || "";
+        meta.appendChild(cityTag);
 
-        metaLine.appendChild(cityChip);
         if (ev.provider) {
-          metaLine.appendChild(providerSpan);
+          const providerSpan = document.createElement("span");
+          providerSpan.textContent = ev.provider;
+          meta.appendChild(providerSpan);
         }
 
         const deadline = document.createElement("div");
         deadline.className = "event-deadline";
         deadline.textContent = ev.deadlineLabel || "";
 
-        const notesDiv = document.createElement("div");
-        notesDiv.className = "event-notes";
+        const notes = document.createElement("div");
+        notes.className = "event-notes";
         if (ev.notes) {
-          notesDiv.textContent = ev.notes;
+          notes.textContent = ev.notes;
         }
 
         const link = document.createElement("div");
@@ -1351,33 +951,34 @@
           a.href = ev.link;
           a.target = "_blank";
           a.rel = "noopener noreferrer";
-          a.textContent = "Go to registration or info page →";
+          a.textContent = "Open registration / info →";
           link.appendChild(a);
         }
 
         main.appendChild(title);
-        main.appendChild(metaLine);
+        main.appendChild(meta);
         if (ev.deadlineLabel) main.appendChild(deadline);
-        if (ev.notes) main.appendChild(notesDiv);
+        if (ev.notes) main.appendChild(notes);
         main.appendChild(link);
 
         const actions = document.createElement("div");
         actions.className = "event-actions";
 
-        const typeChip = document.createElement("div");
-        typeChip.className = "chip-type " + (ev.type || "other");
-        typeChip.textContent = prettyType(ev.type);
+        const typePill = document.createElement("div");
+        typePill.className = "type-pill " + (ev.type || "other");
+        typePill.textContent = prettyType(ev.type);
 
         const btnAdd = document.createElement("button");
-        btnAdd.className = "btn-small";
-        btnAdd.innerHTML = "<span>➕</span> Add to my reminders";
+        btnAdd.className = "btn btn-secondary btn-small";
+        btnAdd.textContent = "Add reminder";
         btnAdd.addEventListener("click", () => addReminder(ev));
 
-        actions.appendChild(typeChip);
+        actions.appendChild(typePill);
         actions.appendChild(btnAdd);
 
         li.appendChild(main);
         li.appendChild(actions);
+
         eventsList.appendChild(li);
       });
     }
@@ -1403,17 +1004,17 @@
 
         const meta = document.createElement("div");
         meta.className = "reminder-meta";
-        const parts = [];
-        if (r.deadlineLabel) parts.push(r.deadlineLabel);
-        if (r.city) parts.push(r.city);
-        if (r.provider) parts.push(r.provider);
-        meta.textContent = parts.join(" · ");
+        const bits = [];
+        if (r.deadlineLabel) bits.push(r.deadlineLabel);
+        if (r.city) bits.push(r.city);
+        if (r.provider) bits.push(r.provider);
+        meta.textContent = bits.join(" · ");
 
         main.appendChild(title);
         main.appendChild(meta);
 
         const btnRemove = document.createElement("button");
-        btnRemove.className = "btn-icon-only";
+        btnRemove.className = "btn-icon";
         btnRemove.textContent = "✕";
         btnRemove.title = "Remove";
         btnRemove.addEventListener("click", () => {
@@ -1431,21 +1032,21 @@
 
     function addReminder(ev) {
       const exists = reminders.some((r) => r.id === ev.id);
-      if (!exists) {
-        reminders.push({
-          id: ev.id,
-          title: ev.title,
-          city: ev.city,
-          provider: ev.provider,
-          deadlineLabel: ev.deadlineLabel,
-          date: ev.date
-        });
-        saveRemindersToStorage();
-        renderReminders();
-        showToast("Added to your reminder calendar");
-      } else {
+      if (exists) {
         showToast("Already in your reminders");
+        return;
       }
+      reminders.push({
+        id: ev.id,
+        title: ev.title,
+        city: ev.city,
+        provider: ev.provider,
+        deadlineLabel: ev.deadlineLabel,
+        date: ev.date
+      });
+      saveRemindersToStorage();
+      renderReminders();
+      showToast("Added to your reminders");
     }
 
     function handleFind() {
@@ -1460,7 +1061,7 @@
         (ev) => (ev.city || "").toLowerCase().includes(city)
       );
       cityFilterLabel.style.display = "inline-flex";
-      cityFilterLabel.textContent = `Filtered by: “${cityInput.value.trim()}”`;
+      cityFilterLabel.textContent = `Filter: “${cityInput.value.trim()}”`;
       renderEvents();
     }
 
@@ -1473,16 +1074,23 @@
 
     function clearReminders() {
       if (!reminders.length) return;
-      if (!confirm("Clear all reminders saved on this device?")) return;
+      if (!confirm("Clear all reminders on this device?")) return;
       reminders = [];
       saveRemindersToStorage();
       renderReminders();
       showToast("All reminders cleared");
     }
 
+    function escapeText(text) {
+      return String(text)
+        .replace(/,/g, "\\,")
+        .replace(/;/g, "\\;")
+        .replace(/\n/g, "\\n");
+    }
+
     function generateIcsContent() {
       if (!reminders.length) {
-        alert("No reminders yet. Add at least one before downloading.");
+        alert("No reminders yet. Add one before downloading.");
         return null;
       }
 
@@ -1513,13 +1121,6 @@
       return lines.join("\r\n");
     }
 
-    function escapeText(text) {
-      return String(text)
-        .replace(/,/g, "\\,")
-        .replace(/;/g, "\\;")
-        .replace(/\n/g, "\\n");
-    }
-
     function downloadIcs() {
       const content = generateIcsContent();
       if (!content) return;
@@ -1536,7 +1137,7 @@
       showToast("Downloaded kidcal-reminders.ics");
     }
 
-    // --- Event listeners ---
+    // Event listeners
     btnFind.addEventListener("click", handleFind);
     btnSample.addEventListener("click", handleSample);
     typeFilter.addEventListener("change", renderEvents);
@@ -1544,16 +1145,13 @@
     btnDownloadIcs.addEventListener("click", downloadIcs);
 
     cityInput.addEventListener("keyup", (e) => {
-      if (e.key === "Enter") {
-        handleFind();
-      }
+      if (e.key === "Enter") handleFind();
     });
 
-    // Initial render: show whatever EVENTS currently is, then try to swap in sheet data
+    // Initial render
     handleSample();
     renderReminders();
     fetchSheetData();
   </script>
 </body>
 </html>
-
