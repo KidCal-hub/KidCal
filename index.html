@@ -972,23 +972,23 @@
       URL.revokeObjectURL(url);
     }
 
-    // --- Simple CSV parser (assumes no commas inside cells) ---
-    function parseCsv(text) {
-      const lines = text.trim().split(/\r?\n/);
-      if (!lines.length) return { headers: [], rows: [] };
+// Simple CSV parser assuming no commas inside cells
+function parseCsv(text) {
+  const lines = text.trim().split(/\r?\n/);
+  if (!lines.length) return { headers: [], rows: [] };
 
-      const headers = lines[0].split(",").map((h) => h.trim());
-      const rows = lines.slice(1).map((line) => {
-        const cells = line.split(",").map((c) => c.trim());
-        const obj = {};
-        headers.forEach((h, i) => {
-          obj[h] = cells[i] || "";
-        });
-        return obj;
-      });
+  const headers = lines[0].split(",").map((h) => h.trim());
+  const rows = lines.slice(1).map((line) => {
+    const cells = line.split(",").map((c) => c.trim());
+    const obj = {};
+    headers.forEach((h, i) => {
+      obj[h] = cells[i] || "";
+    });
+    return obj;
+  });
 
-      return { headers, rows };
-    }
+  return { headers, rows };
+}
 
     // Helper to get a value from row by trying multiple header names
     function getCell(row, candidates) {
@@ -1002,69 +1002,57 @@
       return "";
     }
 
-    async function fetchSheetData() {
-      try {
-        const res = await fetch(SHEET_URL);
-        if (!res.ok) throw new Error("Network error");
-        const text = await res.text();
-        const parsed = parseCsv(text);
+async function fetchSheetData() {
+  try {
+    const res = await fetch(SHEET_URL);
+    if (!res.ok) throw new Error("Network error");
+    const text = await res.text();
+    const parsed = parseCsv(text);
 
-        if (!parsed.rows || !parsed.rows.length) {
-          console.warn("Sheet has no rows; keeping sample events.");
-          return;
-        }
-
-        const mapped = parsed.rows
-          .map((row, idx) => {
-            const title = getCell(row, ["title", "event_title", "name"]);
-            if (!title) return null;
-
-            const city = getCell(row, ["city", "town"]);
-            const type = (
-              getCell(row, ["type", "category"]) || "other"
-            ).toLowerCase();
-            const date = getCell(row, ["date", "start_date"]);
-            const deadlineLabel = getCell(row, [
-              "deadline_label",
-              "deadline",
-              "deadline text",
-              "notes"
-            ]);
-            const provider = getCell(row, [
-              "provider",
-              "host",
-              "organization",
-              "org"
-            ]);
-            const link = getCell(row, ["link", "url", "website"]);
-
-            return {
-              id: "sheet-" + idx,
-              city,
-              type,
-              title,
-              date,
-              deadlineLabel,
-              provider,
-              link
-              // Extra columns like age_range, cost, etc. are safely ignored
-            };
-          })
-          .filter(Boolean);
-
-        if (mapped.length) {
-          EVENTS = mapped;
-          currentEvents = [...EVENTS];
-          renderEvents();
-          console.info(`Loaded ${mapped.length} events from sheet.`);
-        }
-      } catch (e) {
-        console.warn("Failed to load sheet data; using sample events.", e);
-        EVENTS = [...SAMPLE_EVENTS];
-        currentEvents = [...EVENTS];
-        renderEvents();
-      }
+    if (!parsed.rows || !parsed.rows.length) {
+      console.warn("Sheet has no rows; keeping sample events.");
+      return;
     }
+
+    // Expecting exact headers:
+    // city, title, type, date, deadline_label, provider, link, age_range, cost, notes
+    const mapped = parsed.rows
+      .map((row, idx) => {
+        // Require at least title and city and link to show the event
+        if (!row.title || !row.city || !row.link) return null;
+
+        return {
+          id: "sheet-" + idx,
+          city: row.city,
+          type: (row.type || "other").toLowerCase(),
+          title: row.title,
+          date: row.date, // YYYY-MM-DD recommended
+          deadlineLabel: row.deadline_label,
+          provider: row.provider,
+          link: row.link,
+          // Optional extras (not currently used in rendering)
+          ageRange: row.age_range,
+          cost: row.cost,
+          notes: row.notes
+        };
+      })
+      .filter(Boolean);
+
+    if (mapped.length) {
+      EVENTS = mapped;
+      currentEvents = [...EVENTS];
+      renderEvents();
+      console.info(`Loaded ${mapped.length} events from sheet (strict headers).`);
+    } else {
+      console.warn("Sheet rows did not have required fields; using samples.");
+    }
+  } catch (e) {
+    console.warn("Failed to load sheet data; using sample events.", e);
+    EVENTS = [...SAMPLE_EVENTS];
+    currentEvents = [...EVENTS];
+    renderEvents();
+  }
+}
 
     // --- Event listeners ---
     btnFind.addEventListener("click", handleFind);
@@ -1086,3 +1074,4 @@
   </script>
 </body>
 </html>
+
