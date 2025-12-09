@@ -11,16 +11,21 @@
 
   <style>
     :root {
-      --bg: #f7fafc;
+      --bg: #f3f4ff;
+      --bg-deep: #0f172a;
       --card-bg: #ffffff;
       --accent: #2563eb;
       --accent-soft: #dbeafe;
-      --text-main: #111827;
+      --accent-soft-2: #eef2ff;
+      --accent-contrast: #1d4ed8;
+      --text-main: #0f172a;
       --text-muted: #6b7280;
       --border: #e5e7eb;
       --danger: #b91c1c;
-      --radius-lg: 14px;
-      --shadow-soft: 0 10px 25px rgba(15, 23, 42, 0.07);
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.18);
+      --shadow-subtle: 0 10px 24px rgba(15, 23, 42, 0.10);
       --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
         sans-serif;
     }
@@ -32,8 +37,11 @@
     body {
       margin: 0;
       font-family: var(--font-main);
-      background: radial-gradient(circle at top left, #eff6ff, #f9fafb);
+      background:
+        radial-gradient(circle at top left, #eef2ff 0, #eef2ff 30%, #f9fafb 80%),
+        linear-gradient(135deg, #0f172a 0, #0f172a 22%, transparent 22%);
       color: var(--text-main);
+      min-height: 100vh;
     }
 
     .page {
@@ -47,40 +55,64 @@
       justify-content: space-between;
       align-items: center;
       gap: 12px;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
       flex-wrap: wrap;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
     }
 
     .logo-wrap {
       display: flex;
-      align-items: baseline;
-      gap: 10px;
+      flex-direction: column;
+      gap: 2px;
     }
 
     .logo {
       font-weight: 800;
-      font-size: 1.4rem;
-      letter-spacing: 0.04em;
+      font-size: 1.6rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #ffffff;
     }
 
     .logo span {
-      color: var(--accent);
+      color: #a5b4fc;
     }
 
     .tagline-mini {
       font-size: 0.9rem;
-      color: var(--text-muted);
+      color: #e5e7eb;
+    }
+
+    .mini-pill {
+      font-size: 0.75rem;
+      color: #c7d2fe;
+      background: rgba(79, 70, 229, 0.25);
+      border-radius: 999px;
+      padding: 3px 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mini-pill span {
+      font-size: 0.95rem;
     }
 
     .prototype-pill {
       background: #f97316;
       color: white;
-      padding: 4px 10px;
+      padding: 5px 12px;
       border-radius: 999px;
       font-size: 0.8rem;
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      box-shadow: 0 10px 20px rgba(248, 113, 22, 0.45);
     }
 
     .prototype-pill span {
@@ -88,44 +120,85 @@
     }
 
     main {
+      margin-top: 6px;
       display: grid;
-      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-      gap: 24px;
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1.3fr);
+      gap: 22px;
+      align-items: flex-start;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 960px) {
+      body {
+        background:
+          radial-gradient(circle at top, #eef2ff 0, #eef2ff 18%, #f9fafb 80%),
+          linear-gradient(180deg, #0f172a 0, #0f172a 18%, transparent 18%);
+      }
       main {
         grid-template-columns: 1fr;
       }
     }
 
+    /* HERO LAYOUT */
+
+    .hero-shell {
+      position: relative;
+    }
+
     .hero-card {
-      background: var(--card-bg);
+      background: linear-gradient(135deg, #ffffff 0, #eef2ff 100%);
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-soft);
-      padding: 24px 20px;
-      margin-bottom: 20px;
+      padding: 22px 20px 20px;
+      margin-bottom: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      right: -40px;
+      top: -40px;
+      width: 160px;
+      height: 160px;
+      background: radial-gradient(circle, rgba(129, 140, 248, 0.35), transparent 60%);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #4b5563;
+      margin-bottom: 2px;
     }
 
     .hero-title {
-      font-size: 1.8rem;
-      margin: 0 0 10px;
+      font-size: 1.9rem;
+      margin: 0 0 8px;
+      color: #111827;
+    }
+
+    .hero-title span {
+      color: var(--accent-contrast);
     }
 
     .hero-subtitle {
       margin: 0 0 10px;
       color: var(--text-muted);
-      font-size: 0.98rem;
-      line-height: 1.5;
+      font-size: 0.99rem;
+      line-height: 1.55;
     }
 
-    .hero-highlight {
+    .highlight-text {
       font-weight: 600;
+      color: #111827;
     }
 
     .hero-list {
-      margin: 10px 0 10px;
-      padding-left: 18px;
+      margin: 10px 0 12px;
+      padding-left: 20px;
       color: var(--text-muted);
       font-size: 0.92rem;
     }
@@ -134,25 +207,56 @@
       margin-bottom: 4px;
     }
 
-    .hint-text {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-top: 6px;
-    }
-
     .pill-hint {
       background: var(--accent-soft);
       border-radius: 999px;
-      padding: 6px 10px;
-      display: inline-block;
+      padding: 6px 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      color: #1d4ed8;
+      margin-bottom: 10px;
+    }
+
+    .pill-hint span {
+      font-size: 0.95rem;
+    }
+
+    .city-input-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .city-input-row {
+      display: flex;
+      gap: 8px;
       margin-top: 4px;
+    }
+
+    .city-input-row input {
+      flex: 1;
+      padding: 9px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      font-size: 0.95rem;
+      background: #f9fafb;
+      transition: border-color 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
+    }
+
+    .city-input-row input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.4);
+      background: #ffffff;
     }
 
     .cta-row {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      margin-top: 16px;
+      margin-top: 12px;
     }
 
     .btn {
@@ -165,8 +269,11 @@
       padding: 9px 16px;
       font-size: 0.95rem;
       cursor: pointer;
-      transition: transform 0.05s ease, box-shadow 0.1s ease,
-        background-color 0.15s ease;
+      transition:
+        transform 0.06s ease,
+        box-shadow 0.12s ease,
+        background-color 0.15s ease,
+        color 0.15s ease;
       font-weight: 500;
       text-decoration: none;
     }
@@ -174,105 +281,167 @@
     .btn-primary {
       background: var(--accent);
       color: white;
-      box-shadow: 0 10px 15px rgba(37, 99, 235, 0.3);
+      box-shadow: 0 12px 22px rgba(37, 99, 235, 0.4);
     }
 
     .btn-secondary {
       background: #f3f4f6;
       color: var(--text-main);
+      box-shadow: 0 6px 12px rgba(148, 163, 184, 0.35);
     }
 
     .btn:active {
-      transform: translateY(1px);
+      transform: translateY(1px) scale(0.99);
       box-shadow: none;
     }
 
-    .city-input-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
+    .how-it-steps {
+      background: rgba(15, 23, 42, 0.95);
+      color: #e5e7eb;
+      border-radius: var(--radius-lg);
+      padding: 14px 14px 12px;
+      box-shadow: var(--shadow-subtle);
     }
 
-    .city-input-row input {
-      flex: 1;
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      font-size: 0.95rem;
-    }
-
-    .section-title {
-      font-size: 1.1rem;
-      margin: 0 0 4px;
-    }
-
-    .section-subtitle {
-      margin: 0 0 12px;
-      color: var(--text-muted);
+    .how-it-steps-title {
       font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 0 0 6px;
+      color: #a5b4fc;
     }
+
+    .how-it-steps ol {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 0.85rem;
+      color: #e5e7eb;
+    }
+
+    .how-it-steps li {
+      margin-bottom: 4px;
+    }
+
+    /* LEFT: EVENT LIST PANEL */
 
     .section-card {
       background: var(--card-bg);
       border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-soft);
-      padding: 16px 14px;
-      margin-bottom: 16px;
+      box-shadow: var(--shadow-subtle);
+      padding: 14px 14px 12px;
+      margin-bottom: 14px;
+    }
+
+    .section-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+
+    .section-title {
+      font-size: 1.02rem;
+      margin: 0;
+    }
+
+    .section-subtitle {
+      margin: 2px 0 8px;
+      color: var(--text-muted);
+      font-size: 0.88rem;
     }
 
     .label-chip {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-size: 0.8rem;
-      padding: 3px 9px;
+      font-size: 0.78rem;
+      padding: 4px 9px;
       border-radius: 999px;
-      background: var(--accent-soft);
-      color: #1d4ed8;
-      margin-bottom: 8px;
+      background: var(--accent-soft-2);
+      color: #4f46e5;
     }
 
-    .events-header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 10px;
+    .label-chip span {
+      font-size: 0.95rem;
     }
 
     .filter-row {
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 0.85rem;
+      gap: 8px;
+      font-size: 0.82rem;
       color: var(--text-muted);
     }
 
     .filter-row select {
       border-radius: 999px;
       border: 1px solid var(--border);
-      padding: 4px 8px;
-      font-size: 0.85rem;
+      padding: 4px 9px;
+      font-size: 0.82rem;
       background: #f9fafb;
+    }
+
+    .filter-row .tiny {
+      font-size: 0.78rem;
+      color: #9ca3af;
+    }
+
+    .status-line {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .status-pill {
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .status-pill.loading {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .status-pill.dot::before {
+      content: "•";
+      margin-right: 4px;
     }
 
     .events-list {
       list-style: none;
       padding: 0;
       margin: 0;
-      max-height: 460px;
+      max-height: 430px;
       overflow-y: auto;
     }
 
     .event-item {
-      border-radius: 10px;
+      border-radius: var(--radius-md);
       border: 1px solid var(--border);
-      padding: 10px 10px 10px;
+      padding: 10px 10px;
       margin-bottom: 8px;
       display: grid;
       grid-template-columns: minmax(0, 3fr) auto;
       gap: 8px;
+      background: #ffffff;
+      transition: transform 0.08s ease, box-shadow 0.12s ease,
+        border-color 0.12s ease, background 0.12s ease;
+    }
+
+    .event-item:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 18px rgba(15, 23, 42, 0.12);
+      border-color: #c7d2fe;
+      background: #f9fafb;
     }
 
     @media (max-width: 600px) {
@@ -288,21 +457,46 @@
     .event-title {
       font-weight: 600;
       margin-bottom: 2px;
+      color: #111827;
     }
 
-    .event-meta {
+    .event-meta-line {
       font-size: 0.8rem;
       color: var(--text-muted);
-      margin-bottom: 3px;
+      margin-bottom: 2px;
     }
 
-    .event-city {
+    .event-city-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #4f46e5;
+      font-size: 0.75rem;
+      margin-right: 6px;
+    }
+
+    .event-provider {
       font-weight: 500;
+    }
+
+    .event-deadline {
+      font-size: 0.8rem;
+      color: #4b5563;
+      margin-bottom: 2px;
+    }
+
+    .event-notes {
+      font-size: 0.77rem;
+      color: #6b7280;
+      margin-top: 3px;
     }
 
     .event-link a {
       font-size: 0.8rem;
-      color: var(--accent);
+      color: var(--accent-contrast);
       text-decoration: none;
     }
 
@@ -314,22 +508,86 @@
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      justify-content: center;
+      justify-content: space-between;
       gap: 6px;
+      text-align: right;
     }
 
     .chip-type {
       font-size: 0.75rem;
-      padding: 3px 7px;
+      padding: 3px 8px;
       border-radius: 999px;
       background: #f3f4f6;
       color: #4b5563;
+      text-transform: capitalize;
+    }
+
+    .chip-type.school {
+      background: #eef2ff;
+      color: #4f46e5;
+    }
+
+    .chip-type.sports {
+      background: #dcfce7;
+      color: #15803d;
+    }
+
+    .chip-type.camp {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .chip-type.other {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .btn-small {
+      padding: 5px 10px;
+      font-size: 0.8rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: #f3f4f6;
+      color: #111827;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.12s ease, transform 0.05s ease;
+    }
+
+    .btn-small:hover {
+      background: #e5e7eb;
+      transform: translateY(-1px);
+    }
+
+    .btn-small span {
+      font-size: 0.9rem;
     }
 
     .no-events {
       font-size: 0.9rem;
       color: var(--text-muted);
       padding: 6px 4px 2px;
+    }
+
+    /* RIGHT COLUMN: REMINDERS + PROVIDER CARD */
+
+    .reminders-card {
+      background: #020617;
+      color: #e5e7eb;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      padding: 14px 14px 12px;
+      margin-bottom: 14px;
+    }
+
+    .reminders-card .section-title {
+      color: #f3f4ff;
+    }
+
+    .reminders-card .section-subtitle {
+      color: #9ca3af;
     }
 
     .reminders-header-row {
@@ -341,6 +599,11 @@
       margin-bottom: 8px;
     }
 
+    .label-chip.dark {
+      background: rgba(37, 99, 235, 0.2);
+      color: #bfdbfe;
+    }
+
     .reminders-actions {
       display: flex;
       gap: 6px;
@@ -348,9 +611,10 @@
       font-size: 0.8rem;
     }
 
-    .btn-ghost {
+    .btn-ghost,
+    .btn-ghost-danger {
       background: transparent;
-      border: 1px solid var(--border);
+      border: 1px solid rgba(156, 163, 175, 0.7);
       box-shadow: none;
       padding: 5px 10px;
       border-radius: 999px;
@@ -358,11 +622,19 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
+      color: #e5e7eb;
+      font-size: 0.8rem;
+      transition: background 0.12s ease, border-color 0.12s ease;
     }
 
     .btn-ghost-danger {
       border-color: #fecaca;
-      color: var(--danger);
+      color: #fecaca;
+    }
+
+    .btn-ghost:hover,
+    .btn-ghost-danger:hover {
+      background: rgba(15, 23, 42, 0.8);
     }
 
     .reminders-list {
@@ -370,19 +642,20 @@
       padding: 0;
       margin: 0;
       font-size: 0.9rem;
-      max-height: 260px;
+      max-height: 220px;
       overflow-y: auto;
     }
 
     .reminder-item {
-      border-radius: 9px;
-      border: 1px solid var(--border);
+      border-radius: 10px;
+      border: 1px solid rgba(55, 65, 81, 0.8);
       padding: 8px 8px;
       margin-bottom: 6px;
       display: flex;
       justify-content: space-between;
       gap: 8px;
       align-items: center;
+      background: rgba(15, 23, 42, 0.9);
     }
 
     .reminder-main {
@@ -393,29 +666,77 @@
 
     .reminder-title {
       font-weight: 600;
+      color: #e5e7eb;
     }
 
     .reminder-meta {
-      font-size: 0.8rem;
-      color: var(--text-muted);
+      font-size: 0.78rem;
+      color: #9ca3af;
     }
 
     .btn-icon-only {
       border-radius: 999px;
-      border: 1px solid var(--border);
+      border: 1px solid rgba(75, 85, 99, 0.9);
       background: transparent;
       font-size: 0.8rem;
       cursor: pointer;
       padding: 4px 8px;
+      color: #e5e7eb;
+      transition: background 0.12s ease, transform 0.05s ease;
+    }
+
+    .btn-icon-only:hover {
+      background: rgba(15, 23, 42, 0.9);
+      transform: translateY(-1px);
     }
 
     .empty-state {
       font-size: 0.9rem;
+      color: #9ca3af;
+    }
+
+    .provider-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-subtle);
+      padding: 14px 14px 12px;
+      margin-bottom: 10px;
+    }
+
+    .provider-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: #ecfeff;
+      color: #0369a1;
+      margin-bottom: 4px;
+    }
+
+    ol.info-list {
+      margin: 6px 0 0;
+      padding-left: 18px;
       color: var(--text-muted);
+      font-size: 0.88rem;
+    }
+
+    ol.info-list li {
+      margin-bottom: 6px;
+    }
+
+    ol.info-list a {
+      color: var(--accent-contrast);
+      text-decoration: none;
+    }
+
+    ol.info-list a:hover {
+      text-decoration: underline;
     }
 
     footer {
-      margin-top: 18px;
+      margin-top: 16px;
       font-size: 0.8rem;
       color: var(--text-muted);
       text-align: left;
@@ -439,24 +760,42 @@
       margin-top: 4px;
     }
 
-    ol.info-list {
-      margin: 8px 0 0;
-      padding-left: 18px;
-      color: var(--text-muted);
-      font-size: 0.9rem;
+    /* TOAST */
+
+    .toast {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #111827;
+      color: #f9fafb;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      box-shadow: 0 12px 26px rgba(15, 23, 42, 0.45);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 40;
     }
 
-    ol.info-list li {
-      margin-bottom: 6px;
+    .toast.toast--visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
   </style>
 </head>
 <body>
   <div class="page">
     <header class="site-header">
-      <div class="logo-wrap">
-        <div class="logo">KidCal<span>.</span></div>
-        <div class="tagline-mini">Built for busy families</div>
+      <div class="brand-wrap">
+        <div class="logo-wrap">
+          <div class="logo">KidCal<span>.</span></div>
+          <div class="tagline-mini">One calendar for every kid’s to-dos</div>
+          <div class="mini-pill">
+            <span>⚡</span> Built for busy families
+          </div>
+        </div>
       </div>
       <div class="prototype-pill">
         <span>⚠️</span> San Luis Obispo County prototype
@@ -465,62 +804,79 @@
 
     <main>
       <!-- LEFT COLUMN: HERO + FINDER -->
-      <section>
+      <section class="hero-shell">
         <div class="hero-card">
-          <h1 class="hero-title">KidCal: One Calendar for Every Kid’s To-Dos</h1>
+          <div class="hero-eyebrow">For families</div>
+          <h1 class="hero-title">
+            Stay ahead of <span>every</span> kid deadline.
+          </h1>
           <p class="hero-subtitle">
-            <span class="hero-highlight">
+            <span class="highlight-text">
               All your child’s registrations, events & deadlines — organized in one place so you never miss a moment.
             </span>
             <br /><br />
-            Enter your city or ZIP to instantly see enrollment dates, sports sign-ups, camps, school events, and more.
-            Tap “Add to my reminders” to build your do-not-miss list and download it to your calendar.
+            Type your city or ZIP to see school, sports, camp, and activity sign-ups in your area. Tap “Add to my reminders” and sync it to your calendar.
           </p>
 
           <ul class="hero-list">
             <li>School enrollment & key school dates</li>
             <li>Youth sports leagues & teams</li>
-            <li>Camps, classes & kids’ activities</li>
+            <li>Camps, classes & community youth programs</li>
           </ul>
 
           <div class="pill-hint">
+            <span>💡</span>
             Try: “Atascadero”, “San Luis Obispo”, “Paso Robles”, “Nipomo”, “Templeton”… ZIP codes work too.
           </div>
 
+          <div class="city-input-label">Step 1 — Tell KidCal where you are:</div>
           <div class="city-input-row">
             <input
               id="cityInput"
               type="text"
-              placeholder="Enter city or ZIP (San Luis Obispo County)"
+              placeholder="Enter city or ZIP in San Luis Obispo County"
               autocomplete="off"
             />
           </div>
 
           <div class="cta-row">
             <button class="btn btn-primary" id="btnFind">
-              Find My Kids’ Deadlines
+              🔍 Find my kids’ deadlines
             </button>
             <button class="btn btn-secondary" id="btnSample">
-              ✨ Try sample list
+              ✨ Show everything
             </button>
           </div>
         </div>
 
-        <!-- Registration finder section -->
-        <div class="section-card">
-          <p class="section-title">Registration finder (prototype)</p>
-          <p class="section-subtitle">
-            Enter a San Luis Obispo County city or town above to filter the list. The live version will load real deadlines
-            from local partners using the KidCal sheet.
-          </p>
+        <div class="how-it-steps">
+          <p class="how-it-steps-title">How KidCal works</p>
+          <ol>
+            <li>Enter your city or ZIP.</li>
+            <li>Filter by school, sports, camps, or other programs.</li>
+            <li>Add must-not-miss dates to your reminder list.</li>
+            <li>Download an .ics file and drop it into your calendar.</li>
+          </ol>
+        </div>
 
-          <div class="label-chip">
-            🔎 Browsing events
+        <!-- Registration finder section -->
+        <div class="section-card" style="margin-top: 14px;">
+          <div class="section-header-row">
+            <div>
+              <p class="section-title">Registration finder</p>
+              <p class="section-subtitle">
+                This prototype pulls from a shared sheet of youth programs in San Luis Obispo County.
+              </p>
+            </div>
+            <div class="label-chip" id="eventsStatusChip">
+              <span>🗂</span> Browsing events
+            </div>
           </div>
 
-          <div class="events-header-row">
-            <div>
-              <strong>All school, sports & activity events</strong>
+          <div class="section-header-row">
+            <div class="status-line">
+              <span id="eventsCounter" class="status-pill dot">Loading events…</span>
+              <span id="cityFilterLabel" class="status-pill" style="display:none;"></span>
             </div>
             <div class="filter-row">
               <span>Filter by type:</span>
@@ -529,37 +885,42 @@
                 <option value="school">School</option>
                 <option value="sports">Sports</option>
                 <option value="camp">Camps & activities</option>
-                <option value="other">Other</option>
+                <option value="other">Other / directories</option>
               </select>
+              <span class="tiny">(Step 2)</span>
             </div>
           </div>
 
           <p class="section-subtitle">
-            Filter by type, then tap “Add to my reminders” to build your do-not-miss list of registrations and key dates.
+            Step 3 — Tap “Add to my reminders” for any date you want on your calendar.
           </p>
 
           <ul id="eventsList" class="events-list"></ul>
           <p id="eventsEmpty" class="no-events" style="display: none;">
-            No events match your filters yet. Try a different city, or tap “Try sample list”.
+            No events match your filters yet. Try a different city, widen the type filter, or tap “Show everything”.
           </p>
         </div>
       </section>
 
       <!-- RIGHT COLUMN: REMINDERS + HOW-TO CARD -->
       <section>
-        <div class="section-card">
-          <p class="section-title">My reminder calendar</p>
-          <p class="section-subtitle">
-            Saved on this device. Download an .ics file to import into your own calendar (Google, Apple, Outlook and more).
-          </p>
+        <div class="reminders-card">
+          <div class="reminders-header-row">
+            <div>
+              <p class="section-title">My reminder calendar</p>
+              <p class="section-subtitle">
+                Step 4 — Save on this device and download an .ics file for your Google, Apple, or Outlook calendar.
+              </p>
+            </div>
+          </div>
 
           <div class="reminders-header-row">
-            <div class="label-chip">
-              📅 Reminders
+            <div class="label-chip dark">
+              <span>📅</span> Saved reminders
             </div>
             <div class="reminders-actions">
-              <button class="btn-ghost btn-ghost-danger" id="btnClearReminders">
-                Clear
+              <button class="btn-ghost-danger" id="btnClearReminders">
+                🧹 Clear
               </button>
               <button class="btn-ghost" id="btnDownloadIcs">
                 ⬇️ Download .ics
@@ -573,19 +934,21 @@
           </p>
         </div>
 
-        <!-- HOW TO ADD PROGRAM CARD -->
-        <div class="section-card">
-          <p class="section-title">How to add your program to KidCal</p>
+        <div class="provider-card">
+          <div class="provider-pill">
+            <span>🏫</span> For schools & youth programs
+          </div>
+          <p class="section-title" style="margin-top:4px;">How to add your program to KidCal</p>
           <p class="section-subtitle">
-            Local schools, sports leagues, camps, and youth programs can add their dates into the shared KidCal sheet.
-            Once added, they’ll appear here for families to discover.
+            Local schools, sports leagues, camps, and youth programs can add dates into the shared KidCal sheet.
+            Once added, they’ll show up here for families.
           </p>
 
           <ol class="info-list">
             <li>
               Open the shared KidCal programs sheet:
               <a
-                href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSTGyzF9lGXW8a1--CtEYzaQFhZnkU0Ye8InlnVPgbmyYaiYzy8wPEgGp2dVodt-GEbonPHKGRKQJwl/pub?gid=0&single=true&output=csv"
+                href="https://docs.google.com/spreadsheets/d/1vSTGyzF9lGXW8a1--CtEYzaQFhZnkU0Ye8InlnVPgbmyYaiYzy8wPEgGp2dVodt-GEbonPHKGRKQJwl/edit"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -593,16 +956,20 @@
               </a>.
             </li>
             <li>
-              Add a new row with at least these columns filled in:
-              <strong>City</strong>, <strong>Title</strong>, <strong>Type</strong> (school, sports, camp, or other),
-              <strong>Date</strong>, <strong>Deadline label</strong>, <strong>Provider</strong>, and <strong>Link</strong>.
+              Add one row per program or season with your
+              <strong>location</strong>, <strong>title</strong>, <strong>type</strong>,
+              <strong>registration dates</strong>, <strong>event date</strong>, <strong>organization</strong>,
+              and a direct <strong>registration or info link</strong>.
             </li>
             <li>
-              Optional columns like <strong>Age range</strong>, <strong>Cost</strong>, or <strong>Notes</strong> are welcome.
-              The website safely ignores extra columns, so adding more details will not break anything.
+              The website reads columns like
+              <code>location_label</code>, <code>org</code>, <code>type</code>,
+              <code>registration_open</code>, <code>registration_close</code>,
+              <code>event_date</code>, <code>url</code>, <code>notes</code>,
+              plus optional <code>age_range</code> and <code>cost</code>.
             </li>
             <li>
-              Save your changes. Updates may take a few minutes to show up in KidCal as the sheet is synced.
+              Save your changes. Updates will appear in KidCal once the sheet syncs — no web edits needed.
             </li>
           </ol>
         </div>
@@ -616,16 +983,19 @@
               Prototype only
             </span>
             <br />
-            This version uses sample and sheet-based data to show how KidCal will work. Dates and offerings change each season.
-            Always confirm through the linked district or recreation site before you rely on a deadline.
+            This version uses a shared sheet to demo how KidCal will work. Dates and offerings change each season.
+            Always confirm through the linked district or recreation site before relying on a deadline.
           </div>
         </footer>
       </section>
     </main>
   </div>
 
+  <!-- Toast for dynamic feedback -->
+  <div id="toast" class="toast"></div>
+
   <script>
-    // --- Google Sheet CSV URL ---
+    // --- Google Sheet CSV URL (published CSV) ---
     const SHEET_URL =
       "https://docs.google.com/spreadsheets/d/e/2PACX-1vSTGyzF9lGXW8a1--CtEYzaQFhZnkU0Ye8InlnVPgbmyYaiYzy8wPEgGp2dVodt-GEbonPHKGRKQJwl/pub?gid=0&single=true&output=csv";
 
@@ -633,63 +1003,27 @@
     const SAMPLE_EVENTS = [
       {
         id: 1,
-        city: "San Luis Obispo",
+        city: "Atascadero CA 93422",
         type: "school",
-        title: "Kindergarten registration opens",
-        date: "2025-03-01",
-        deadlineLabel: "Opens Mar 1, 2025",
-        provider: "SLOUSD",
-        link: "https://www.slcusd.org/"
+        title: "AUSD TK and Kindergarten Enrollment 2025-26",
+        date: "2025-03-31",
+        deadlineLabel: "Register between Mar 1 2025 and Mar 31 2025",
+        provider: "Atascadero Unified School District",
+        link: "https://atascaderousd.aeries.net/air/",
+        notes:
+          "Online enrollment for new TK and Kindergarten students for 2025-26. Requires Aeries account plus residency and immunization documents."
       },
       {
         id: 2,
-        city: "Atascadero",
+        city: "Atascadero CA 93422",
         type: "sports",
-        title: "Spring soccer league registration",
-        date: "2025-02-10",
-        deadlineLabel: "Register by Feb 10, 2025",
-        provider: "Atascadero Recreation",
-        link: "https://www.atascadero.org/"
-      },
-      {
-        id: 3,
-        city: "Paso Robles",
-        type: "camp",
-        title: "Summer day camp session 1",
-        date: "2025-06-15",
-        deadlineLabel: "Early bird ends May 15, 2025",
-        provider: "Paso Robles Recreation Services",
-        link: "https://www.prcity.com/"
-      },
-      {
-        id: 4,
-        city: "Nipomo",
-        type: "sports",
-        title: "Little League player registration",
-        date: "2025-01-20",
-        deadlineLabel: "Tryouts in late January",
-        provider: "Nipomo Little League",
-        link: "https://www.littleleague.org/"
-      },
-      {
-        id: 5,
-        city: "Templeton",
-        type: "school",
-        title: "Middle school back-to-school night",
-        date: "2025-08-20",
-        deadlineLabel: "Evening of Aug 20, 2025",
-        provider: "Templeton Unified",
-        link: "https://www.templetonusd.org/"
-      },
-      {
-        id: 6,
-        city: "San Luis Obispo",
-        type: "other",
-        title: "Library storytime sign-up",
-        date: "2025-04-05",
-        deadlineLabel: "Weekly sessions starting Apr 5, 2025",
-        provider: "SLO County Libraries",
-        link: "https://www.slolibrary.org/"
+        title: "Atascadero Youth Soccer League Fall 2025",
+        date: "2025-06-16",
+        deadlineLabel: "Register between Apr 8 2025 and Jun 16 2025",
+        provider: "Atascadero Youth Soccer League",
+        link: "https://www.atascaderosoccer.org/",
+        notes:
+          "Fall 2025 schedule with early bird registration opening April 8 and final closing June 16. First games planned for September 6 2025."
       }
     ];
 
@@ -700,6 +1034,9 @@
     const typeFilter = document.getElementById("typeFilter");
     const eventsList = document.getElementById("eventsList");
     const eventsEmpty = document.getElementById("eventsEmpty");
+    const eventsCounter = document.getElementById("eventsCounter");
+    const cityFilterLabel = document.getElementById("cityFilterLabel");
+    const eventsStatusChip = document.getElementById("eventsStatusChip");
 
     const btnFind = document.getElementById("btnFind");
     const btnSample = document.getElementById("btnSample");
@@ -713,6 +1050,167 @@
 
     let currentEvents = [...EVENTS];
     let reminders = loadRemindersFromStorage();
+    let isLoadingEvents = false;
+
+    // --- Toast helper ---
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      if (!toast) return;
+      toast.textContent = message;
+      toast.classList.add("toast--visible");
+      clearTimeout(window._kidcalToastTimeout);
+      window._kidcalToastTimeout = setTimeout(() => {
+        toast.classList.remove("toast--visible");
+      }, 2200);
+    }
+
+    // Simple CSV parser assuming no commas inside cells
+    function parseCsv(text) {
+      const lines = text.trim().split(/\r?\n/);
+      if (!lines.length) return { headers: [], rows: [] };
+
+      const headers = lines[0].split(",").map((h) => h.trim());
+      const rows = lines.slice(1).map((line) => {
+        const cells = line.split(",").map((c) => c.trim());
+        const obj = {};
+        headers.forEach((h, i) => {
+          obj[h] = cells[i] || "";
+        });
+        return obj;
+      });
+
+      return { headers, rows };
+    }
+
+    // Pick the main date for calendar use: registration_close > registration_open > event_date
+    function pickPrimaryDate(row) {
+      return (
+        row.registration_close ||
+        row.registration_open ||
+        row.event_date ||
+        ""
+      );
+    }
+
+    // Turn "2025-03-01" into "Mar 1 2025"
+    function formatDate(iso) {
+      if (!iso) return "";
+      const parts = iso.split("-");
+      if (parts.length !== 3) return iso;
+      const [y, m, d] = parts;
+      const monthNames = [
+        "Jan","Feb","Mar","Apr","May","Jun",
+        "Jul","Aug","Sep","Oct","Nov","Dec"
+      ];
+      const monthIndex = parseInt(m, 10) - 1;
+      const monthName = monthNames[monthIndex] || m;
+      const day = String(parseInt(d, 10));
+      return `${monthName} ${day} ${y}`;
+    }
+
+    // Build a friendly deadline label from open/close/event_date/notes
+    function buildDeadlineLabel(row) {
+      const open = row.registration_open;
+      const close = row.registration_close;
+      const event = row.event_date;
+      const notes = row.notes;
+
+      if (open && close) {
+        return `Register between ${formatDate(open)} and ${formatDate(close)}`;
+      }
+
+      if (close) {
+        return `Register by ${formatDate(close)}`;
+      }
+
+      if (open) {
+        return `Registration opens ${formatDate(open)}`;
+      }
+
+      if (event) {
+        return `Event on ${formatDate(event)}`;
+      }
+
+      return notes || "";
+    }
+
+    // Normalize type so "event" becomes "other"
+    function normalizeType(raw) {
+      const t = (raw || "").toLowerCase().trim();
+      if (!t) return "other";
+      if (t === "event") return "other";
+      return t;
+    }
+
+    async function fetchSheetData() {
+      try {
+        isLoadingEvents = true;
+        updateStatusUi();
+
+        const res = await fetch(SHEET_URL);
+        if (!res.ok) throw new Error("Network error");
+        const text = await res.text();
+        const parsed = parseCsv(text);
+
+        if (!parsed.rows || !parsed.rows.length) {
+          console.warn("Sheet has no rows; keeping sample events.");
+          isLoadingEvents = false;
+          updateStatusUi();
+          return;
+        }
+
+        // Expecting headers like:
+        // location_id, location_label, item_id, title, org, type,
+        // registration_open, registration_close, event_date, url,
+        // notes, age_range, cost, location_area, contact_name, contact_email, ...
+        const mapped = parsed.rows
+          .map((row, idx) => {
+            const title = row.title;
+            const url = row.url;
+
+            // Require at least title and url to show an event
+            if (!title || !url) return null;
+
+            const cityLabel =
+              row.location_label || row.location_id || "";
+
+            const eventType = normalizeType(row.type);
+            const date = pickPrimaryDate(row);
+            const deadlineLabel = buildDeadlineLabel(row);
+
+            return {
+              id: row.item_id || "sheet-" + idx,
+              city: cityLabel,
+              type: eventType,
+              title: title,
+              date: date,
+              deadlineLabel: deadlineLabel,
+              provider: row.org,
+              link: url,
+              notes: row.notes,
+              ageRange: row.age_range,
+              cost: row.cost
+            };
+          })
+          .filter(Boolean);
+
+        if (mapped.length) {
+          EVENTS = mapped;
+          currentEvents = [...EVENTS];
+          renderEvents();
+          showToast(`Loaded ${mapped.length} programs from local partners`);
+          console.info(`Loaded ${mapped.length} events from sheet (KidCal schema).`);
+        } else {
+          console.warn("Sheet rows did not have required fields; using samples.");
+        }
+      } catch (e) {
+        console.warn("Failed to load sheet data; using sample events.", e);
+      } finally {
+        isLoadingEvents = false;
+        updateStatusUi();
+        renderEvents();
+      }
+    }
 
     function loadRemindersFromStorage() {
       try {
@@ -734,6 +1232,41 @@
       }
     }
 
+    function prettyType(type) {
+      const t = (type || "other").toLowerCase();
+      switch (t) {
+        case "school":
+          return "School";
+        case "sports":
+          return "Sports";
+        case "camp":
+          return "Camp / Activity";
+        case "other":
+          return "Other / Directory";
+        default:
+          return t.charAt(0).toUpperCase() + t.slice(1);
+      }
+    }
+
+    function updateStatusUi() {
+      const total = EVENTS.length;
+      const visible = currentEvents.length;
+
+      if (isLoadingEvents) {
+        eventsCounter.textContent = "Loading events…";
+        eventsCounter.classList.add("loading");
+        eventsStatusChip.textContent = "⏳ Loading from KidCal sheet…";
+      } else {
+        eventsCounter.classList.remove("loading");
+        if (visible === total) {
+          eventsCounter.textContent = `Showing ${visible} program${visible === 1 ? "" : "s"}`;
+        } else {
+          eventsCounter.textContent = `Showing ${visible} of ${total} program${total === 1 ? "" : "s"}`;
+        }
+        eventsStatusChip.innerHTML = '<span>🗂</span> Browsing events';
+      }
+    }
+
     function renderEvents() {
       eventsList.innerHTML = "";
       const filterType = typeFilter.value;
@@ -741,6 +1274,8 @@
         if (filterType === "all") return true;
         return (ev.type || "other").toLowerCase() === filterType;
       });
+
+      updateStatusUi();
 
       if (list.length === 0) {
         eventsEmpty.style.display = "block";
@@ -760,17 +1295,31 @@
         title.className = "event-title";
         title.textContent = ev.title || "(No title)";
 
-        const meta1 = document.createElement("div");
-        meta1.className = "event-meta";
-        meta1.innerHTML =
-          '<span class="event-city">' +
-          (ev.city || "Unknown city") +
-          "</span>" +
-          (ev.provider ? " · " + ev.provider : "");
+        const metaLine = document.createElement("div");
+        metaLine.className = "event-meta-line";
 
-        const meta2 = document.createElement("div");
-        meta2.className = "event-meta";
-        meta2.textContent = ev.deadlineLabel || "";
+        const cityChip = document.createElement("span");
+        cityChip.className = "event-city-chip";
+        cityChip.textContent = ev.city || "Unknown location";
+
+        const providerSpan = document.createElement("span");
+        providerSpan.className = "event-provider";
+        providerSpan.textContent = ev.provider || "";
+
+        metaLine.appendChild(cityChip);
+        if (ev.provider) {
+          metaLine.appendChild(providerSpan);
+        }
+
+        const deadline = document.createElement("div");
+        deadline.className = "event-deadline";
+        deadline.textContent = ev.deadlineLabel || "";
+
+        const notesDiv = document.createElement("div");
+        notesDiv.className = "event-notes";
+        if (ev.notes) {
+          notesDiv.textContent = ev.notes;
+        }
 
         const link = document.createElement("div");
         link.className = "event-link";
@@ -784,22 +1333,21 @@
         }
 
         main.appendChild(title);
-        main.appendChild(meta1);
-        if (ev.deadlineLabel) main.appendChild(meta2);
+        main.appendChild(metaLine);
+        if (ev.deadlineLabel) main.appendChild(deadline);
+        if (ev.notes) main.appendChild(notesDiv);
         main.appendChild(link);
 
         const actions = document.createElement("div");
         actions.className = "event-actions";
 
         const typeChip = document.createElement("div");
-        typeChip.className = "chip-type";
+        typeChip.className = "chip-type " + (ev.type || "other");
         typeChip.textContent = prettyType(ev.type);
 
         const btnAdd = document.createElement("button");
-        btnAdd.className = "btn btn-secondary";
-        btnAdd.style.padding = "5px 10px";
-        btnAdd.style.fontSize = "0.8rem";
-        btnAdd.textContent = "Add to my reminders";
+        btnAdd.className = "btn-small";
+        btnAdd.innerHTML = "<span>➕</span> Add to my reminders";
         btnAdd.addEventListener("click", () => addReminder(ev));
 
         actions.appendChild(typeChip);
@@ -809,23 +1357,6 @@
         li.appendChild(actions);
         eventsList.appendChild(li);
       });
-    }
-
-    function prettyType(type) {
-      const t = (type || "other").toLowerCase();
-      switch (t) {
-        case "school":
-          return "School";
-        case "sports":
-          return "Sports";
-        case "camp":
-        case "camp/activity":
-          return "Camp / Activity";
-        case "other":
-          return "Other";
-        default:
-          return t.charAt(0).toUpperCase() + t.slice(1);
-      }
     }
 
     function renderReminders() {
@@ -866,6 +1397,7 @@
           reminders.splice(index, 1);
           saveRemindersToStorage();
           renderReminders();
+          showToast("Removed from reminders");
         });
 
         li.appendChild(main);
@@ -887,6 +1419,9 @@
         });
         saveRemindersToStorage();
         renderReminders();
+        showToast("Added to your reminder calendar");
+      } else {
+        showToast("Already in your reminders");
       }
     }
 
@@ -894,18 +1429,22 @@
       const city = (cityInput.value || "").trim().toLowerCase();
       if (!city) {
         currentEvents = [...EVENTS];
+        cityFilterLabel.style.display = "none";
         renderEvents();
         return;
       }
       currentEvents = EVENTS.filter(
         (ev) => (ev.city || "").toLowerCase().includes(city)
       );
+      cityFilterLabel.style.display = "inline-flex";
+      cityFilterLabel.textContent = `Filtered by: “${cityInput.value.trim()}”`;
       renderEvents();
     }
 
     function handleSample() {
       cityInput.value = "";
       currentEvents = [...EVENTS];
+      cityFilterLabel.style.display = "none";
       renderEvents();
     }
 
@@ -915,6 +1454,7 @@
       reminders = [];
       saveRemindersToStorage();
       renderReminders();
+      showToast("All reminders cleared");
     }
 
     function generateIcsContent() {
@@ -970,101 +1510,8 @@
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+      showToast("Downloaded kidcal-reminders.ics");
     }
-
-// Simple CSV parser assuming no commas inside cells
-function parseCsv(text) {
-  const lines = text.trim().split(/\r?\n/);
-  if (!lines.length) return { headers: [], rows: [] };
-
-  const headers = lines[0].split(",").map((h) => h.trim());
-  const rows = lines.slice(1).map((line) => {
-    const cells = line.split(",").map((c) => c.trim());
-    const obj = {};
-    headers.forEach((h, i) => {
-      obj[h] = cells[i] || "";
-    });
-    return obj;
-  });
-
-  return { headers, rows };
-}
-
-    // Helper to get a value from row by trying multiple header names
-    function getCell(row, candidates) {
-      for (const name of candidates) {
-        for (const key of Object.keys(row)) {
-          if (key.toLowerCase().trim() === name.toLowerCase().trim()) {
-            return row[key] || "";
-          }
-        }
-      }
-      return "";
-    }
-
-async function fetchSheetData() {
-  try {
-    const res = await fetch(SHEET_URL);
-    if (!res.ok) throw new Error("Network error");
-    const text = await res.text();
-    const parsed = parseCsv(text);
-
-    if (!parsed.rows || !parsed.rows.length) {
-      console.warn("Sheet has no rows; keeping sample events.");
-      return;
-    }
-
-    // Expecting headers like:
-    // location_id, location_label, item_id, title, org, type,
-    // registration_open, registration_close, event_date, url,
-    // notes, age_range, cost, location_area, contact_name, contact_email, ...
-    const mapped = parsed.rows
-      .map((row, idx) => {
-        const title = row.title;
-        const url = row.url;
-
-        // Require at least title and url to show an event
-        if (!title || !url) return null;
-
-        const cityLabel =
-          row.location_label || row.location_id || "";
-
-        const eventType = normalizeType(row.type);
-        const date = pickPrimaryDate(row);
-        const deadlineLabel = buildDeadlineLabel(row);
-
-        return {
-          id: row.item_id || "sheet-" + idx,
-          city: cityLabel,              // e.g., "Atascadero CA 93422"
-          type: eventType,              // "school" | "sports" | "camp" | "other"
-          title: title,
-          date: date,                   // used for calendar export
-          deadlineLabel: deadlineLabel, // friendly label
-          provider: row.org,
-          link: url,
-          // extras we might use later
-          notes: row.notes,
-          ageRange: row.age_range,
-          cost: row.cost
-        };
-      })
-      .filter(Boolean);
-
-    if (mapped.length) {
-      EVENTS = mapped;
-      currentEvents = [...EVENTS];
-      renderEvents();
-      console.info(`Loaded ${mapped.length} events from sheet (KidCal schema).`);
-    } else {
-      console.warn("Sheet rows did not have required fields; using samples.");
-    }
-  } catch (e) {
-    console.warn("Failed to load sheet data; using sample events.", e);
-    EVENTS = [...SAMPLE_EVENTS];
-    currentEvents = [...EVENTS];
-    renderEvents();
-  }
-}
 
     // --- Event listeners ---
     btnFind.addEventListener("click", handleFind);
@@ -1086,5 +1533,3 @@ async function fetchSheetData() {
   </script>
 </body>
 </html>
-
-
