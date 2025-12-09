@@ -528,7 +528,6 @@
       text-align: center;
     }
 
-    /* Scrollbar tweak for reminders list */
     .reminders-list::-webkit-scrollbar {
       width: 5px;
     }
@@ -571,14 +570,12 @@
           </div>
         </div>
         <div class="hero-cta">
-          <small>Start by searching your location below.</small>
+          <small>Try searching for “Atascadero” or ZIP 93422 to see live data.</small>
         </div>
       </div>
       <div class="hero-panel">
-        <div class="hero-panel-title">Today's upcoming deadlines</div>
-        <div class="hero-panel-list" id="hero-deadlines">
-          <!-- Filled by JS from mock data -->
-        </div>
+        <div class="hero-panel-title">Today's sample deadlines</div>
+        <div class="hero-panel-list" id="hero-deadlines"></div>
         <div class="hero-panel-footer">
           These are sample items. In a full version, this panel could show
           real, location-based upcoming deadlines for your family.
@@ -591,9 +588,9 @@
         <input
           id="locationInput"
           type="text"
-          placeholder="Enter city or ZIP code (e.g., 94103 or Nipomo)..."
+          placeholder="Enter city or ZIP code (e.g., Atascadero or 93422)..."
         />
-        <button class="btn-primary" id="searchBtn">
+        <button class="btn-primary" id="searchBtn" type="button">
           <span>🔍</span> Find registrations
         </button>
       </div>
@@ -635,10 +632,10 @@
             </div>
           </div>
           <div class="reminders-tools">
-            <button class="btn-sm secondary" id="clearRemindersBtn">
+            <button class="btn-sm secondary" id="clearRemindersBtn" type="button">
               🧹 Clear
             </button>
-            <button class="btn-sm" id="downloadIcsBtn">
+            <button class="btn-sm" id="downloadIcsBtn" type="button">
               📥 Download .ics
             </button>
           </div>
@@ -660,9 +657,77 @@
 
   <script>
     // ---------------------------
-    // Mock data (replace with real APIs later)
+    // Mock + location-specific data
     // ---------------------------
     const MOCK_DATA = {
+      // Atascadero-specific curated data
+      atascadero: {
+        locationLabel: "Atascadero, CA 93422",
+        items: [
+          {
+            id: "atascadero-ausd-kinder-2025",
+            title: "AUSD Kindergarten & TK Enrollment (2025–26)",
+            org: "Atascadero Unified School District",
+            type: "school",
+            registrationOpen: "2025-03-01",
+            registrationClose: "2025-03-31",
+            eventDate: null,
+            url: "https://atascaderousd.aeries.net/air/",
+            notes:
+              "Online pre-enrollment for NEW incoming students for 2025–26 opens March 1 and runs through March 31. Check AUSD Parent Resources for updates each year."
+          },
+          {
+            id: "atascadero-rec-youth-basketball-2025",
+            title: "City of Atascadero – Winter Youth Basketball 2025–26",
+            org: "City of Atascadero Recreation",
+            type: "sports",
+            registrationOpen: "2025-08-25",
+            registrationClose: "2025-10-24",
+            eventDate: "2026-01-10",
+            url: "https://www.atascaderonews.com/news/sports/youth-basketball-registration-now-open-in-atascadero/",
+            notes:
+              "Registration for Winter Youth Basketball opens late August 2025 and closes October 24, 2025. Games run Saturdays from Jan 10 to Mar 7, 2026; skills clinics in Oct and Nov."
+          },
+          {
+            id: "atascadero-little-league-spring-2025",
+            title: "Atascadero Little League – Spring 2025 Season",
+            org: "Atascadero Little League",
+            type: "sports",
+            registrationOpen: "2024-11-17",
+            registrationClose: "2025-01-01",
+            eventDate: null,
+            url: "https://www.atascaderolittleleague.com/",
+            notes:
+              "Spring 2025 registration opens Nov 17, 2024. Early bird discount available for players registered before Jan 1, 2025; final close date may be later, see site for current info."
+          },
+          {
+            id: "atascadero-little-league-fall-ball-2025",
+            title: "Atascadero Little League – Fall Ball 2025",
+            org: "Atascadero Little League",
+            type: "sports",
+            registrationOpen: "2025-08-12",
+            registrationClose: "2025-08-31",
+            eventDate: null,
+            url: "https://www.atascaderolittleleague.com/",
+            notes:
+              "Fall Ball registration opens mid-August 2025 and closes Aug 31, 2025. Games/practices on Sundays at Paloma; check the Little League site for latest details."
+          },
+          {
+            id: "atascadero-youth-soccer-fall-2025",
+            title: "Atascadero Youth Soccer League – Fall 2025",
+            org: "Atascadero Youth Soccer (AYSL)",
+            type: "sports",
+            registrationOpen: null,
+            registrationClose: "2025-05-19",
+            eventDate: null,
+            url: "https://www.atascaderosoccer.org/",
+            notes:
+              "Fall 2025 registration open with an early bird discount deadline of May 19, 2025. Registration may continue after; see AYSL site for current dates and fees."
+          }
+        ]
+      },
+
+      // Example other locations (you can expand later)
       "93444": {
         locationLabel: "Nipomo, CA 93444",
         items: [
@@ -822,10 +887,6 @@
       });
     }
 
-    function capitalize(str) {
-      return str.charAt(0).toUpperCase() + str.slice(1);
-    }
-
     function saveReminders() {
       try {
         localStorage.setItem("kidcal-reminders", JSON.stringify(reminders));
@@ -851,11 +912,23 @@
       const trimmed = input.trim();
       if (!trimmed) return null;
 
+      const lower = trimmed.toLowerCase();
+
+      // Atascadero detection: by city name or ZIPs 93422, 93423
+      if (
+        lower.includes("atascadero") ||
+        trimmed === "93422" ||
+        trimmed === "93423"
+      ) {
+        return MOCK_DATA.atascadero;
+      }
+
+      // Exact ZIPs (Nipomo, SF)
       if (MOCK_DATA[trimmed]) {
         return MOCK_DATA[trimmed];
       }
 
-      // Very simple fuzzy: match sample for anything else
+      // Fallback: sample data, labeled with whatever they typed
       return {
         locationLabel: trimmed,
         items: MOCK_DATA.sample.items
@@ -890,9 +963,9 @@
 
         main.innerHTML = `
           <div class="result-main-title">${item.title}</div>
-          <div class="result-main-meta">${
-            item.org
-          } • <span style="text-transform: capitalize;">${item.type}</span></div>
+          <div class="result-main-meta">
+            ${item.org} • <span style="text-transform: capitalize;">${item.type}</span>
+          </div>
         `;
 
         const datePieces = [];
@@ -930,6 +1003,7 @@
 
         const addBtn = document.createElement("button");
         addBtn.className = "btn-sm";
+        addBtn.type = "button";
         addBtn.innerHTML = "➕ Add to my reminders";
         addBtn.addEventListener("click", () => addReminder(item));
         actions.appendChild(addBtn);
@@ -962,7 +1036,6 @@
       }
       emptyEl.style.display = "none";
 
-      // sort soonest closing/opening date
       reminders
         .slice()
         .sort((a, b) => {
@@ -1018,6 +1091,7 @@
 
           const deleteBtn = document.createElement("button");
           deleteBtn.className = "btn-icon";
+          deleteBtn.type = "button";
           deleteBtn.title = "Remove reminder";
           deleteBtn.innerHTML = "✕";
           deleteBtn.addEventListener("click", () => {
@@ -1064,13 +1138,6 @@
         container.appendChild(el);
       });
     }
-    async function fetchAtascaderoData() {
-      const res = await fetch('data/atascadero.json');
-      if (!res.ok) {
-        throw new Error('Could not load Atascadero data');
-      }
-      return res.json();
-    }
 
     // ---------------------------
     // Actions
@@ -1086,7 +1153,7 @@
       }
     }
 
-       async function handleSearch() {
+    async function handleSearch() {
       const inputEl = document.getElementById("locationInput");
       const input = inputEl.value.trim();
       const subtitleEl = document.getElementById("resultsSubtitle");
@@ -1100,36 +1167,30 @@
         return;
       }
 
-      // show a quick 'loading' state
       subtitleEl.textContent = `Looking up registrations for "${input}"...`;
       listEl.innerHTML = "";
 
       try {
-        // ✅ If the user types Atascadero or 93422/93423, use your JSON file
+        const data = findDataForLocation(input);
+        currentItems = data.items || [];
+
+        // Customize the message a bit for Atascadero
+        const lower = input.toLowerCase();
         const isAtascadero =
-          /atascadero/i.test(input) ||
+          lower.includes("atascadero") ||
           input === "93422" ||
           input === "93423";
 
         if (isAtascadero) {
-          const data = await fetchAtascaderoData();
-          currentItems = data.items || [];
           subtitleEl.textContent = currentItems.length
             ? `Showing Atascadero, CA events from your curated list.`
             : `No events found yet for Atascadero, CA.`;
-          renderResults();
-          return;
+        } else {
+          subtitleEl.textContent = currentItems.length
+            ? `Showing sample data for ${data.locationLabel}. Connect more real cities over time.`
+            : `No events found for "${input}". Try a nearby city or school district.`;
         }
 
-        // 🔁 Fallback: for any other location, still use the sample data for now
-        const data = {
-          locationLabel: input,
-          items: MOCK_DATA.sample.items
-        };
-        currentItems = data.items;
-        subtitleEl.textContent =
-          `Showing sample data for ${data.locationLabel}. ` +
-          `Connect more real cities over time.`;
         renderResults();
       } catch (err) {
         console.error(err);
@@ -1139,7 +1200,6 @@
           '<div class="empty-state">Network error fetching events.</div>';
       }
     }
-
 
     function handleUseSample() {
       const data = MOCK_DATA.sample;
@@ -1285,4 +1345,3 @@
   </script>
 </body>
 </html>
-
