@@ -552,7 +552,7 @@
 
     <section class="hero">
       <div>
-        <h1>Never miss another school or sports registration again.</h1>
+        <h1>Never miss another school or sports registration.</h1>
         <p>
           Enter your city or ZIP and get key registration links and kids programs
           for San Luis Obispo County in one place. Add them to your own
@@ -572,7 +572,7 @@
         <div class="hero-cta">
           <small>
             Try: “Atascadero”, “San Luis Obispo”, “Paso Robles”, “Nipomo”, “Templeton”…  
-            zip codes work too.
+            ZIP codes work too.
           </small>
         </div>
       </div>
@@ -619,7 +619,7 @@
           </div>
         </div>
         <div class="pill-filter-caption">
-          Filter by type, then tap “Add to my reminders” to build your do not miss list.
+          Filter by type, then tap “Add to my reminders” to build your do-not-miss list.
         </div>
         <div class="results-list" id="resultsList"></div>
       </div>
@@ -656,7 +656,7 @@
 
   <script>
     // ---------------------------
-    // Location data – SLO County cities and major towns
+    // Static location data – SLO County cities and major towns (fallback)
     // ---------------------------
     const LOCATION_DATA = {
       atascadero: {
@@ -1209,28 +1209,97 @@
       }
     };
 
-    // Helper mapping search input -> location id
+    // Map search input -> location id
     const LOCATION_MATCH_RULES = [
-      { id: "atascadero", keys: ["atascadero", "93422", "93423"] },
-      { id: "arroyo_grande", keys: ["arroyo grande", "93420", "93421"] },
-      { id: "grover_beach", keys: ["grover beach", "93433", "93483"] },
-      { id: "morro_bay", keys: ["morro bay", "93442", "93443"] },
-      { id: "paso_robles", keys: ["paso robles", "el paso de robles", "93446", "93447"] },
-      { id: "pismo_beach", keys: ["pismo beach", "93449", "93448"] },
-      { id: "san_luis_obispo", keys: ["san luis obispo", "slo ", " slo", "93401", "93405", "93406", "93407", "93408", "93409", "93410", "93403"] },
-      { id: "nipomo", keys: ["nipomo", "93444"] },
-      { id: "templeton", keys: ["templeton", "93465"] },
-      { id: "cambria", keys: ["cambria", "93428"] },
-      { id: "los_osos", keys: ["los osos", "93402", "93412"] },
-      { id: "oceano", keys: ["oceano", "93445"] },
-      { id: "avila_beach", keys: ["avila beach", "93424"] },
-      { id: "cayucos", keys: ["cayucos", "93430"] },
-      { id: "san_miguel", keys: ["san miguel", "93451"] },
-      { id: "san_simeon", keys: ["san simeon", "93452"] },
-      { id: "santa_margarita", keys: ["santa margarita", "93453"] },
-      { id: "shandon", keys: ["shandon", "93461"] },
-      { id: "creston", keys: ["creston", "93432"] }
+      { id: "atascadero",       keys: ["atascadero", "93422", "93423"] },
+      { id: "arroyo_grande",    keys: ["arroyo grande", "93420", "93421"] },
+      { id: "grover_beach",     keys: ["grover beach", "93433", "93483"] },
+      { id: "morro_bay",        keys: ["morro bay", "93442", "93443"] },
+      { id: "paso_robles",      keys: ["paso robles", "el paso de robles", "93446", "93447"] },
+      { id: "pismo_beach",      keys: ["pismo beach", "93449", "93448"] },
+      { id: "san_luis_obispo",  keys: ["san luis obispo", "slo ", " slo", "93401", "93405", "93406", "93407", "93408", "93409", "93410", "93403"] },
+      { id: "nipomo",           keys: ["nipomo", "93444"] },
+      { id: "templeton",        keys: ["templeton", "93465"] },
+      { id: "cambria",          keys: ["cambria", "93428"] },
+      { id: "los_osos",         keys: ["los osos", "93402", "93412"] },
+      { id: "oceano",           keys: ["oceano", "93445"] },
+      { id: "avila_beach",      keys: ["avila beach", "93424"] },
+      { id: "cayucos",          keys: ["cayucos", "93430"] },
+      { id: "san_miguel",       keys: ["san miguel", "93451"] },
+      { id: "san_simeon",       keys: ["san simeon", "93452"] },
+      { id: "santa_margarita",  keys: ["santa margarita", "93453"] },
+      { id: "shandon",          keys: ["shandon", "93461"] },
+      { id: "creston",          keys: ["creston", "93432"] }
     ];
+
+    // ---------------------------
+    // Google Sheet configuration
+    // ---------------------------
+    const SHEET_CSV_URL =
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vSTGyzF9lGXW8a1--CtEYzaQFhZnkU0Ye8InlnVPgbmyYaiYzy8wPEgGp2dVodt-GEbonPHKGRKQJwl/pub?gid=0&single=true&output=csv";
+
+    // Map of location_id -> { locationLabel, items: [...] } loaded from sheet
+    const sheetLocationData = {};
+
+    // Tiny CSV parser for simple comma-separated rows (no complex quoting)
+    function parseCsv(text) {
+      const lines = text.trim().split(/\r?\n/);
+      if (!lines.length) return [];
+
+      const headers = lines[0].split(",").map(h => h.trim());
+      return lines.slice(1).map(line => {
+        const cols = line.split(",");
+        const obj = {};
+        headers.forEach((h, i) => {
+          obj[h] = (cols[i] || "").trim();
+        });
+        return obj;
+      });
+    }
+
+    async function loadSheetData() {
+      try {
+        if (!SHEET_CSV_URL) {
+          console.info("No SHEET_CSV_URL set; using static data only.");
+          return;
+        }
+        const res = await fetch(SHEET_CSV_URL);
+        if (!res.ok) {
+          console.warn("Could not load sheet, status:", res.status);
+          return;
+        }
+        const text = await res.text();
+        const rows = parseCsv(text);
+
+        rows.forEach(row => {
+          const locId = row.location_id;
+          if (!locId) return;
+
+          if (!sheetLocationData[locId]) {
+            sheetLocationData[locId] = {
+              locationLabel: row.location_label || (LOCATION_DATA[locId]?.locationLabel || locId),
+              items: []
+            };
+          }
+
+          sheetLocationData[locId].items.push({
+            id: row.item_id || `${locId}-${sheetLocationData[locId].items.length}`,
+            title: row.title || "",
+            org: row.org || "",
+            type: row.type || "event",
+            registrationOpen: row.registration_open || null,
+            registrationClose: row.registration_close || null,
+            eventDate: row.event_date || null,
+            url: row.url || "",
+            notes: row.notes || ""
+          });
+        });
+
+        console.log("Loaded sheet data for locations:", Object.keys(sheetLocationData));
+      } catch (err) {
+        console.error("Error loading sheet data:", err);
+      }
+    }
 
     // ---------------------------
     // State
@@ -1276,22 +1345,38 @@
       const lower = trimmed.toLowerCase();
 
       // 1) Try to match any SLO County city/town by name or ZIP
+      let matchedLocationId = null;
+
       for (const rule of LOCATION_MATCH_RULES) {
         for (const key of rule.keys) {
-          // ZIP code (5 digits) must match exactly
           if (/^\d{5}$/.test(key)) {
+            // ZIP code must match exactly
             if (trimmed === key) {
-              return LOCATION_DATA[rule.id] || null;
+              matchedLocationId = rule.id;
+              break;
             }
           } else {
             if (lower.includes(key)) {
-              return LOCATION_DATA[rule.id] || null;
+              matchedLocationId = rule.id;
+              break;
             }
           }
         }
+        if (matchedLocationId) break;
       }
 
-      // 2) If nothing matched but it looks like SLO County, still label it
+      if (matchedLocationId) {
+        // 1a) Prefer sheet-backed data if available
+        if (sheetLocationData[matchedLocationId]) {
+          return sheetLocationData[matchedLocationId];
+        }
+        // 1b) Fallback to static seed data
+        if (LOCATION_DATA[matchedLocationId]) {
+          return LOCATION_DATA[matchedLocationId];
+        }
+      }
+
+      // 2) If nothing matched but it looks like SLO County in general
       if (lower.includes("san luis obispo county") || lower.includes("slo county")) {
         return {
           locationLabel: "San Luis Obispo County (general)",
@@ -1312,7 +1397,7 @@
         };
       }
 
-      // 3) Fallback: generic sample data, labeled with whatever they typed
+      // 3) Fallback: generic sample data
       return {
         locationLabel: trimmed,
         items: LOCATION_DATA.sample.items
@@ -1704,7 +1789,7 @@
 
     renderHeroDeadlines();
     loadReminders();
+    loadSheetData(); // pulls partner-maintained data from Google Sheets
   </script>
 </body>
 </html>
-
