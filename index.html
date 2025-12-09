@@ -1064,6 +1064,13 @@
         container.appendChild(el);
       });
     }
+    async function fetchAtascaderoData() {
+      const res = await fetch('data/atascadero.json');
+      if (!res.ok) {
+        throw new Error('Could not load Atascadero data');
+      }
+      return res.json();
+    }
 
     // ---------------------------
     // Actions
@@ -1079,24 +1086,60 @@
       }
     }
 
-    function handleSearch() {
-      const input = document.getElementById("locationInput").value;
-      const data = findDataForLocation(input);
-
+       async function handleSearch() {
+      const inputEl = document.getElementById("locationInput");
+      const input = inputEl.value.trim();
       const subtitleEl = document.getElementById("resultsSubtitle");
+      const listEl = document.getElementById("resultsList");
 
-      if (!data) {
+      if (!input) {
+        subtitleEl.textContent = "Enter a city or ZIP to see results.";
+        listEl.innerHTML = "";
         currentItems = [];
-        subtitleEl.textContent =
-          "We couldn't understand that location. Try a city name or ZIP code.";
         renderResults();
         return;
       }
 
-      currentItems = data.items;
-      subtitleEl.textContent = `Showing sample data for ${data.locationLabel}. In a live version, this would pull from real district and league feeds.`;
-      renderResults();
+      // show a quick 'loading' state
+      subtitleEl.textContent = `Looking up registrations for "${input}"...`;
+      listEl.innerHTML = "";
+
+      try {
+        // ✅ If the user types Atascadero or 93422/93423, use your JSON file
+        const isAtascadero =
+          /atascadero/i.test(input) ||
+          input === "93422" ||
+          input === "93423";
+
+        if (isAtascadero) {
+          const data = await fetchAtascaderoData();
+          currentItems = data.items || [];
+          subtitleEl.textContent = currentItems.length
+            ? `Showing Atascadero, CA events from your curated list.`
+            : `No events found yet for Atascadero, CA.`;
+          renderResults();
+          return;
+        }
+
+        // 🔁 Fallback: for any other location, still use the sample data for now
+        const data = {
+          locationLabel: input,
+          items: MOCK_DATA.sample.items
+        };
+        currentItems = data.items;
+        subtitleEl.textContent =
+          `Showing sample data for ${data.locationLabel}. ` +
+          `Connect more real cities over time.`;
+        renderResults();
+      } catch (err) {
+        console.error(err);
+        subtitleEl.textContent =
+          "We had trouble fetching data. Please try again in a moment.";
+        listEl.innerHTML =
+          '<div class="empty-state">Network error fetching events.</div>';
+      }
     }
+
 
     function handleUseSample() {
       const data = MOCK_DATA.sample;
@@ -1242,3 +1285,4 @@
   </script>
 </body>
 </html>
+
