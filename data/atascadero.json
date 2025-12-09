@@ -1,0 +1,60 @@
+{
+  "locationLabel": "Atascadero, CA 93422",
+  "items": [
+    {
+      "id": "atascadero-ausd-kinder-2025",
+      "title": "AUSD Kindergarten & TK Enrollment (2025–26)",
+      "org": "Atascadero Unified School District",
+      "type": "school",
+      "registrationOpen": "2025-03-01",
+      "registrationClose": "2025-03-31",
+      "eventDate": null,
+      "url": "https://atascaderousd.aeries.net/air/",
+      "notes": "Online pre-enrollment for NEW incoming students for 2025–26 opens March 1 and runs through March 31. Check AUSD Parent Resources for updates each year."
+    },
+    {
+      "id": "atascadero-rec-youth-basketball-2025",
+      "title": "City of Atascadero – Winter Youth Basketball 2025–26",
+      "org": "City of Atascadero Recreation",
+      "type": "sports",
+      "registrationOpen": "2025-08-25",
+      "registrationClose": "2025-10-24",
+      "eventDate": "2026-01-10",
+      "url": "https://www.atascaderonews.com/news/sports/youth-basketball-registration-now-open-in-atascadero/",
+      "notes": "Registration for Winter Youth Basketball opens late August 2025 and closes October 24, 2025. Games run Saturdays from Jan 10 to Mar 7, 2026; skills clinics in Oct and Nov."
+    },
+    {
+      "id": "atascadero-little-league-spring-2025",
+      "title": "Atascadero Little League – Spring 2025 Season",
+      "org": "Atascadero Little League",
+      "type": "sports",
+      "registrationOpen": "2024-11-17",
+      "registrationClose": "2025-01-01",
+      "eventDate": null,
+      "url": "https://www.atascaderolittleleague.com/",
+      "notes": "Spring 2025 registration opens Nov 17, 2024. Early bird discount available for players registered before Jan 1, 2025; final close date may be later, see site for current info."
+    },
+    {
+      "id": "atascadero-little-league-fall-ball-2025",
+      "title": "Atascadero Little League – Fall Ball 2025",
+      "org": "Atascadero Little League",
+      "type": "sports",
+      "registrationOpen": "2025-08-12",
+      "registrationClose": "2025-08-31",
+      "eventDate": null,
+      "url": "https://www.atascaderolittleleague.com/",
+      "notes": "Fall Ball registration opens mid-August 2025 and closes Aug 31, 2025. Games/practices on Sundays at Paloma; check the Little League site for latest details."
+    },
+    {
+      "id": "atascadero-youth-soccer-fall-2025",
+      "title": "Atascadero Youth Soccer League – Fall 2025",
+      "org": "Atascadero Youth Soccer (AYSL)",
+      "type": "sports",
+      "registrationOpen": null,
+      "registrationClose": "2025-05-19",
+      "eventDate": null,
+      "url": "https://www.atascaderosoccer.org/",
+      "notes": "Fall 2025 registration open with an early bird discount deadline of May 19, 2025. Registration may continue after; see AYSL site for current dates and fees."
+    }
+  ]
+}
