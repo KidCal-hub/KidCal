@@ -104,7 +104,7 @@
     }
 
     .prototype-pill {
-      background: #f97316;
+      background: #2563eb;
       color: white;
       padding: 5px 12px;
       border-radius: 999px;
@@ -112,7 +112,7 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      box-shadow: 0 10px 20px rgba(248, 113, 22, 0.45);
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.45);
     }
 
     .prototype-pill span {
@@ -748,18 +748,6 @@
       color: var(--text-muted);
     }
 
-    .pill-prototype {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #fff7ed;
-      color: #9a3412;
-      border-radius: 999px;
-      padding: 4px 9px;
-      font-size: 0.75rem;
-      margin-top: 4px;
-    }
-
     /* TOAST */
 
     .toast {
@@ -798,7 +786,7 @@
         </div>
       </div>
       <div class="prototype-pill">
-        <span>⚠️</span> San Luis Obispo County prototype
+        <span>📍</span> Serving San Luis Obispo County families
       </div>
     </header>
 
@@ -865,7 +853,7 @@
             <div>
               <p class="section-title">Registration finder</p>
               <p class="section-subtitle">
-                This prototype pulls from a shared sheet of youth programs in San Luis Obispo County.
+                This page pulls from a shared sheet of youth programs in San Luis Obispo County.
               </p>
             </div>
             <div class="label-chip" id="eventsStatusChip">
@@ -941,7 +929,7 @@
           <p class="section-title" style="margin-top:4px;">How to add your program to KidCal</p>
           <p class="section-subtitle">
             Local schools, sports leagues, camps, and youth programs can add dates into the shared KidCal sheet.
-            Once added, they’ll show up here for families.
+            Once added, they show up here for families.
           </p>
 
           <ol class="info-list">
@@ -969,7 +957,7 @@
               plus optional <code>age_range</code> and <code>cost</code>.
             </li>
             <li>
-              Save your changes. Updates will appear in KidCal once the sheet syncs — no web edits needed.
+              Save your changes. Updates appear in KidCal once the sheet syncs — no web edits needed.
             </li>
           </ol>
         </div>
@@ -979,12 +967,7 @@
             KidCal helps parents stay organized by collecting local kids’ activity deadlines in one place.
           </div>
           <div class="disclaimer">
-            <span class="pill-prototype">
-              Prototype only
-            </span>
-            <br />
-            This version uses a shared sheet to demo how KidCal will work. Dates and offerings change each season.
-            Always confirm through the linked district or recreation site before relying on a deadline.
+            Dates and offerings change each season as local providers update their programs.
           </div>
         </footer>
       </section>
@@ -999,7 +982,7 @@
     const SHEET_URL =
       "https://docs.google.com/spreadsheets/d/e/2PACX-1vSTGyzF9lGXW8a1--CtEYzaQFhZnkU0Ye8InlnVPgbmyYaiYzy8wPEgGp2dVodt-GEbonPHKGRKQJwl/pub?gid=0&single=true&output=csv";
 
-    // --- Fallback sample events for SLO County prototype ---
+    // --- Fallback sample events for SLO County ---
     const SAMPLE_EVENTS = [
       {
         id: 1,
@@ -1159,10 +1142,6 @@
           return;
         }
 
-        // Expecting headers like:
-        // location_id, location_label, item_id, title, org, type,
-        // registration_open, registration_close, event_date, url,
-        // notes, age_range, cost, location_area, contact_name, contact_email, ...
         const mapped = parsed.rows
           .map((row, idx) => {
             const title = row.title;
@@ -1466,7 +1445,7 @@
       const lines = [];
       lines.push("BEGIN:VCALENDAR");
       lines.push("VERSION:2.0");
-      lines.push("PRODID:-//KidCal//Prototype//EN");
+      lines.push("PRODID:-//KidCal//App//EN");
 
       reminders.forEach((r, idx) => {
         const dt = (r.date || "").replace(/-/g, "");
