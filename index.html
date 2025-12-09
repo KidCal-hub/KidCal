@@ -1014,26 +1014,38 @@ async function fetchSheetData() {
       return;
     }
 
-    // Expecting exact headers:
-    // city, title, type, date, deadline_label, provider, link, age_range, cost, notes
+    // Expecting headers like:
+    // location_id, location_label, item_id, title, org, type,
+    // registration_open, registration_close, event_date, url,
+    // notes, age_range, cost, location_area, contact_name, contact_email, ...
     const mapped = parsed.rows
       .map((row, idx) => {
-        // Require at least title and city and link to show the event
-        if (!row.title || !row.city || !row.link) return null;
+        const title = row.title;
+        const url = row.url;
+
+        // Require at least title and url to show an event
+        if (!title || !url) return null;
+
+        const cityLabel =
+          row.location_label || row.location_id || "";
+
+        const eventType = normalizeType(row.type);
+        const date = pickPrimaryDate(row);
+        const deadlineLabel = buildDeadlineLabel(row);
 
         return {
-          id: "sheet-" + idx,
-          city: row.city,
-          type: (row.type || "other").toLowerCase(),
-          title: row.title,
-          date: row.date, // YYYY-MM-DD recommended
-          deadlineLabel: row.deadline_label,
-          provider: row.provider,
-          link: row.link,
-          // Optional extras (not currently used in rendering)
+          id: row.item_id || "sheet-" + idx,
+          city: cityLabel,              // e.g., "Atascadero CA 93422"
+          type: eventType,              // "school" | "sports" | "camp" | "other"
+          title: title,
+          date: date,                   // used for calendar export
+          deadlineLabel: deadlineLabel, // friendly label
+          provider: row.org,
+          link: url,
+          // extras we might use later
+          notes: row.notes,
           ageRange: row.age_range,
-          cost: row.cost,
-          notes: row.notes
+          cost: row.cost
         };
       })
       .filter(Boolean);
@@ -1042,7 +1054,7 @@ async function fetchSheetData() {
       EVENTS = mapped;
       currentEvents = [...EVENTS];
       renderEvents();
-      console.info(`Loaded ${mapped.length} events from sheet (strict headers).`);
+      console.info(`Loaded ${mapped.length} events from sheet (KidCal schema).`);
     } else {
       console.warn("Sheet rows did not have required fields; using samples.");
     }
@@ -1074,4 +1086,5 @@ async function fetchSheetData() {
   </script>
 </body>
 </html>
+
 
