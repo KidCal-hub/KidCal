@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>KidCal – Never Miss a Registration Again</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #f5f5fb;
+      --card-bg: #ffffff;
+      --primary: #4b7bec;
+      --primary-soft: rgba(75, 123, 236, 0.08);
+      --danger: #e74c3c;
+      --text: #1f2933;
+      --muted: #6b7280;
+      --radius-lg: 18px;
+      --radius-sm: 10px;
+      --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: linear-gradient(135deg, #eef2ff, #fdfdfd);
+      color: var(--text);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 0 0, #ffd6a5, #ff6b6b);
+      color: white;
+      font-weight: 700;
+      box-shadow: 0 8px 20px rgba(248, 113, 113, 0.3);
+    }
+
+    .brand-text-title {
+      font-weight: 700;
+      font-size: 1.15rem;
+    }
+
+    .brand-text-sub {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .tagline {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    .hero {
+      background: var(--card-bg);
+      box-shadow: var(--shadow-soft);
+      border-radius: 24px;
+      padding: 20px 18px;
+      display: grid;
+      grid-template-columns: minmax(0, 2.1fr) minmax(260px, 1.3fr);
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 840px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    .hero h1 {
+      font-size: 1.7rem;
+      margin: 0 0 10px;
+    }
+
+    .hero p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .hero-badge {
+      background: var(--primary-soft);
+      color: #1e40af;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .hero-badge span {
+      font-size: 1rem;
+    }
+
+    .hero-cta {
+      margin-top: 14px;
+    }
+
+    .hero-cta small {
+      display: block;
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+
+    .hero-panel {
+      background: radial-gradient(circle at 0 0, #bfdbfe, #eef2ff);
+      border-radius: 20px;
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .hero-panel-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #1d4ed8;
+    }
+
+    .hero-panel-list {
+      display: grid;
+      gap: 6px;
+      font-size: 0.85rem;
+    }
+
+    .hero-panel-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 6px 8px;
+      border-radius: 999px;
+      align-items: center;
+    }
+
+    .hero-panel-item strong {
+      font-size: 0.82rem;
+    }
+
+    .hero-panel-item span {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .hero-panel-footer {
+      font-size: 0.78rem;
+      color: #1f2933;
+    }
+
+    .search-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      padding: 16px 16px 14px;
+      margin-bottom: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .search-group {
+      flex: 1 1 260px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .search-group input {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid #d0d7e2;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .search-group input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.25);
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      color: white;
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 16px rgba(37, 99, 235, 0.35);
+      white-space: nowrap;
+    }
+
+    .btn-primary span {
+      font-size: 1rem;
+    }
+
+    .btn-ghost {
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.02);
+      font-size: 0.8rem;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-ghost span {
+      font-size: 1rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(260px, 1.1fr);
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .results-card,
+    .reminders-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      padding: 14px 14px 16px;
+    }
+
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .results-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .results-subtitle {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .pill-group {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .pill {
+      font-size: 0.78rem;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.12);
+      color: #475569;
+      cursor: pointer;
+      border: none;
+    }
+
+    .pill.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .results-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .result-item {
+      border-radius: var(--radius-sm);
+      border: 1px solid #e5e7eb;
+      padding: 9px 10px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1.1fr) auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    @media (max-width: 720px) {
+      .result-item {
+        grid-template-columns: 1fr;
+        align-items: flex-start;
+      }
+    }
+
+    .result-main-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .result-main-meta {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .result-dates {
+      font-size: 0.8rem;
+      color: #111827;
+    }
+
+    .result-dates span {
+      display: inline-block;
+      margin-right: 8px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.08);
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      color: #059669;
+    }
+
+    .chip span {
+      font-size: 0.95rem;
+    }
+
+    .result-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+
+    .btn-sm {
+      font-size: 0.78rem;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-sm.secondary {
+      background: #f9fafb;
+      color: #374151;
+    }
+
+    a {
+      color: #1d4ed8;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .reminders-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .reminders-title-box {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .reminders-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .reminders-subtitle {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .reminders-tools {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .reminders-list {
+      display: grid;
+      gap: 8px;
+      max-height: 340px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .reminder-item {
+      border-radius: var(--radius-sm);
+      border: 1px solid #e5e7eb;
+      padding: 8px 9px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 6px;
+      font-size: 0.82rem;
+      align-items: center;
+    }
+
+    .reminder-main-title {
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .reminder-meta {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .reminder-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.76rem;
+      border-radius: 999px;
+      padding: 2px 7px;
+      background: rgba(59, 130, 246, 0.08);
+      color: #1d4ed8;
+      margin-right: 6px;
+    }
+
+    .reminder-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: flex-end;
+    }
+
+    .btn-icon {
+      padding: 4px;
+      border-radius: 999px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: #9ca3af;
+    }
+
+    .btn-icon:hover {
+      background: #fee2e2;
+      color: var(--danger);
+    }
+
+    .empty-state {
+      font-size: 0.8rem;
+      color: var(--muted);
+      padding: 6px 2px 2px;
+    }
+
+    .pill-filter-caption {
+      font-size: 0.76rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      font-size: 0.74rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* Scrollbar tweak for reminders list */
+    .reminders-list::-webkit-scrollbar {
+      width: 5px;
+    }
+    .reminders-list::-webkit-scrollbar-thumb {
+      background: #cbd5f5;
+      border-radius: 999px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="brand">
+        <div class="brand-icon">K</div>
+        <div>
+          <div class="brand-text-title">KidCal</div>
+          <div class="brand-text-sub">One place for every kid deadline</div>
+        </div>
+      </div>
+      <div class="tagline">For busy parents & caregivers</div>
+    </header>
+
+    <section class="hero">
+      <div>
+        <h1>Never miss another school or sports registration.</h1>
+        <p>
+          Enter your city or ZIP and get key registration dates, links, and
+          event info in one place. Build your own reminder calendar so you
+          never forget the important stuff for your kids.
+        </p>
+        <div class="hero-badges">
+          <div class="hero-badge">
+            <span>📅</span> School registration
+          </div>
+          <div class="hero-badge">
+            <span>🏅</span> Youth sports sign-ups
+          </div>
+          <div class="hero-badge">
+            <span>🎨</span> Camps & enrichment
+          </div>
+        </div>
+        <div class="hero-cta">
+          <small>Start by searching your location below.</small>
+        </div>
+      </div>
+      <div class="hero-panel">
+        <div class="hero-panel-title">Today's upcoming deadlines</div>
+        <div class="hero-panel-list" id="hero-deadlines">
+          <!-- Filled by JS from mock data -->
+        </div>
+        <div class="hero-panel-footer">
+          These are sample items. In a full version, this panel could show
+          real, location-based upcoming deadlines for your family.
+        </div>
+      </div>
+    </section>
+
+    <section class="search-card">
+      <div class="search-group">
+        <input
+          id="locationInput"
+          type="text"
+          placeholder="Enter city or ZIP code (e.g., 94103 or Nipomo)..."
+        />
+        <button class="btn-primary" id="searchBtn">
+          <span>🔍</span> Find registrations
+        </button>
+      </div>
+      <button class="btn-ghost" id="useSampleBtn" type="button">
+        <span>✨</span> Try sample data
+      </button>
+    </section>
+
+    <section class="layout">
+      <div class="results-card">
+        <div class="results-header">
+          <div>
+            <div class="results-title">Registration finder</div>
+            <div class="results-subtitle" id="resultsSubtitle">
+              Enter a location to see school, sports, and event timelines.
+            </div>
+          </div>
+          <div class="pill-group" id="filterPills">
+            <button class="pill active" data-filter="all">All</button>
+            <button class="pill" data-filter="school">School</button>
+            <button class="pill" data-filter="sports">Sports</button>
+            <button class="pill" data-filter="event">Events</button>
+          </div>
+        </div>
+        <div class="pill-filter-caption">
+          Filter by type, then tap "Add to my reminders" to build your own
+          do-not-miss list.
+        </div>
+        <div class="results-list" id="resultsList"></div>
+      </div>
+
+      <aside class="reminders-card">
+        <div class="reminders-header">
+          <div class="reminders-title-box">
+            <div class="reminders-title">My reminder calendar</div>
+            <div class="reminders-subtitle">
+              Saved deadlines stay on this device. In production, these would
+              sync between app and web.
+            </div>
+          </div>
+          <div class="reminders-tools">
+            <button class="btn-sm secondary" id="clearRemindersBtn">
+              🧹 Clear
+            </button>
+            <button class="btn-sm" id="downloadIcsBtn">
+              📥 Download .ics
+            </button>
+          </div>
+        </div>
+        <div class="reminders-list" id="remindersList"></div>
+        <div class="empty-state" id="remindersEmpty">
+          No reminders yet. Add a school or sports registration from the list
+          to see it here.
+        </div>
+      </aside>
+    </section>
+
+    <div class="footer-note">
+      Prototype only. Real data would come from school districts, youth
+      leagues, and community providers via APIs, open data, and partner
+      submissions.
+    </div>
+  </div>
+
+  <script>
+    // ---------------------------
+    // Mock data (replace with real APIs later)
+    // ---------------------------
+    const MOCK_DATA = {
+      "93444": {
+        locationLabel: "Nipomo, CA 93444",
+        items: [
+          {
+            id: "nipomo-es-kinder",
+            title: "Nipomo Elementary – Kindergarten Registration",
+            org: "Lucia Mar Unified School District",
+            type: "school",
+            registrationOpen: "2025-02-15",
+            registrationClose: "2025-04-01",
+            eventDate: null,
+            url: "https://example.com/nipomo-kinder",
+            notes: "Bring immunization records, proof of residence, and birth certificate."
+          },
+          {
+            id: "nipomo-little-league-spring",
+            title: "Nipomo Little League – Spring Baseball",
+            org: "Nipomo Little League",
+            type: "sports",
+            registrationOpen: "2025-01-05",
+            registrationClose: "2025-02-10",
+            eventDate: null,
+            url: "https://example.com/nipomo-little-league",
+            notes: "Ages 4–12. Skills assessments mid-February."
+          },
+          {
+            id: "nipomo-ayso-fall",
+            title: "AYSO – Fall Soccer Sign-ups",
+            org: "Local AYSO Region",
+            type: "sports",
+            registrationOpen: "2025-05-01",
+            registrationClose: "2025-06-15",
+            eventDate: null,
+            url: "https://example.com/ayso-fall",
+            notes: "Discounts for early registration through May 15."
+          },
+          {
+            id: "nipomo-summer-camp",
+            title: "Summer STEAM Camp Week 1",
+            org: "Nipomo Community Center",
+            type: "event",
+            registrationOpen: "2025-03-01",
+            registrationClose: "2025-05-31",
+            eventDate: "2025-07-08",
+            url: "https://example.com/nipomo-steam-camp",
+            notes: "Week-long camp, 9am–3pm, grades 1–6."
+          }
+        ]
+      },
+      "94103": {
+        locationLabel: "San Francisco, CA 94103",
+        items: [
+          {
+            id: "sfusd-kinder",
+            title: "SFUSD Elementary – School Enrollment Round 1",
+            org: "San Francisco Unified School District",
+            type: "school",
+            registrationOpen: "2025-11-01",
+            registrationClose: "2026-01-10",
+            eventDate: null,
+            url: "https://example.com/sfusd-enrollment",
+            notes: "Submit online application and school rankings."
+          },
+          {
+            id: "sf-rec-baseball",
+            title: "SF Rec & Park – Youth Baseball",
+            org: "San Francisco Rec & Park",
+            type: "sports",
+            registrationOpen: "2025-02-01",
+            registrationClose: "2025-03-05",
+            eventDate: null,
+            url: "https://example.com/sf-baseball",
+            notes: "League play begins in April."
+          },
+          {
+            id: "sf-summer-camp",
+            title: "Summer Day Camp Session 1",
+            org: "SF Rec & Park",
+            type: "event",
+            registrationOpen: "2025-03-15",
+            registrationClose: "2025-04-30",
+            eventDate: "2025-06-10",
+            url: "https://example.com/sf-summer-camp",
+            notes: "Camps fill quickly; set a reminder for open date."
+          }
+        ]
+      },
+      sample: {
+        locationLabel: "Sample Family Calendar",
+        items: [
+          {
+            id: "sample-school",
+            title: "Elementary School – New Student Registration",
+            org: "Your Local School District",
+            type: "school",
+            registrationOpen: "2025-03-01",
+            registrationClose: "2025-04-15",
+            eventDate: null,
+            url: "https://school.example.com/registration",
+            notes: "Typical documents: ID, proof of address, immunizations."
+          },
+          {
+            id: "sample-soccer",
+            title: "Youth Soccer League – Fall Season",
+            org: "City Youth Soccer League",
+            type: "sports",
+            registrationOpen: "2025-05-10",
+            registrationClose: "2025-06-20",
+            eventDate: null,
+            url: "https://soccer.example.com/register",
+            notes: "Ages 5–12; practice starts in August."
+          },
+          {
+            id: "sample-swim",
+            title: "Swim Lessons Session 2",
+            org: "Community Pool",
+            type: "sports",
+            registrationOpen: "2025-04-01",
+            registrationClose: "2025-04-30",
+            eventDate: "2025-06-01",
+            url: "https://pool.example.com/swim-lessons",
+            notes: "Level 1–3; choose mornings or afternoons."
+          },
+          {
+            id: "sample-camp",
+            title: "Art & Music Summer Camp",
+            org: "Local Arts Center",
+            type: "event",
+            registrationOpen: "2025-02-15",
+            registrationClose: "2025-05-01",
+            eventDate: "2025-07-15",
+            url: "https://arts.example.com/camp",
+            notes: "Limited spots. Scholarships available."
+          }
+        ]
+      }
+    };
+
+    // ---------------------------
+    // State
+    // ---------------------------
+    let currentFilter = "all";
+    let currentItems = [];
+    let reminders = [];
+
+    // ---------------------------
+    // Helpers
+    // ---------------------------
+    function formatDate(dateStr) {
+      if (!dateStr) return "";
+      const d = new Date(dateStr + "T00:00:00");
+      if (Number.isNaN(d.getTime())) return dateStr;
+      return d.toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+      });
+    }
+
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    function saveReminders() {
+      try {
+        localStorage.setItem("kidcal-reminders", JSON.stringify(reminders));
+      } catch (e) {
+        // ignore if storage not available
+      }
+    }
+
+    function loadReminders() {
+      try {
+        const saved = localStorage.getItem("kidcal-reminders");
+        if (saved) {
+          reminders = JSON.parse(saved);
+        }
+      } catch (e) {
+        reminders = [];
+      }
+      renderReminders();
+    }
+
+    function findDataForLocation(input) {
+      if (!input) return null;
+      const trimmed = input.trim();
+      if (!trimmed) return null;
+
+      if (MOCK_DATA[trimmed]) {
+        return MOCK_DATA[trimmed];
+      }
+
+      // Very simple fuzzy: match sample for anything else
+      return {
+        locationLabel: trimmed,
+        items: MOCK_DATA.sample.items
+      };
+    }
+
+    // ---------------------------
+    // Rendering
+    // ---------------------------
+    function renderResults() {
+      const listEl = document.getElementById("resultsList");
+      listEl.innerHTML = "";
+
+      const filtered = currentItems.filter((item) => {
+        if (currentFilter === "all") return true;
+        return item.type === currentFilter;
+      });
+
+      if (!filtered.length) {
+        listEl.innerHTML =
+          '<div class="empty-state">No items for this filter. Try another type or expand your search.</div>';
+        return;
+      }
+
+      filtered.forEach((item) => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "result-item";
+
+        const main = document.createElement("div");
+        const dates = document.createElement("div");
+        const actions = document.createElement("div");
+
+        main.innerHTML = `
+          <div class="result-main-title">${item.title}</div>
+          <div class="result-main-meta">${
+            item.org
+          } • <span style="text-transform: capitalize;">${item.type}</span></div>
+        `;
+
+        const datePieces = [];
+        if (item.registrationOpen) {
+          datePieces.push(
+            `<span>Opens: <strong>${formatDate(
+              item.registrationOpen
+            )}</strong></span>`
+          );
+        }
+        if (item.registrationClose) {
+          datePieces.push(
+            `<span>Closes: <strong>${formatDate(
+              item.registrationClose
+            )}</strong></span>`
+          );
+        }
+        if (item.eventDate) {
+          datePieces.push(
+            `<span class="chip"><span>⭐</span> Starts: <strong>${formatDate(
+              item.eventDate
+            )}</strong></span>`
+          );
+        }
+
+        dates.className = "result-dates";
+        dates.innerHTML = datePieces.join("");
+
+        actions.className = "result-actions";
+        actions.innerHTML = `
+          <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="btn-sm secondary">
+            🔗 Open details
+          </a>
+        `;
+
+        const addBtn = document.createElement("button");
+        addBtn.className = "btn-sm";
+        addBtn.innerHTML = "➕ Add to my reminders";
+        addBtn.addEventListener("click", () => addReminder(item));
+        actions.appendChild(addBtn);
+
+        wrapper.appendChild(main);
+        wrapper.appendChild(dates);
+
+        if (item.notes) {
+          const notesEl = document.createElement("div");
+          notesEl.style.fontSize = "0.78rem";
+          notesEl.style.color = "#6b7280";
+          notesEl.style.marginTop = "2px";
+          notesEl.textContent = item.notes;
+          main.appendChild(notesEl);
+        }
+
+        wrapper.appendChild(actions);
+        listEl.appendChild(wrapper);
+      });
+    }
+
+    function renderReminders() {
+      const listEl = document.getElementById("remindersList");
+      const emptyEl = document.getElementById("remindersEmpty");
+      listEl.innerHTML = "";
+
+      if (!reminders.length) {
+        emptyEl.style.display = "block";
+        return;
+      }
+      emptyEl.style.display = "none";
+
+      // sort soonest closing/opening date
+      reminders
+        .slice()
+        .sort((a, b) => {
+          const aDate = a.registrationClose || a.registrationOpen || a.eventDate;
+          const bDate = b.registrationClose || b.registrationOpen || b.eventDate;
+          return new Date(aDate) - new Date(bDate);
+        })
+        .forEach((item, index) => {
+          const wrapper = document.createElement("div");
+          wrapper.className = "reminder-item";
+
+          const main = document.createElement("div");
+          const actions = document.createElement("div");
+          actions.className = "reminder-actions";
+
+          const typeLabel = `<span class="reminder-label">${
+            item.type === "school"
+              ? "🏫 School"
+              : item.type === "sports"
+              ? "🏅 Sports"
+              : "🎟 Event"
+          }</span>`;
+
+          const keyDate =
+            item.registrationClose ||
+            item.registrationOpen ||
+            item.eventDate;
+          const keyLabel = item.registrationClose
+            ? "Registration closes"
+            : item.registrationOpen
+            ? "Registration opens"
+            : "Event date";
+
+          main.innerHTML = `
+            <div class="reminder-main-title">${item.title}</div>
+            <div class="reminder-meta">
+              ${typeLabel}
+              <span>${item.org}</span>
+              ${
+                keyDate
+                  ? `<br/><strong>${keyLabel}:</strong> ${formatDate(keyDate)}`
+                  : ""
+              }
+            </div>
+          `;
+
+          const linkBtn = document.createElement("a");
+          linkBtn.href = item.url;
+          linkBtn.target = "_blank";
+          linkBtn.rel = "noopener noreferrer";
+          linkBtn.className = "btn-sm secondary";
+          linkBtn.textContent = "🔗 View details";
+
+          const deleteBtn = document.createElement("button");
+          deleteBtn.className = "btn-icon";
+          deleteBtn.title = "Remove reminder";
+          deleteBtn.innerHTML = "✕";
+          deleteBtn.addEventListener("click", () => {
+            reminders.splice(index, 1);
+            saveReminders();
+            renderReminders();
+          });
+
+          actions.appendChild(linkBtn);
+          actions.appendChild(deleteBtn);
+
+          wrapper.appendChild(main);
+          wrapper.appendChild(actions);
+          listEl.appendChild(wrapper);
+        });
+    }
+
+    function renderHeroDeadlines() {
+      const container = document.getElementById("hero-deadlines");
+      container.innerHTML = "";
+
+      const sampleItems = MOCK_DATA.sample.items.slice(0, 3);
+      sampleItems.forEach((item) => {
+        const el = document.createElement("div");
+        el.className = "hero-panel-item";
+        const keyDate =
+          item.registrationClose || item.registrationOpen || item.eventDate;
+        const label = item.registrationClose
+          ? "Closes"
+          : item.registrationOpen
+          ? "Opens"
+          : "Starts";
+        el.innerHTML = `
+          <div>
+            <strong>${item.title}</strong>
+            <br />
+            <span>${item.org}</span>
+          </div>
+          <div style="text-align: right; font-size: 0.8rem;">
+            <div>${label}</div>
+            <div><strong>${formatDate(keyDate)}</strong></div>
+          </div>
+        `;
+        container.appendChild(el);
+      });
+    }
+
+    // ---------------------------
+    // Actions
+    // ---------------------------
+    function addReminder(item) {
+      const exists = reminders.some((r) => r.id === item.id);
+      if (!exists) {
+        reminders.push(item);
+        saveReminders();
+        renderReminders();
+      } else {
+        alert("This item is already in your reminders.");
+      }
+    }
+
+    function handleSearch() {
+      const input = document.getElementById("locationInput").value;
+      const data = findDataForLocation(input);
+
+      const subtitleEl = document.getElementById("resultsSubtitle");
+
+      if (!data) {
+        currentItems = [];
+        subtitleEl.textContent =
+          "We couldn't understand that location. Try a city name or ZIP code.";
+        renderResults();
+        return;
+      }
+
+      currentItems = data.items;
+      subtitleEl.textContent = `Showing sample data for ${data.locationLabel}. In a live version, this would pull from real district and league feeds.`;
+      renderResults();
+    }
+
+    function handleUseSample() {
+      const data = MOCK_DATA.sample;
+      currentItems = data.items;
+      document.getElementById("resultsSubtitle").textContent =
+        "Showing generic sample data. Customize or connect real data sources next.";
+      renderResults();
+    }
+
+    function handleFilterClick(e) {
+      const btn = e.target.closest(".pill");
+      if (!btn) return;
+
+      currentFilter = btn.dataset.filter;
+      document
+        .querySelectorAll("#filterPills .pill")
+        .forEach((el) => el.classList.remove("active"));
+      btn.classList.add("active");
+      renderResults();
+    }
+
+    function generateICS() {
+      if (!reminders.length) {
+        alert("No reminders to export yet.");
+        return;
+      }
+
+      const lines = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//KidCal//EN"
+      ];
+
+      reminders.forEach((item, idx) => {
+        const now = new Date();
+        const dtstamp = now
+          .toISOString()
+          .replace(/[-:]/g, "")
+          .replace(/\.\d{3}Z$/, "Z");
+
+        const dateStr =
+          item.registrationClose ||
+          item.registrationOpen ||
+          item.eventDate ||
+          null;
+
+        let dtstart = "";
+        if (dateStr) {
+          const d = new Date(dateStr + "T00:00:00");
+          const y = d.getFullYear();
+          const m = String(d.getMonth() + 1).padStart(2, "0");
+          const day = String(d.getDate()).padStart(2, "0");
+          dtstart = `${y}${m}${day}`;
+        }
+
+        lines.push("BEGIN:VEVENT");
+        lines.push(`UID:${idx}-${Date.now()}@kidcal`);
+        lines.push(`DTSTAMP:${dtstamp}`);
+        if (dtstart) {
+          lines.push(`DTSTART;VALUE=DATE:${dtstart}`);
+        }
+        lines.push(`SUMMARY:${item.title.replace(/,/g, "\\,")}`);
+        const descParts = [];
+        if (item.org) descParts.push(`Org: ${item.org}`);
+        if (item.url) descParts.push(`Link: ${item.url}`);
+        if (item.registrationOpen)
+          descParts.push(
+            `Registration opens: ${formatDate(item.registrationOpen)}`
+          );
+        if (item.registrationClose)
+          descParts.push(
+            `Registration closes: ${formatDate(item.registrationClose)}`
+          );
+        if (item.eventDate)
+          descParts.push(`Event date: ${formatDate(item.eventDate)}`);
+        const desc = descParts.join(" | ").replace(/,/g, "\\,");
+        lines.push(`DESCRIPTION:${desc}`);
+        lines.push("END:VEVENT");
+      });
+
+      lines.push("END:VCALENDAR");
+
+      const blob = new Blob([lines.join("\r\n")], {
+        type: "text/calendar;charset=utf-8"
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "kidcal-reminders.ics";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function clearReminders() {
+      if (!reminders.length) return;
+      if (
+        !confirm(
+          "Clear all reminders on this device? This cannot be undone."
+        )
+      ) {
+        return;
+      }
+      reminders = [];
+      saveReminders();
+      renderReminders();
+    }
+
+    // ---------------------------
+    // Init
+    // ---------------------------
+    document
+      .getElementById("searchBtn")
+      .addEventListener("click", handleSearch);
+
+    document
+      .getElementById("locationInput")
+      .addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          handleSearch();
+        }
+      });
+
+    document
+      .getElementById("useSampleBtn")
+      .addEventListener("click", handleUseSample);
+
+    document
+      .getElementById("filterPills")
+      .addEventListener("click", handleFilterClick);
+
+    document
+      .getElementById("downloadIcsBtn")
+      .addEventListener("click", generateICS);
+
+    document
+      .getElementById("clearRemindersBtn")
+      .addEventListener("click", clearReminders);
+
+    renderHeroDeadlines();
+    loadReminders();
+  </script>
+</body>
+</html>
