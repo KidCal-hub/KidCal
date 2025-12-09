@@ -438,6 +438,17 @@
       font-size: 0.75rem;
       margin-top: 4px;
     }
+
+    ol.info-list {
+      margin: 8px 0 0;
+      padding-left: 18px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    ol.info-list li {
+      margin-bottom: 6px;
+    }
   </style>
 </head>
 <body>
@@ -462,7 +473,8 @@
               All your child’s registrations, events & deadlines — organized in one place so you never miss a moment.
             </span>
             <br /><br />
-            Enter your city or ZIP to instantly see enrollment dates, sports sign-ups, camps, school events, and more. Tap “Add to my reminders” to build your do-not-miss list and download it to your calendar.
+            Enter your city or ZIP to instantly see enrollment dates, sports sign-ups, camps, school events, and more.
+            Tap “Add to my reminders” to build your do-not-miss list and download it to your calendar.
           </p>
 
           <ul class="hero-list">
@@ -498,7 +510,8 @@
         <div class="section-card">
           <p class="section-title">Registration finder (prototype)</p>
           <p class="section-subtitle">
-            Enter a San Luis Obispo County city or town above to filter the sample list. In the full version, this will load live deadlines specific to your area.
+            Enter a San Luis Obispo County city or town above to filter the list. The live version will load real deadlines
+            from local partners using the KidCal sheet.
           </p>
 
           <div class="label-chip">
@@ -532,7 +545,7 @@
         </div>
       </section>
 
-      <!-- RIGHT COLUMN: REMINDERS -->
+      <!-- RIGHT COLUMN: REMINDERS + HOW-TO CARD -->
       <section>
         <div class="section-card">
           <p class="section-title">My reminder calendar</p>
@@ -560,6 +573,40 @@
           </p>
         </div>
 
+        <!-- HOW TO ADD PROGRAM CARD -->
+        <div class="section-card">
+          <p class="section-title">How to add your program to KidCal</p>
+          <p class="section-subtitle">
+            Local schools, sports leagues, camps, and youth programs can add their dates into the shared KidCal sheet.
+            Once added, they’ll appear here for families to discover.
+          </p>
+
+          <ol class="info-list">
+            <li>
+              Open the shared KidCal programs sheet:
+              <a
+                href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSTGyzF9lGXW8a1--CtEYzaQFhZnkU0Ye8InlnVPgbmyYaiYzy8wPEgGp2dVodt-GEbonPHKGRKQJwl/pub?gid=0&single=true&output=csv"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                KidCal programs sheet
+              </a>.
+            </li>
+            <li>
+              Add a new row with at least these columns filled in:
+              <strong>City</strong>, <strong>Title</strong>, <strong>Type</strong> (school, sports, camp, or other),
+              <strong>Date</strong>, <strong>Deadline label</strong>, <strong>Provider</strong>, and <strong>Link</strong>.
+            </li>
+            <li>
+              Optional columns like <strong>Age range</strong>, <strong>Cost</strong>, or <strong>Notes</strong> are welcome.
+              The website safely ignores extra columns, so adding more details will not break anything.
+            </li>
+            <li>
+              Save your changes. Updates may take a few minutes to show up in KidCal as the sheet is synced.
+            </li>
+          </ol>
+        </div>
+
         <footer>
           <div>
             KidCal helps parents stay organized by collecting local kids’ activity deadlines in one place.
@@ -569,7 +616,8 @@
               Prototype only
             </span>
             <br />
-            This version uses sample data to show how KidCal will work. Dates and offerings change each season. Always confirm through the linked district or recreation site before you rely on a deadline.
+            This version uses sample and sheet-based data to show how KidCal will work. Dates and offerings change each season.
+            Always confirm through the linked district or recreation site before you rely on a deadline.
           </div>
         </footer>
       </section>
@@ -577,8 +625,12 @@
   </div>
 
   <script>
-    // --- Sample events for San Luis Obispo County prototype ---
-    const EVENTS = [
+    // --- Google Sheet CSV URL ---
+    const SHEET_URL =
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vSTGyzF9lGXW8a1--CtEYzaQFhZnkU0Ye8InlnVPgbmyYaiYzy8wPEgGp2dVodt-GEbonPHKGRKQJwl/pub?gid=0&single=true&output=csv";
+
+    // --- Fallback sample events for SLO County prototype ---
+    const SAMPLE_EVENTS = [
       {
         id: 1,
         city: "San Luis Obispo",
@@ -641,6 +693,9 @@
       }
     ];
 
+    // This will be replaced by sheet data if available
+    let EVENTS = [...SAMPLE_EVENTS];
+
     const cityInput = document.getElementById("cityInput");
     const typeFilter = document.getElementById("typeFilter");
     const eventsList = document.getElementById("eventsList");
@@ -684,7 +739,7 @@
       const filterType = typeFilter.value;
       const list = currentEvents.filter((ev) => {
         if (filterType === "all") return true;
-        return ev.type === filterType;
+        return (ev.type || "other").toLowerCase() === filterType;
       });
 
       if (list.length === 0) {
@@ -703,19 +758,19 @@
 
         const title = document.createElement("div");
         title.className = "event-title";
-        title.textContent = ev.title;
+        title.textContent = ev.title || "(No title)";
 
         const meta1 = document.createElement("div");
         meta1.className = "event-meta";
         meta1.innerHTML =
           '<span class="event-city">' +
-          ev.city +
-          "</span> · " +
-          (ev.provider || "");
+          (ev.city || "Unknown city") +
+          "</span>" +
+          (ev.provider ? " · " + ev.provider : "");
 
         const meta2 = document.createElement("div");
         meta2.className = "event-meta";
-        meta2.textContent = ev.deadlineLabel;
+        meta2.textContent = ev.deadlineLabel || "";
 
         const link = document.createElement("div");
         link.className = "event-link";
@@ -730,7 +785,7 @@
 
         main.appendChild(title);
         main.appendChild(meta1);
-        main.appendChild(meta2);
+        if (ev.deadlineLabel) main.appendChild(meta2);
         main.appendChild(link);
 
         const actions = document.createElement("div");
@@ -757,17 +812,19 @@
     }
 
     function prettyType(type) {
-      switch (type) {
+      const t = (type || "other").toLowerCase();
+      switch (t) {
         case "school":
           return "School";
         case "sports":
           return "Sports";
         case "camp":
+        case "camp/activity":
           return "Camp / Activity";
         case "other":
           return "Other";
         default:
-          return type;
+          return t.charAt(0).toUpperCase() + t.slice(1);
       }
     }
 
@@ -788,13 +845,15 @@
 
         const title = document.createElement("div");
         title.className = "reminder-title";
-        title.textContent = r.title;
+        title.textContent = r.title || "(No title)";
 
         const meta = document.createElement("div");
         meta.className = "reminder-meta";
-        meta.textContent = `${r.deadlineLabel} · ${r.city}${
-          r.provider ? " · " + r.provider : ""
-        }`;
+        const parts = [];
+        if (r.deadlineLabel) parts.push(r.deadlineLabel);
+        if (r.city) parts.push(r.city);
+        if (r.provider) parts.push(r.provider);
+        meta.textContent = parts.join(" · ");
 
         main.appendChild(title);
         main.appendChild(meta);
@@ -838,8 +897,8 @@
         renderEvents();
         return;
       }
-      currentEvents = EVENTS.filter((ev) =>
-        ev.city.toLowerCase().includes(city)
+      currentEvents = EVENTS.filter(
+        (ev) => (ev.city || "").toLowerCase().includes(city)
       );
       renderEvents();
     }
@@ -875,10 +934,14 @@
 
         lines.push("BEGIN:VEVENT");
         lines.push(`UID:kidcal-${r.id || idx}@kidcal`);
-        lines.push(`SUMMARY:${escapeText(r.title)}`);
-        lines.push(`DESCRIPTION:${escapeText(
-          `${r.city}${r.provider ? " · " + r.provider : ""} · ${r.deadlineLabel}`
-        )}`);
+        lines.push(`SUMMARY:${escapeText(r.title || "")}`);
+        lines.push(
+          `DESCRIPTION:${escapeText(
+            `${r.city || ""}${r.provider ? " · " + r.provider : ""}${
+              r.deadlineLabel ? " · " + r.deadlineLabel : ""
+            }`
+          )}`
+        );
         lines.push(`DTSTART;VALUE=DATE:${start}`);
         lines.push("END:VEVENT");
       });
@@ -909,6 +972,100 @@
       URL.revokeObjectURL(url);
     }
 
+    // --- Simple CSV parser (assumes no commas inside cells) ---
+    function parseCsv(text) {
+      const lines = text.trim().split(/\r?\n/);
+      if (!lines.length) return { headers: [], rows: [] };
+
+      const headers = lines[0].split(",").map((h) => h.trim());
+      const rows = lines.slice(1).map((line) => {
+        const cells = line.split(",").map((c) => c.trim());
+        const obj = {};
+        headers.forEach((h, i) => {
+          obj[h] = cells[i] || "";
+        });
+        return obj;
+      });
+
+      return { headers, rows };
+    }
+
+    // Helper to get a value from row by trying multiple header names
+    function getCell(row, candidates) {
+      for (const name of candidates) {
+        for (const key of Object.keys(row)) {
+          if (key.toLowerCase().trim() === name.toLowerCase().trim()) {
+            return row[key] || "";
+          }
+        }
+      }
+      return "";
+    }
+
+    async function fetchSheetData() {
+      try {
+        const res = await fetch(SHEET_URL);
+        if (!res.ok) throw new Error("Network error");
+        const text = await res.text();
+        const parsed = parseCsv(text);
+
+        if (!parsed.rows || !parsed.rows.length) {
+          console.warn("Sheet has no rows; keeping sample events.");
+          return;
+        }
+
+        const mapped = parsed.rows
+          .map((row, idx) => {
+            const title = getCell(row, ["title", "event_title", "name"]);
+            if (!title) return null;
+
+            const city = getCell(row, ["city", "town"]);
+            const type = (
+              getCell(row, ["type", "category"]) || "other"
+            ).toLowerCase();
+            const date = getCell(row, ["date", "start_date"]);
+            const deadlineLabel = getCell(row, [
+              "deadline_label",
+              "deadline",
+              "deadline text",
+              "notes"
+            ]);
+            const provider = getCell(row, [
+              "provider",
+              "host",
+              "organization",
+              "org"
+            ]);
+            const link = getCell(row, ["link", "url", "website"]);
+
+            return {
+              id: "sheet-" + idx,
+              city,
+              type,
+              title,
+              date,
+              deadlineLabel,
+              provider,
+              link
+              // Extra columns like age_range, cost, etc. are safely ignored
+            };
+          })
+          .filter(Boolean);
+
+        if (mapped.length) {
+          EVENTS = mapped;
+          currentEvents = [...EVENTS];
+          renderEvents();
+          console.info(`Loaded ${mapped.length} events from sheet.`);
+        }
+      } catch (e) {
+        console.warn("Failed to load sheet data; using sample events.", e);
+        EVENTS = [...SAMPLE_EVENTS];
+        currentEvents = [...EVENTS];
+        renderEvents();
+      }
+    }
+
     // --- Event listeners ---
     btnFind.addEventListener("click", handleFind);
     btnSample.addEventListener("click", handleSample);
@@ -922,9 +1079,10 @@
       }
     });
 
-    // Initial render
+    // Initial render: show whatever EVENTS currently is, then try to swap in sheet data
     handleSample();
     renderReminders();
+    fetchSheetData();
   </script>
 </body>
 </html>
