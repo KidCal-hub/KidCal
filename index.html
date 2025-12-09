@@ -771,6 +771,50 @@
       opacity: 1;
       transform: translateX(-50%) translateY(0);
     }
+    /* Mobile tweaks */
+@media (max-width: 600px) {
+  /* Stack the search bar and buttons nicely */
+  .city-input-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .cta-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cta-row .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Slightly larger tap targets on small screens */
+  .city-input-row input {
+    padding: 11px 14px;
+    font-size: 1rem;
+  }
+
+  .btn {
+    padding: 11px 16px;
+    font-size: 1rem;
+  }
+
+  /* Event list: more spacing so it feels less cramped */
+  .events-list {
+    max-height: none;
+  }
+
+  .event-item {
+    padding: 12px 10px;
+  }
+
+  /* Reminders card spacing on mobile */
+  .reminders-card {
+    margin-top: 10px;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -1512,3 +1556,4 @@
   </script>
 </body>
 </html>
+
