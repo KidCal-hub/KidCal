@@ -547,38 +547,41 @@
           <div class="brand-text-sub">One place for every kid deadline</div>
         </div>
       </div>
-      <div class="tagline">For busy parents & caregivers</div>
+      <div class="tagline">San Luis Obispo County prototype</div>
     </header>
 
     <section class="hero">
       <div>
-        <h1>Never miss another school or sports registration again!/h1>
+        <h1>Never miss another school or sports registration.</h1>
         <p>
-          Enter your city or ZIP and get key registration dates, links, and
-          event info in one place. Build your own reminder calendar so you
-          never forget the important stuff for your kids.
+          Enter your city or ZIP and get key registration links and kids programs
+          for San Luis Obispo County in one place. Add them to your own
+          reminder list in seconds.
         </p>
         <div class="hero-badges">
           <div class="hero-badge">
-            <span>📅</span> School registration
+            <span>📅</span> School enrollment
           </div>
           <div class="hero-badge">
-            <span>🏅</span> Youth sports sign-ups
+            <span>🏅</span> Youth sports leagues
           </div>
           <div class="hero-badge">
-            <span>🎨</span> Camps & enrichment
+            <span>🎨</span> Camps & activities
           </div>
         </div>
         <div class="hero-cta">
-          <small>Try searching for “Atascadero” or ZIP 93422 to see live data.</small>
+          <small>
+            Try: “Atascadero”, “San Luis Obispo”, “Paso Robles”, “Nipomo”, “Templeton”…  
+            zip codes work too.
+          </small>
         </div>
       </div>
       <div class="hero-panel">
-        <div class="hero-panel-title">Today's sample deadlines</div>
+        <div class="hero-panel-title">Sample upcoming deadlines</div>
         <div class="hero-panel-list" id="hero-deadlines"></div>
         <div class="hero-panel-footer">
-          These are sample items. In a full version, this panel could show
-          real, location-based upcoming deadlines for your family.
+          This panel uses sample data. In a full build, it would show
+          live, location-based deadlines for your kids.
         </div>
       </div>
     </section>
@@ -588,14 +591,14 @@
         <input
           id="locationInput"
           type="text"
-          placeholder="Enter city or ZIP code (e.g., Atascadero or 93422)..."
+          placeholder="Enter city or ZIP code in San Luis Obispo County..."
         />
         <button class="btn-primary" id="searchBtn" type="button">
           <span>🔍</span> Find registrations
         </button>
       </div>
       <button class="btn-ghost" id="useSampleBtn" type="button">
-        <span>✨</span> Try sample data
+        <span>✨</span> Try generic sample list
       </button>
     </section>
 
@@ -605,7 +608,7 @@
           <div>
             <div class="results-title">Registration finder</div>
             <div class="results-subtitle" id="resultsSubtitle">
-              Enter a location to see school, sports, and event timelines.
+              Enter a San Luis Obispo County city or town to see links and programs.
             </div>
           </div>
           <div class="pill-group" id="filterPills">
@@ -616,8 +619,7 @@
           </div>
         </div>
         <div class="pill-filter-caption">
-          Filter by type, then tap "Add to my reminders" to build your own
-          do-not-miss list.
+          Filter by type, then tap “Add to my reminders” to build your do not miss list.
         </div>
         <div class="results-list" id="resultsList"></div>
       </div>
@@ -627,8 +629,7 @@
           <div class="reminders-title-box">
             <div class="reminders-title">My reminder calendar</div>
             <div class="reminders-subtitle">
-              Saved deadlines stay on this device. In production, these would
-              sync between app and web.
+              Saved on this device. Download an .ics file to import into your own calendar.
             </div>
           </div>
           <div class="reminders-tools">
@@ -642,31 +643,28 @@
         </div>
         <div class="reminders-list" id="remindersList"></div>
         <div class="empty-state" id="remindersEmpty">
-          No reminders yet. Add a school or sports registration from the list
-          to see it here.
+          No reminders yet. Add a school or sports registration from the list to see it here.
         </div>
       </aside>
     </section>
 
     <div class="footer-note">
-      Prototype only. Real data would come from school districts, youth
-      leagues, and community providers via APIs, open data, and partner
-      submissions.
+      Prototype only. Dates and offerings change each season. Always confirm on the
+      linked district or recreation site before you rely on a deadline.
     </div>
   </div>
 
   <script>
     // ---------------------------
-    // Mock + location-specific data
+    // Location data – SLO County cities and major towns
     // ---------------------------
-    const MOCK_DATA = {
-      // Atascadero-specific curated data
+    const LOCATION_DATA = {
       atascadero: {
         locationLabel: "Atascadero, CA 93422",
         items: [
           {
-            id: "atascadero-ausd-kinder-2025",
-            title: "AUSD Kindergarten & TK Enrollment (2025–26)",
+            id: "atascadero-ausd-tk-kinder-2025",
+            title: "AUSD Transitional Kindergarten and Kindergarten Enrollment 2025–26",
             org: "Atascadero Unified School District",
             type: "school",
             registrationOpen: "2025-03-01",
@@ -674,147 +672,492 @@
             eventDate: null,
             url: "https://atascaderousd.aeries.net/air/",
             notes:
-              "Online pre-enrollment for NEW incoming students for 2025–26 opens March 1 and runs through March 31. Check AUSD Parent Resources for updates each year."
-          },
-          {
-            id: "atascadero-rec-youth-basketball-2025",
-            title: "City of Atascadero – Winter Youth Basketball 2025–26",
-            org: "City of Atascadero Recreation",
-            type: "sports",
-            registrationOpen: "2025-08-25",
-            registrationClose: "2025-10-24",
-            eventDate: "2026-01-10",
-            url: "https://www.atascaderonews.com/news/sports/youth-basketball-registration-now-open-in-atascadero/",
-            notes:
-              "Registration for Winter Youth Basketball opens late August 2025 and closes October 24, 2025. Games run Saturdays from Jan 10 to Mar 7, 2026; skills clinics in Oct and Nov."
-          },
-          {
-            id: "atascadero-little-league-spring-2025",
-            title: "Atascadero Little League – Spring 2025 Season",
-            org: "Atascadero Little League",
-            type: "sports",
-            registrationOpen: "2024-11-17",
-            registrationClose: "2025-01-01",
-            eventDate: null,
-            url: "https://www.atascaderolittleleague.com/",
-            notes:
-              "Spring 2025 registration opens Nov 17, 2024. Early bird discount available for players registered before Jan 1, 2025; final close date may be later, see site for current info."
-          },
-          {
-            id: "atascadero-little-league-fall-ball-2025",
-            title: "Atascadero Little League – Fall Ball 2025",
-            org: "Atascadero Little League",
-            type: "sports",
-            registrationOpen: "2025-08-12",
-            registrationClose: "2025-08-31",
-            eventDate: null,
-            url: "https://www.atascaderolittleleague.com/",
-            notes:
-              "Fall Ball registration opens mid-August 2025 and closes Aug 31, 2025. Games/practices on Sundays at Paloma; check the Little League site for latest details."
+              "Online enrollment for new TK and Kindergarten students for 2025–26 runs March 1–31, 2025. Requires online Aeries account and residency, age, and immunization documents."
           },
           {
             id: "atascadero-youth-soccer-fall-2025",
-            title: "Atascadero Youth Soccer League – Fall 2025",
-            org: "Atascadero Youth Soccer (AYSL)",
+            title: "Atascadero Youth Soccer League – Fall 2025 Season",
+            org: "Atascadero Youth Soccer League (AYSL)",
             type: "sports",
-            registrationOpen: null,
-            registrationClose: "2025-05-19",
-            eventDate: null,
+            registrationOpen: "2025-04-08",
+            registrationClose: "2025-06-16",
+            eventDate: "2025-09-06",
             url: "https://www.atascaderosoccer.org/",
             notes:
-              "Fall 2025 registration open with an early bird discount deadline of May 19, 2025. Registration may continue after; see AYSL site for current dates and fees."
+              "Fall 2025 schedule lists early bird registration opening April 8, discount through May 19, and final registration closing June 16. First games scheduled for September 6, 2025; divisions fill to capacity."
+          },
+          {
+            id: "atascadero-winter-basketball-2025-26",
+            title: "City of Atascadero Winter Youth Basketball 2025–26",
+            org: "City of Atascadero Recreation",
+            type: "sports",
+            registrationOpen: null,
+            registrationClose: null,
+            eventDate: "2026-01-10",
+            url: "https://www.atascadero.org/service/youth-sports",
+            notes:
+              "City winter youth basketball league with practices beginning early December and games on Saturdays from January 10 through March 7, 2026. Registration and skills clinics open in the fall through the city recreation site."
           }
         ]
       },
 
-      // Example other locations (you can expand later)
-      "93444": {
+      arroyo_grande: {
+        locationLabel: "Arroyo Grande, CA 93420",
+        items: [
+          {
+            id: "arroyo-grande-rec-classes",
+            title: "Recreation Services – Sports, Camps, and Family Events",
+            org: "City of Arroyo Grande Recreation Services",
+            type: "event",
+            registrationOpen: null,
+            registrationClose: null,
+            eventDate: null,
+            url: "https://secure.rec1.com/CA/arroyo-grande-ca/catalog",
+            notes:
+              "Arroyo Grande Recreation Services offers seasonal youth sports, classes, and special events with online registration through the Rec1 catalog. Check activity listings for current sports leagues and kids programs."
+          },
+          {
+            id: "five-cities-youth-basketball",
+            title: "Five Cities Youth Basketball League",
+            org: "5 Cities Youth Basketball",
+            type: "sports",
+            registrationOpen: null,
+            registrationClose: null,
+            eventDate: null,
+            url: "https://5cyb.sportngin.com/",
+            notes:
+              "Recreational basketball league serving Arroyo Grande, Grover Beach, Pismo Beach, Shell Beach, and Oceano for grades 1–8. Registration windows and season dates are posted each year on the league site."
+          }
+        ]
+      },
+
+      grover_beach: {
+        locationLabel: "Grover Beach, CA 93433",
+        items: [
+          {
+            id: "grover-beach-community-services-programs",
+            title: "Grover Beach Community Services – Activities and Events",
+            org: "Grover Beach Community Services",
+            type: "event",
+            registrationOpen: null,
+            registrationClose: null,
+            eventDate: null,
+            url: "https://anc.apm.activecommunities.com/groverbeachparks/home?onlineSiteId=0",
+            notes:
+              "Grover Beach Community Services offers classes, special events, and seasonal activities for youth and families. View the current activity guide and register online through the ActiveNet portal."
+          }
+        ]
+      },
+
+      morro_bay: {
+        locationLabel: "Morro Bay, CA 93442",
+        items: [
+          {
+            id: "morro-bay-estero-basketball",
+            title: "Estero Bay Youth Basketball League",
+            org: "City of Morro Bay Recreation Services",
+            type: "sports",
+            registrationOpen: null,
+            registrationClose: null,
+            eventDate: "2026-01-10",
+            url: "https://www.morrobayca.gov/338/Sports-Leagues---Youth",
+            notes:
+              "Basketball league for youth in approximately 2nd–8th grade. Registration takes place in October, practices begin in December, and games run from early January through early March in Morro Bay and the Estero Bay area."
+          },
+          {
+            id: "morro-bay-kids-club",
+            title: "Kid's Club Before and After School Care 2025–26",
+            org: "City of Morro Bay Recreation Services",
+            type: "event",
+            registrationOpen: null,
+            registrationClose: null,
+            eventDate: null,
+            url: "https://www.morrobayca.gov/292/Recreation-Services",
+            notes:
+              "Kid's Club provides before and after school care for elementary students in Morro Bay. Pre-registration information for the 2025–26 school year is posted on the Recreation Services page each spring."
+          }
+        ]
+      },
+
+      paso_robles: {
+        locationLabel: "Paso Robles, CA 93446",
+        items: [
+          {
+            id: "paso-junior-giants-2025",
+            title: "Paso Robles Junior Giants 2025 Baseball and Softball",
+            org: "Paso Robles Recreation / Junior Giants",
+            type: "sports",
+            registrationOpen: "2025-04-01",
+            registrationClose: "2025-07-31",
+            eventDate: "2025-06-09",
+            url: "https://www.prcity.com/CivicAlerts.asp?AID=1328",
+            notes:
+              "Free Junior Giants summer baseball and softball league with T-Ball, Minors, and Majors divisions. Registration typically runs April through July, with practices starting in June and games through early August at Barney Schwartz Park."
+          },
+          {
+            id: "paso-youth-baseball-spring",
+            title: "Paso Robles Youth Baseball – Spring Season",
+            org: "Paso Robles Youth Baseball",
+            type: "sports",
+            registrationOpen: "2025-10-11",
+            registrationClose: "2026-01-09",
+            eventDate: null,
+            url: "https://www.pasobaseball.org/",
+            notes:
+              "Spring youth baseball registration opens in October and remains open into early January, with early bird discounts before the end of October. Practices and games are held at local Paso Robles fields."
+          },
+          {
+            id: "paso-rec-youth-activities",
+            title: "Paso Robles Recreation Youth Classes and Sports",
+            org: "Paso Robles Recreation Services",
+            type: "event",
+            registrationOpen: null,
+            registrationClose: null,
+            eventDate: null,
+            url: "https://apm.activecommunities.com/PRCityRecreation",
+            notes:
+              "Paso Robles Recreation Services uses ActiveNet for youth classes, camps, and leagues, including Youth Evolution basketball programs and other activities at Centennial Park. Check current listings for specific session dates."
+          }
+        ]
+      },
+
+      pismo_beach: {
+        locationLabel: "Pismo Beach, CA 93449",
+        items: [
+          {
+            id: "pismo-winter-theater-camp-2026",
+            title: "Creative Kids Company Winter Theater Camp – January 2026",
+            org: "City of Pismo Beach Recreation",
+            type: "event",
+            registrationOpen: null,
+            registrationClose: null,
+            eventDate: "2026-01-05",
+            url: "https://www.activekids.com/orgs/city-of-pismo-beach-recreation",
+            notes:
+              "City of Pismo Beach Recreation offers seasonal camps including Creative Kids Company Winter Theater Camp (for example January 5–9, 2026) plus surf camps and martial arts. Current offerings and dates appear in the online activity guide."
+          },
+          {
+            id: "pismo-rec-activity-guide",
+            title: "Pismo Beach Recreation – Youth Programs and Activity Guide",
+            org: "Pismo Beach Recreation",
+            type: "event",
+            registrationOpen: null,
+            registrationClose: null,
+            eventDate: null,
+            url: "https://www.pismobeach.org/73/Recreation",
+            notes:
+              "Pismo Beach Recreation publishes an activity guide with youth sports, camps, and classes. Families can view current youth programs and register online through the linked portals."
+          }
+        ]
+      },
+
+      san_luis_obispo: {
+        locationLabel: "San Luis Obispo, CA 93401",
+        items: [
+          {
+            id: "slcusb-tk-2025-26",
+            title: "San Luis Coastal USD – Transitional Kindergarten Enrollment 2025–26",
+            org: "San Luis Coastal Unified School District",
+            type: "school",
+            registrationOpen: "2025-03-03",
+            registrationClose: null,
+            eventDate: null,
+            url: "https://www.slcusd.org/academics/transitional-kindergarten-tk",
+            notes:
+              "For 2025–26, students turning four on or before September 1, 2025 are eligible for TK. Enrollment for TK opens March 3, 2025 through the SLCUSD online enrollment portal and continues while space is available."
+          },
+          {
+            id: "slo-youth-basketball-clinic-dec-2025",
+            title: "SLO Youth Basketball Pre-Season Clinic – December 2025",
+            org: "City of San Luis Obispo Parks and Recreation",
+            type: "sports",
+            registrationOpen: null,
+            registrationClose: null,
+            eventDate: "2025-12-01",
+            url: "https://www.activekids.com/san-luis-obispo-ca/basketball/basketball-clinics/youth-basketball-pre-season-clinic-6-8-years-2025",
+            notes:
+              "Pre-season youth basketball clinic for ages around 6–8, held December 1–17, 2025 at SLO Parks and Recreation. Registration and details are posted through the SLO Parks and Recreation activity search."
+          },
+          {
+            id: "slo-ymca-futsal-2025",
+            title: "SLO County YMCA Spring Youth Futsal League 2025",
+            org: "SLO County YMCA / City of San Luis Obispo",
+            type: "sports",
+            registrationOpen: null,
+            registrationClose: null,
+            eventDate: "2025-04-11",
+            url: "https://channel.recliquecore.com/programs/1542/san-luis-obispo-futsal-league/?locations=140",
+            notes:
+              "Indoor futsal league in partnership with the City of San Luis Obispo Parks and Recreation. Practices are held Monday through Thursday with games on Fridays starting April 11, 2025. Age divisions and registration details are on the YMCA site."
+          }
+        ]
+      },
+
+      nipomo: {
         locationLabel: "Nipomo, CA 93444",
         items: [
           {
-            id: "nipomo-es-kinder",
-            title: "Nipomo Elementary – Kindergarten Registration",
-            org: "Lucia Mar Unified School District",
-            type: "school",
-            registrationOpen: "2025-02-15",
-            registrationClose: "2025-04-01",
-            eventDate: null,
-            url: "https://example.com/nipomo-kinder",
-            notes: "Bring immunization records, proof of residence, and birth certificate."
+            id: "nipomo-ayso-fall-2025",
+            title: "AYSO Region 716 – Nipomo Fall 2025 Soccer",
+            org: "AYSO Region 716 Nipomo",
+            type: "sports",
+            registrationOpen: null,
+            registrationClose: "2025-08-03",
+            eventDate: "2025-08-16",
+            url: "https://ayso.bluesombrero.com/Default.aspx?tabid=954819",
+            notes:
+              "Fall soccer runs roughly August 16 to October 25, 2025. Registration fee discounts apply through about August 3. Exact registration window and fee details are posted on the Region 716 registration page."
           },
           {
-            id: "nipomo-little-league-spring",
-            title: "Nipomo Little League – Spring Baseball",
+            id: "nipomo-little-league-2026",
+            title: "Nipomo Little League – 2026 Season",
             org: "Nipomo Little League",
             type: "sports",
-            registrationOpen: "2025-01-05",
-            registrationClose: "2025-02-10",
-            eventDate: null,
-            url: "https://example.com/nipomo-little-league",
-            notes: "Ages 4–12. Skills assessments mid-February."
+            registrationOpen: null,
+            registrationClose: "2026-01-13",
+            eventDate: "2026-03-07",
+            url: "https://www.nipomolittleleague.com/Default.aspx?tabid=1768597",
+            notes:
+              "Nipomo Little League offers spring baseball with multiple divisions including Challenger. For some programs, registration closes January 13, 2026, with the season running March through late May. See the league site for division specific dates."
           },
           {
-            id: "nipomo-ayso-fall",
-            title: "AYSO – Fall Soccer Sign-ups",
-            org: "Local AYSO Region",
-            type: "sports",
-            registrationOpen: "2025-05-01",
-            registrationClose: "2025-06-15",
-            eventDate: null,
-            url: "https://example.com/ayso-fall",
-            notes: "Discounts for early registration through May 15."
-          },
-          {
-            id: "nipomo-summer-camp",
-            title: "Summer STEAM Camp Week 1",
-            org: "Nipomo Community Center",
+            id: "nipomo-recreation-youth-programs",
+            title: "Nipomo Recreation – Youth Basketball and Programs",
+            org: "Nipomo Recreation",
             type: "event",
-            registrationOpen: "2025-03-01",
-            registrationClose: "2025-05-31",
-            eventDate: "2025-07-08",
-            url: "https://example.com/nipomo-steam-camp",
-            notes: "Week-long camp, 9am–3pm, grades 1–6."
+            registrationOpen: null,
+            registrationClose: null,
+            eventDate: null,
+            url: "https://www.nipomorecreation.com/",
+            notes:
+              "Nipomo Recreation provides youth basketball, before and after school care, preschool and toddler programs, and events for families from ages 6 weeks through 8th grade. Program dates and registration are posted on their website."
           }
         ]
       },
-      "94103": {
-        locationLabel: "San Francisco, CA 94103",
+
+      templeton: {
+        locationLabel: "Templeton, CA 93465",
         items: [
           {
-            id: "sfusd-kinder",
-            title: "SFUSD Elementary – School Enrollment Round 1",
-            org: "San Francisco Unified School District",
-            type: "school",
-            registrationOpen: "2025-11-01",
-            registrationClose: "2026-01-10",
-            eventDate: null,
-            url: "https://example.com/sfusd-enrollment",
-            notes: "Submit online application and school rankings."
-          },
-          {
-            id: "sf-rec-baseball",
-            title: "SF Rec & Park – Youth Baseball",
-            org: "San Francisco Rec & Park",
+            id: "templeton-youth-basketball-2025-26",
+            title: "Templeton Youth Basketball League 2025–26",
+            org: "Templeton Recreation Department",
             type: "sports",
-            registrationOpen: "2025-02-01",
-            registrationClose: "2025-03-05",
-            eventDate: null,
-            url: "https://example.com/sf-baseball",
-            notes: "League play begins in April."
+            registrationOpen: null,
+            registrationClose: "2025-12-20",
+            eventDate: "2026-01-10",
+            url: "https://leagues.bluesombrero.com/Default.aspx?tabid=1713824",
+            notes:
+              "Templeton Recreation Youth Basketball 2025–26 includes divisions such as 7th and 8th grade girls, with registration closing December 20, 2025 and season dates from January 10 through March 7, 2026."
           },
           {
-            id: "sf-summer-camp",
-            title: "Summer Day Camp Session 1",
-            org: "SF Rec & Park",
+            id: "templeton-youth-soccer-2025",
+            title: "Templeton Recreation – Youth Soccer League",
+            org: "Templeton Community Services District",
+            type: "sports",
+            registrationOpen: null,
+            registrationClose: null,
+            eventDate: null,
+            url: "https://leagues.bluesombrero.com/Default.aspx?tabid=1352276",
+            notes:
+              "Templeton Recreation runs youth soccer, softball, T-ball, basketball, flag football, and other seasonal programs. The youth soccer program offers divisions from under-10 through under-14. Registration dates vary by season."
+          },
+          {
+            id: "templeton-parks-recreation",
+            title: "Templeton Parks and Recreation – Youth Sports Programs",
+            org: "Templeton Community Services District",
             type: "event",
-            registrationOpen: "2025-03-15",
-            registrationClose: "2025-04-30",
-            eventDate: "2025-06-10",
-            url: "https://example.com/sf-summer-camp",
-            notes: "Camps fill quickly; set a reminder for open date."
+            registrationOpen: null,
+            registrationClose: null,
+            eventDate: null,
+            url: "https://www.templetoncsd.org/111/Parks-Recreation",
+            notes:
+              "Templeton Parks and Recreation coordinates multiple youth sports leagues and community events, including fall soccer, winter basketball, spring softball and T-ball, and summer flag football."
           }
         ]
       },
+
+      cambria: {
+        locationLabel: "Cambria, CA 93428",
+        items: [
+          {
+            id: "cambria-county-rec-programs",
+            title: "SLO County Parks and Recreation – Youth Programs (Cambria area)",
+            org: "San Luis Obispo County Parks and Recreation",
+            type: "event",
+            registrationOpen: null,
+            registrationClose: null,
+            eventDate: null,
+            url: "https://www.slocounty.ca.gov/departments/parks-recreation/services/recreation-programs-and-services",
+            notes:
+              "Families in Cambria can access countywide classes, camps, and recreation programs offered by San Luis Obispo County Parks and Recreation, including youth and family activities listed on the county recreation programs page."
+          }
+        ]
+      },
+
+      los_osos: {
+        locationLabel: "Los Osos, CA 93402",
+        items: [
+          {
+            id: "los-osos-county-rec-programs",
+            title: "SLO County Parks and Recreation – Youth Programs (Los Osos area)",
+            org: "San Luis Obispo County Parks and Recreation",
+            type: "event",
+            registrationOpen: null,
+            registrationClose: null,
+            eventDate: null,
+            url: "https://www.slocounty.ca.gov/departments/parks-recreation/services/recreation-programs-and-services",
+            notes:
+              "Residents of Los Osos and the surrounding community can participate in county recreation programs such as youth classes and camps offered at regional parks and facilities across San Luis Obispo County."
+          }
+        ]
+      },
+
+      oceano: {
+        locationLabel: "Oceano, CA 93445",
+        items: [
+          {
+            id: "oceano-five-cities-basketball",
+            title: "Five Cities Youth Basketball – Oceano Area",
+            org: "5 Cities Youth Basketball",
+            type: "sports",
+            registrationOpen: null,
+            registrationClose: null,
+            eventDate: null,
+            url: "https://5cyb.sportngin.com/",
+            notes:
+              "Five Cities Youth Basketball serves communities including Oceano, Arroyo Grande, Grover Beach, Pismo Beach, and Shell Beach with youth basketball leagues. Registration and season details are maintained on the league site."
+          }
+        ]
+      },
+
+      avila_beach: {
+        locationLabel: "Avila Beach, CA 93424",
+        items: [
+          {
+            id: "avila-beach-county-rec-programs",
+            title: "SLO County Parks and Recreation – Coastal Youth Programs",
+            org: "San Luis Obispo County Parks and Recreation",
+            type: "event",
+            registrationOpen: null,
+            registrationClose: null,
+            eventDate: null,
+            url: "https://www.slocounty.ca.gov/departments/parks-recreation/services/recreation-programs-and-services",
+            notes:
+              "Avila Beach families can take part in county parks and recreation programs and classes, including offerings in nearby coastal communities, with schedules updated regularly on the county website."
+          }
+        ]
+      },
+
+      cayucos: {
+        locationLabel: "Cayucos, CA 93430",
+        items: [
+          {
+            id: "cayucos-county-rec-programs",
+            title: "SLO County Parks and Recreation – Youth Programs (Cayucos area)",
+            org: "San Luis Obispo County Parks and Recreation",
+            type: "event",
+            registrationOpen: null,
+            registrationClose: null,
+            eventDate: null,
+            url: "https://www.slocounty.ca.gov/departments/parks-recreation/services/recreation-programs-and-services",
+            notes:
+              "Cayucos area families can access countywide youth recreation programs, including classes, sports, and activity camps coordinated through SLO County Parks and Recreation."
+          }
+        ]
+      },
+
+      san_miguel: {
+        locationLabel: "San Miguel, CA 93451",
+        items: [
+          {
+            id: "san-miguel-county-rec-programs",
+            title: "SLO County Parks and Recreation – Youth Programs (San Miguel area)",
+            org: "San Luis Obispo County Parks and Recreation",
+            type: "event",
+            registrationOpen: null,
+            registrationClose: null,
+            eventDate: null,
+            url: "https://www.slocounty.ca.gov/departments/parks-recreation/services/recreation-programs-and-services",
+            notes:
+              "San Miguel families can connect to county recreation offerings and regional programs in nearby Paso Robles and Templeton for youth sports and activities."
+          }
+        ]
+      },
+
+      san_simeon: {
+        locationLabel: "San Simeon, CA 93452",
+        items: [
+          {
+            id: "san-simeon-county-rec-programs",
+            title: "SLO County Parks and Recreation – Youth Programs (San Simeon area)",
+            org: "San Luis Obispo County Parks and Recreation",
+            type: "event",
+            registrationOpen: null,
+            registrationClose: null,
+            eventDate: null,
+            url: "https://www.slocounty.ca.gov/departments/parks-recreation/services/recreation-programs-and-services",
+            notes:
+              "Families in San Simeon can access county recreation programming and nearby coastal youth activities via SLO County Parks and Recreation and regional partners."
+          }
+        ]
+      },
+
+      santa_margarita: {
+        locationLabel: "Santa Margarita, CA 93453",
+        items: [
+          {
+            id: "santa-margarita-county-rec-programs",
+            title: "SLO County Parks and Recreation – Youth Programs (Santa Margarita area)",
+            org: "San Luis Obispo County Parks and Recreation",
+            type: "event",
+            registrationOpen: null,
+            registrationClose: null,
+            eventDate: null,
+            url: "https://www.slocounty.ca.gov/departments/parks-recreation/services/recreation-programs-and-services",
+            notes:
+              "Santa Margarita families can use SLO County Parks and Recreation youth classes and camps, along with sports programs in Atascadero and San Luis Obispo."
+          }
+        ]
+      },
+
+      shandon: {
+        locationLabel: "Shandon, CA 93461",
+        items: [
+          {
+            id: "shandon-county-rec-programs",
+            title: "SLO County Parks and Recreation – Youth Programs (Shandon area)",
+            org: "San Luis Obispo County Parks and Recreation",
+            type: "event",
+            registrationOpen: null,
+            registrationClose: null,
+            eventDate: null,
+            url: "https://www.slocounty.ca.gov/departments/parks-recreation/services/recreation-programs-and-services",
+            notes:
+              "Families in Shandon can participate in countywide youth recreation programs and nearby youth leagues in Paso Robles and Templeton."
+          }
+        ]
+      },
+
+      creston: {
+        locationLabel: "Creston, CA 93432",
+        items: [
+          {
+            id: "creston-county-rec-programs",
+            title: "SLO County Parks and Recreation – Youth Programs (Creston area)",
+            org: "San Luis Obispo County Parks and Recreation",
+            type: "event",
+            registrationOpen: null,
+            registrationClose: null,
+            eventDate: null,
+            url: "https://www.slocounty.ca.gov/departments/parks-recreation/services/recreation-programs-and-services",
+            notes:
+              "Creston area families can access youth recreation through SLO County programs and nearby Templeton and Atascadero leagues."
+          }
+        ]
+      },
+
+      // Generic sample data, used for hero panel and fallback
       sample: {
         locationLabel: "Sample Family Calendar",
         items: [
@@ -827,7 +1170,7 @@
             registrationClose: "2025-04-15",
             eventDate: null,
             url: "https://school.example.com/registration",
-            notes: "Typical documents: ID, proof of address, immunizations."
+            notes: "Typical documents include proof of age, residence, and immunizations."
           },
           {
             id: "sample-soccer",
@@ -838,7 +1181,7 @@
             registrationClose: "2025-06-20",
             eventDate: null,
             url: "https://soccer.example.com/register",
-            notes: "Ages 5–12; practice starts in August."
+            notes: "Ages 5–12; practices start in August with Saturday games."
           },
           {
             id: "sample-swim",
@@ -849,22 +1192,45 @@
             registrationClose: "2025-04-30",
             eventDate: "2025-06-01",
             url: "https://pool.example.com/swim-lessons",
-            notes: "Level 1–3; choose mornings or afternoons."
+            notes: "Levels 1–3; choose morning or afternoon time slots."
           },
           {
             id: "sample-camp",
-            title: "Art & Music Summer Camp",
+            title: "Art and Music Summer Camp",
             org: "Local Arts Center",
             type: "event",
             registrationOpen: "2025-02-15",
             registrationClose: "2025-05-01",
             eventDate: "2025-07-15",
             url: "https://arts.example.com/camp",
-            notes: "Limited spots. Scholarships available."
+            notes: "Week-long day camp with visual art and music; scholarships available."
           }
         ]
       }
     };
+
+    // Helper mapping search input -> location id
+    const LOCATION_MATCH_RULES = [
+      { id: "atascadero", keys: ["atascadero", "93422", "93423"] },
+      { id: "arroyo_grande", keys: ["arroyo grande", "93420", "93421"] },
+      { id: "grover_beach", keys: ["grover beach", "93433", "93483"] },
+      { id: "morro_bay", keys: ["morro bay", "93442", "93443"] },
+      { id: "paso_robles", keys: ["paso robles", "el paso de robles", "93446", "93447"] },
+      { id: "pismo_beach", keys: ["pismo beach", "93449", "93448"] },
+      { id: "san_luis_obispo", keys: ["san luis obispo", "slo ", " slo", "93401", "93405", "93406", "93407", "93408", "93409", "93410", "93403"] },
+      { id: "nipomo", keys: ["nipomo", "93444"] },
+      { id: "templeton", keys: ["templeton", "93465"] },
+      { id: "cambria", keys: ["cambria", "93428"] },
+      { id: "los_osos", keys: ["los osos", "93402", "93412"] },
+      { id: "oceano", keys: ["oceano", "93445"] },
+      { id: "avila_beach", keys: ["avila beach", "93424"] },
+      { id: "cayucos", keys: ["cayucos", "93430"] },
+      { id: "san_miguel", keys: ["san miguel", "93451"] },
+      { id: "san_simeon", keys: ["san simeon", "93452"] },
+      { id: "santa_margarita", keys: ["santa margarita", "93453"] },
+      { id: "shandon", keys: ["shandon", "93461"] },
+      { id: "creston", keys: ["creston", "93432"] }
+    ];
 
     // ---------------------------
     // State
@@ -890,17 +1256,13 @@
     function saveReminders() {
       try {
         localStorage.setItem("kidcal-reminders", JSON.stringify(reminders));
-      } catch (e) {
-        // ignore if storage not available
-      }
+      } catch (e) {}
     }
 
     function loadReminders() {
       try {
         const saved = localStorage.getItem("kidcal-reminders");
-        if (saved) {
-          reminders = JSON.parse(saved);
-        }
+        if (saved) reminders = JSON.parse(saved);
       } catch (e) {
         reminders = [];
       }
@@ -911,27 +1273,49 @@
       if (!input) return null;
       const trimmed = input.trim();
       if (!trimmed) return null;
-
       const lower = trimmed.toLowerCase();
 
-      // Atascadero detection: by city name or ZIPs 93422, 93423
-      if (
-        lower.includes("atascadero") ||
-        trimmed === "93422" ||
-        trimmed === "93423"
-      ) {
-        return MOCK_DATA.atascadero;
+      // 1) Try to match any SLO County city/town by name or ZIP
+      for (const rule of LOCATION_MATCH_RULES) {
+        for (const key of rule.keys) {
+          // ZIP code (5 digits) must match exactly
+          if (/^\d{5}$/.test(key)) {
+            if (trimmed === key) {
+              return LOCATION_DATA[rule.id] || null;
+            }
+          } else {
+            if (lower.includes(key)) {
+              return LOCATION_DATA[rule.id] || null;
+            }
+          }
+        }
       }
 
-      // Exact ZIPs (Nipomo, SF)
-      if (MOCK_DATA[trimmed]) {
-        return MOCK_DATA[trimmed];
+      // 2) If nothing matched but it looks like SLO County, still label it
+      if (lower.includes("san luis obispo county") || lower.includes("slo county")) {
+        return {
+          locationLabel: "San Luis Obispo County (general)",
+          items: [
+            {
+              id: "slo-county-parks-programs",
+              title: "SLO County Parks and Recreation – Countywide Youth Programs",
+              org: "San Luis Obispo County Parks and Recreation",
+              type: "event",
+              registrationOpen: null,
+              registrationClose: null,
+              eventDate: null,
+              url: "https://www.slocounty.ca.gov/departments/parks-recreation/services/recreation-programs-and-services",
+              notes:
+                "Countywide recreation programs, classes, and camps for youth and families across San Luis Obispo County. Use the county recreation site to search for offerings near your town."
+            }
+          ]
+        };
       }
 
-      // Fallback: sample data, labeled with whatever they typed
+      // 3) Fallback: generic sample data, labeled with whatever they typed
       return {
         locationLabel: trimmed,
-        items: MOCK_DATA.sample.items
+        items: LOCATION_DATA.sample.items
       };
     }
 
@@ -949,7 +1333,7 @@
 
       if (!filtered.length) {
         listEl.innerHTML =
-          '<div class="empty-state">No items for this filter. Try another type or expand your search.</div>';
+          '<div class="empty-state">No items for this filter. Try another type, or check the linked site directly for more programs.</div>';
         return;
       }
 
@@ -971,16 +1355,12 @@
         const datePieces = [];
         if (item.registrationOpen) {
           datePieces.push(
-            `<span>Opens: <strong>${formatDate(
-              item.registrationOpen
-            )}</strong></span>`
+            `<span>Opens: <strong>${formatDate(item.registrationOpen)}</strong></span>`
           );
         }
         if (item.registrationClose) {
           datePieces.push(
-            `<span>Closes: <strong>${formatDate(
-              item.registrationClose
-            )}</strong></span>`
+            `<span>Closes: <strong>${formatDate(item.registrationClose)}</strong></span>`
           );
         }
         if (item.eventDate) {
@@ -1008,9 +1388,6 @@
         addBtn.addEventListener("click", () => addReminder(item));
         actions.appendChild(addBtn);
 
-        wrapper.appendChild(main);
-        wrapper.appendChild(dates);
-
         if (item.notes) {
           const notesEl = document.createElement("div");
           notesEl.style.fontSize = "0.78rem";
@@ -1020,6 +1397,8 @@
           main.appendChild(notesEl);
         }
 
+        wrapper.appendChild(main);
+        wrapper.appendChild(dates);
         wrapper.appendChild(actions);
         listEl.appendChild(wrapper);
       });
@@ -1039,8 +1418,8 @@
       reminders
         .slice()
         .sort((a, b) => {
-          const aDate = a.registrationClose || a.registrationOpen || a.eventDate;
-          const bDate = b.registrationClose || b.registrationOpen || b.eventDate;
+          const aDate = a.registrationClose || a.registrationOpen || a.eventDate || "9999-12-31";
+          const bDate = b.registrationClose || b.registrationOpen || b.eventDate || "9999-12-31";
           return new Date(aDate) - new Date(bDate);
         })
         .forEach((item, index) => {
@@ -1112,18 +1491,20 @@
     function renderHeroDeadlines() {
       const container = document.getElementById("hero-deadlines");
       container.innerHTML = "";
-
-      const sampleItems = MOCK_DATA.sample.items.slice(0, 3);
+      const sampleItems = LOCATION_DATA.sample.items.slice(0, 3);
       sampleItems.forEach((item) => {
-        const el = document.createElement("div");
-        el.className = "hero-panel-item";
         const keyDate =
-          item.registrationClose || item.registrationOpen || item.eventDate;
+          item.registrationClose ||
+          item.registrationOpen ||
+          item.eventDate;
         const label = item.registrationClose
           ? "Closes"
           : item.registrationOpen
           ? "Opens"
           : "Starts";
+
+        const el = document.createElement("div");
+        el.className = "hero-panel-item";
         el.innerHTML = `
           <div>
             <strong>${item.title}</strong>
@@ -1174,22 +1555,9 @@
         const data = findDataForLocation(input);
         currentItems = data.items || [];
 
-        // Customize the message a bit for Atascadero
-        const lower = input.toLowerCase();
-        const isAtascadero =
-          lower.includes("atascadero") ||
-          input === "93422" ||
-          input === "93423";
-
-        if (isAtascadero) {
-          subtitleEl.textContent = currentItems.length
-            ? `Showing Atascadero, CA events from your curated list.`
-            : `No events found yet for Atascadero, CA.`;
-        } else {
-          subtitleEl.textContent = currentItems.length
-            ? `Showing sample data for ${data.locationLabel}. Connect more real cities over time.`
-            : `No events found for "${input}". Try a nearby city or school district.`;
-        }
+        subtitleEl.textContent = currentItems.length
+          ? `Showing results for ${data.locationLabel}. Always confirm dates on the linked site.`
+          : `No events found yet for ${data.locationLabel}. Try a nearby city or check the linked site directly.`;
 
         renderResults();
       } catch (err) {
@@ -1197,15 +1565,15 @@
         subtitleEl.textContent =
           "We had trouble fetching data. Please try again in a moment.";
         listEl.innerHTML =
-          '<div class="empty-state">Network error fetching events.</div>';
+          '<div class="empty-state">Error rendering events.</div>';
       }
     }
 
     function handleUseSample() {
-      const data = MOCK_DATA.sample;
+      const data = LOCATION_DATA.sample;
       currentItems = data.items;
       document.getElementById("resultsSubtitle").textContent =
-        "Showing generic sample data. Customize or connect real data sources next.";
+        "Showing generic sample data. Connect more real data sources over time.";
       renderResults();
     }
 
@@ -1297,11 +1665,7 @@
 
     function clearReminders() {
       if (!reminders.length) return;
-      if (
-        !confirm(
-          "Clear all reminders on this device? This cannot be undone."
-        )
-      ) {
+      if (!confirm("Clear all reminders on this device? This cannot be undone.")) {
         return;
       }
       reminders = [];
@@ -1319,9 +1683,7 @@
     document
       .getElementById("locationInput")
       .addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          handleSearch();
-        }
+        if (e.key === "Enter") handleSearch();
       });
 
     document
@@ -1345,4 +1707,3 @@
   </script>
 </body>
 </html>
-
