@@ -894,7 +894,8 @@
             notes: row.notes,
             ageRange: row.age_range,
             cost: row.cost,
-            zip: row.zip || row.location_zip || ""
+            // NEW: try to get a ZIP from an explicit column, then fall back to the city string
+            zip: row.zip || row.location_zip || extractZip(cityLabel)
           };
         })
         .filter(Boolean);
@@ -935,9 +936,11 @@
       const data = await res.json();
 
       const mapped = (data || []).map((item, idx) => {
+        const cityLabel = item.city || item.location_label || "";
+
         return {
           id: item.id || "external-" + idx,
-          city: item.city || item.location_label || "",
+          city: cityLabel,
           type: normalizeType(item.type),
           title: item.title,
           date: item.date || item.primary_date || "",
@@ -951,7 +954,7 @@
           notes: item.notes || "",
           ageRange: item.ageRange || item.age_range,
           cost: item.cost,
-          zip: item.zip || item.postal_code || ""
+          zip: item.zip || item.postal_code || extractZip(cityLabel)
         };
       }).filter(ev => ev.title && ev.link);
 
@@ -1246,7 +1249,20 @@
       }
     }
 
-    currentEvents = results.length ? results : [];
+      // After the for-loop:
+      if (results.length) {
+        currentEvents = results;
+      } else {
+        // Fallback: no ZIP matches, so use basic city/ZIP text filter
+        const q = centerZip.toLowerCase();
+        currentEvents = EVENTS.filter(
+          (ev) =>
+            (ev.city || "").toLowerCase().includes(q) ||
+            (ev.zip || "").includes(centerZip)
+        );
+        showToast("No ZIP-radius matches; showing text matches instead.");
+      }
+    }
   }
 
   async function handleFind() {
@@ -1378,5 +1394,6 @@
 </script>
 </body>
 </html>
+
 
 
