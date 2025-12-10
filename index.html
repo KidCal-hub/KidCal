@@ -809,7 +809,13 @@
     return t;
   }
 
-  async function getZipCoords(zip) {
+   function extractZip(str) {
+  if (!str) return "";
+  const match = String(str).match(/\b\d{5}\b/);
+  return match ? match[0] : "";
+}
+
+   async function getZipCoords(zip) {
     if (!zip) return null;
     if (ZIP_COORD_CACHE[zip]) return ZIP_COORD_CACHE[zip];
 
@@ -1372,4 +1378,5 @@
 </script>
 </body>
 </html>
+
 
