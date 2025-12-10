@@ -525,42 +525,58 @@
             <strong>Add a reminder in one tap.</strong>
           </p>
 
-          <div class="controls">
-            <label for="cityInput">Step 1: Choose your area</label>
-            <div class="search-row">
-              <input
-                id="cityInput"
-                type="text"
-                placeholder="Try: Atascadero, SLO, Paso Robles, Nipomo…"
-                autocomplete="off"
-              />
-              <button class="btn btn-primary" id="btnFind">Show my area</button>
-              <button class="btn btn-secondary" id="btnSample">Show everything</button>
-            </div>
+<div class="controls">
+  <label for="cityInput">Step 1: Search by city or ZIP</label>
+  <div class="search-row">
+    <input
+      id="cityInput"
+      type="text"
+      placeholder="Try: 93422 or Atascadero…"
+      autocomplete="off"
+    />
+    <button class="btn btn-primary" id="btnFind">Search</button>
+    <button class="btn btn-secondary" id="btnSample">Show everything</button>
+  </div>
 
-            <div class="filters-row">
-              <div class="filters-left">
-                <span>Step 2: Filter type</span>
-                <select id="typeFilter">
-                  <option value="all">All</option>
-                  <option value="school">School</option>
-                  <option value="sports">Sports</option>
-                  <option value="camp">Camps / activities</option>
-                  <option value="other">Other / directories</option>
-                </select>
-              </div>
-              <div class="filters-right">
-                <span class="badge" style="background:#fef9c3;">
-                  <span>⭐</span> Tap “Add reminder” to save
-                </span>
-              </div>
-            </div>
+  <div class="filters-row">
+    <div class="filters-left">
+      <span>Step 2: Type & distance</span>
+      <select id="typeFilter">
+        <option value="all">All</option>
+        <option value="school">School</option>
+        <option value="sports">Sports</option>
+        <option value="camp">Camps / activities</option>
+        <option value="other">Other / directories</option>
+      </select>
 
-            <div class="status-line">
-              <span id="eventsCounter" class="status-pill">Loading events…</span>
-              <span id="cityFilterLabel" class="status-pill" style="display:none;"></span>
-            </div>
-          </div>
+      <!-- NEW: distance radius filter -->
+      <select id="radiusFilter">
+        <option value="0">Exact ZIP / city</option>
+        <option value="5">Within 5 miles</option>
+        <option value="10">Within 10 miles</option>
+        <option value="25">Within 25 miles</option>
+      </select>
+    </div>
+
+    <div class="filters-right">
+      <!-- NEW: time filter: upcoming / past / all -->
+      <select id="timeFilter">
+        <option value="upcoming">Upcoming only</option>
+        <option value="past">Past only</option>
+        <option value="all">All dates</option>
+      </select>
+
+      <span class="badge" style="background:#fef9c3;">
+        <span>⭐</span> Tap “Add reminder” to save
+      </span>
+    </div>
+  </div>
+
+  <div class="status-line">
+    <span id="eventsCounter" class="status-pill">Loading events…</span>
+    <span id="cityFilterLabel" class="status-pill" style="display:none;"></span>
+  </div>
+</div>
         </div>
 
         <div class="card">
@@ -643,588 +659,717 @@
 
   <div id="toast" class="toast"></div>
 
-  <script>
-    // Google Sheet CSV URL (published to web as CSV)
-    const SHEET_URL =
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vSTGyzF9lGXW8a1--CtEYzaQFhZnkU0Ye8InlnVPgbmyYaiYzy8wPEgGp2dVodt-GEbonPHKGRKQJwl/pub?gid=0&single=true&output=csv";
+ <script>
+  // Google Sheet CSV URL (published to web as CSV)
+  const SHEET_URL =
+    "https://docs.google.com/spreadsheets/d/e/2PACX-1vSTGyzF9lGXW8a1--CtEYzaQFhZnkU0Ye8InlnVPgbmyYaiYzy8wPEgGp2dVodt-GEbonPHKGRKQJwl/pub?gid=0&single=true&output=csv";
 
-    // NEW: External JSON feed URL (live web data)
-    // Create a file extra-events.json in your GitHub repo at /KidCal/extra-events.json
-    // with an array of events.
-    const EXTRA_EVENTS_URL =
-      "https://kidcal-hub.github.io/KidCal/extra-events.json";
+  // Optional external JSON feed URL (extra web data)
+  const EXTRA_EVENTS_URL =
+    "https://kidcal-hub.github.io/KidCal/extra-events.json";
 
-    // Fallback sample events
-    const SAMPLE_EVENTS = [
-      {
-        id: "sample-1",
-        city: "Atascadero CA 93422",
-        type: "school",
-        title: "AUSD TK & Kinder Enrollment 2025–26",
-        date: "2025-03-31",
-        deadlineLabel: "Register between Mar 1 and Mar 31 2025",
-        provider: "Atascadero Unified School District",
-        link: "https://atascaderousd.aeries.net/air/",
-        notes: "Online enrollment for new TK and Kindergarten students."
-      },
-      {
-        id: "sample-2",
-        city: "Atascadero CA 93422",
-        type: "sports",
-        title: "Atascadero Youth Soccer League Fall 2025",
-        date: "2025-06-16",
-        deadlineLabel: "Register between Apr 8 and Jun 16 2025",
-        provider: "Atascadero Youth Soccer League",
-        link: "https://www.atascaderosoccer.org/",
-        notes: "Games start in early September."
-      }
+  // Fallback sample events
+  const SAMPLE_EVENTS = [
+    {
+      id: "sample-1",
+      city: "Atascadero CA 93422",
+      type: "school",
+      title: "AUSD TK & Kinder Enrollment 2025–26",
+      date: "2025-03-31",
+      deadlineLabel: "Register between Mar 1 and Mar 31 2025",
+      provider: "Atascadero Unified School District",
+      link: "https://atascaderousd.aeries.net/air/",
+      notes: "Online enrollment for new TK and Kindergarten students.",
+      zip: "93422"
+    },
+    {
+      id: "sample-2",
+      city: "Atascadero CA 93422",
+      type: "sports",
+      title: "Atascadero Youth Soccer League Fall 2025",
+      date: "2025-06-16",
+      deadlineLabel: "Register between Apr 8 and Jun 16 2025",
+      provider: "Atascadero Youth Soccer League",
+      link: "https://www.atascaderosoccer.org/",
+      notes: "Games start in early September.",
+      zip: "93422"
+    }
+  ];
+
+  let EVENTS = [...SAMPLE_EVENTS];
+  let currentEvents = [...EVENTS];
+
+  const STORAGE_KEY = "kidcal-reminders-v1";
+  let reminders = loadRemindersFromStorage();
+  let isLoadingEvents = false;
+  let pendingSources = 0;
+
+  // ZIP → {lat,lng} cache
+  const ZIP_COORD_CACHE = {};
+
+  // DOM elements
+  const cityInput = document.getElementById("cityInput");
+  const typeFilter = document.getElementById("typeFilter");
+  const radiusFilter = document.getElementById("radiusFilter");
+  const timeFilter = document.getElementById("timeFilter");
+  const btnFind = document.getElementById("btnFind");
+  const btnSample = document.getElementById("btnSample");
+  const eventsList = document.getElementById("eventsList");
+  const eventsEmpty = document.getElementById("eventsEmpty");
+  const eventsCounter = document.getElementById("eventsCounter");
+  const cityFilterLabel = document.getElementById("cityFilterLabel");
+
+  const remindersList = document.getElementById("remindersList");
+  const remindersEmpty = document.getElementById("remindersEmpty");
+  const btnClearReminders = document.getElementById("btnClearReminders");
+  const btnDownloadIcs = document.getElementById("btnDownloadIcs");
+
+  function showToast(message) {
+    const toast = document.getElementById("toast");
+    if (!toast) return;
+    toast.textContent = message;
+    toast.classList.add("toast--visible");
+    clearTimeout(window._kidcalToastTimeout);
+    window._kidcalToastTimeout = setTimeout(() => {
+      toast.classList.remove("toast--visible");
+    }, 2000);
+  }
+
+  // CSV parser (simple, no commas inside cells)
+  function parseCsv(text) {
+    const lines = text.trim().split(/\r?\n/);
+    if (!lines.length) return { headers: [], rows: [] };
+
+    const headers = lines[0].split(",").map((h) => h.trim());
+    const rows = lines.slice(1).map((line) => {
+      const cells = line.split(",").map((c) => c.trim());
+      const obj = {};
+      headers.forEach((h, i) => {
+        obj[h] = cells[i] || "";
+      });
+      return obj;
+    });
+
+    return { headers, rows };
+  }
+
+  function pickPrimaryDate(row) {
+    return (
+      row.registration_close ||
+      row.registration_open ||
+      row.event_date ||
+      ""
+    );
+  }
+
+  function formatDate(iso) {
+    if (!iso) return "";
+    const parts = iso.split("-");
+    if (parts.length !== 3) return iso;
+    const [y, m, d] = parts;
+    const monthNames = [
+      "Jan","Feb","Mar","Apr","May","Jun",
+      "Jul","Aug","Sep","Oct","Nov","Dec"
     ];
+    const monthIndex = parseInt(m, 10) - 1;
+    const monthName = monthNames[monthIndex] || m;
+    const day = String(parseInt(d, 10));
+    return `${monthName} ${day} ${y}`;
+  }
 
-    let EVENTS = [...SAMPLE_EVENTS];
-    let currentEvents = [...EVENTS];
+  function buildDeadlineLabel(row) {
+    const open = row.registration_open;
+    const close = row.registration_close;
+    const event = row.event_date;
+    const notes = row.notes;
 
-    const STORAGE_KEY = "kidcal-reminders-v1";
-    let reminders = loadRemindersFromStorage();
-    let isLoadingEvents = false;
-
-    // NEW: track how many async sources are loading
-    let pendingSources = 0;
-
-    // DOM elements
-    const cityInput = document.getElementById("cityInput");
-    const typeFilter = document.getElementById("typeFilter");
-    const btnFind = document.getElementById("btnFind");
-    const btnSample = document.getElementById("btnSample");
-    const eventsList = document.getElementById("eventsList");
-    const eventsEmpty = document.getElementById("eventsEmpty");
-    const eventsCounter = document.getElementById("eventsCounter");
-    const cityFilterLabel = document.getElementById("cityFilterLabel");
-
-    const remindersList = document.getElementById("remindersList");
-    const remindersEmpty = document.getElementById("remindersEmpty");
-    const btnClearReminders = document.getElementById("btnClearReminders");
-    const btnDownloadIcs = document.getElementById("btnDownloadIcs");
-
-    function showToast(message) {
-      const toast = document.getElementById("toast");
-      if (!toast) return;
-      toast.textContent = message;
-      toast.classList.add("toast--visible");
-      clearTimeout(window._kidcalToastTimeout);
-      window._kidcalToastTimeout = setTimeout(() => {
-        toast.classList.remove("toast--visible");
-      }, 2000);
+    if (open && close) {
+      return `Register between ${formatDate(open)} and ${formatDate(close)}`;
     }
 
-    // CSV parser (simple, no commas inside cells)
-    function parseCsv(text) {
-      const lines = text.trim().split(/\r?\n/);
-      if (!lines.length) return { headers: [], rows: [] };
-
-      const headers = lines[0].split(",").map((h) => h.trim());
-      const rows = lines.slice(1).map((line) => {
-        const cells = line.split(",").map((c) => c.trim());
-        const obj = {};
-        headers.forEach((h, i) => {
-          obj[h] = cells[i] || "";
-        });
-        return obj;
-      });
-
-      return { headers, rows };
+    if (close) {
+      return `Register by ${formatDate(close)}`;
     }
 
-    function pickPrimaryDate(row) {
-      return (
-        row.registration_close ||
-        row.registration_open ||
-        row.event_date ||
-        ""
-      );
+    if (open) {
+      return `Registration opens ${formatDate(open)}`;
     }
 
-    function formatDate(iso) {
-      if (!iso) return "";
-      const parts = iso.split("-");
-      if (parts.length !== 3) return iso;
-      const [y, m, d] = parts;
-      const monthNames = [
-        "Jan","Feb","Mar","Apr","May","Jun",
-        "Jul","Aug","Sep","Oct","Nov","Dec"
-      ];
-      const monthIndex = parseInt(m, 10) - 1;
-      const monthName = monthNames[monthIndex] || m;
-      const day = String(parseInt(d, 10));
-      return `${monthName} ${day} ${y}`;
+    if (event) {
+      return `Event on ${formatDate(event)}`;
     }
 
-    function buildDeadlineLabel(row) {
-      const open = row.registration_open;
-      const close = row.registration_close;
-      const event = row.event_date;
-      const notes = row.notes;
+    return notes || "";
+  }
 
-      if (open && close) {
-        return `Register between ${formatDate(open)} and ${formatDate(close)}`;
-      }
+  function normalizeType(raw) {
+    const t = (raw || "").toLowerCase().trim();
+    if (!t) return "other";
+    if (t === "event") return "other";
+    return t;
+  }
 
-      if (close) {
-        return `Register by ${formatDate(close)}`;
-      }
+  async function getZipCoords(zip) {
+    if (!zip) return null;
+    if (ZIP_COORD_CACHE[zip]) return ZIP_COORD_CACHE[zip];
 
-      if (open) {
-        return `Registration opens ${formatDate(open)}`;
-      }
-
-      if (event) {
-        return `Event on ${formatDate(event)}`;
-      }
-
-      return notes || "";
+    try {
+      const res = await fetch(`https://api.zippopotam.us/us/${zip}`);
+      if (!res.ok) return null;
+      const data = await res.json();
+      const place = data.places && data.places[0];
+      if (!place) return null;
+      const coords = {
+        lat: parseFloat(place.latitude),
+        lng: parseFloat(place.longitude)
+      };
+      ZIP_COORD_CACHE[zip] = coords;
+      return coords;
+    } catch (e) {
+      console.warn("Could not look up ZIP", zip, e);
+      return null;
     }
+  }
 
-    function normalizeType(raw) {
-      const t = (raw || "").toLowerCase().trim();
-      if (!t) return "other";
-      if (t === "event") return "other";
-      return t;
-    }
+  function distanceMiles(a, b) {
+    if (!a || !b) return Infinity;
+    const R = 3958.8;
+    const toRad = (deg) => (deg * Math.PI) / 180;
+    const dLat = toRad(b.lat - a.lat);
+    const dLng = toRad(b.lng - a.lng);
+    const lat1 = toRad(a.lat);
+    const lat2 = toRad(b.lat);
+    const h =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1) * Math.cos(lat2) *
+      Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
+    return R * c;
+  }
 
-    // Fetch from Google Sheet CSV
-    async function fetchSheetData() {
-      try {
-        pendingSources++;
-        isLoadingEvents = true;
-        updateStatusUi();
-
-        const res = await fetch(SHEET_URL);
-        if (!res.ok) throw new Error("Network error fetching sheet");
-        const text = await res.text();
-        const parsed = parseCsv(text);
-
-        if (!parsed.rows || !parsed.rows.length) {
-          console.warn("Sheet has no rows; keeping sample events.");
-          return;
-        }
-
-        const mapped = parsed.rows
-          .map((row, idx) => {
-            const title = row.title;
-            const url = row.url;
-
-            if (!title || !url) return null;
-
-            const cityLabel = row.location_label || row.location_id || "";
-            const eventType = normalizeType(row.type);
-            const date = pickPrimaryDate(row);
-            const deadlineLabel = buildDeadlineLabel(row);
-
-            return {
-              id: row.item_id || "sheet-" + idx,
-              city: cityLabel,
-              type: eventType,
-              title: title,
-              date: date,
-              deadlineLabel: deadlineLabel,
-              provider: row.org,
-              link: url,
-              notes: row.notes,
-              ageRange: row.age_range,
-              cost: row.cost
-            };
-          })
-          .filter(Boolean);
-
-        if (mapped.length) {
-          EVENTS = mapped; // base from sheet
-          currentEvents = [...EVENTS];
-          renderEvents();
-          showToast(`Loaded ${mapped.length} programs from KidCal sheet`);
-        } else {
-          console.warn("Sheet rows did not have required fields; keeping samples.");
-        }
-      } catch (e) {
-        console.warn("Failed to load sheet data; keeping sample events.", e);
-      } finally {
-        pendingSources--;
-        if (pendingSources <= 0) {
-          isLoadingEvents = false;
-        }
-        updateStatusUi();
-        renderEvents();
-      }
-    }
-
-    // NEW: Fetch additional events from a JSON feed on the web
-    async function fetchExternalEvents() {
-      try {
-        pendingSources++;
-        isLoadingEvents = true;
-        updateStatusUi();
-
-        const res = await fetch(EXTRA_EVENTS_URL, { cache: "no-store" });
-        if (!res.ok) {
-          console.warn("External events feed not available", res.status);
-          return;
-        }
-
-        const data = await res.json();
-
-        const mapped = (data || []).map((item, idx) => {
-          return {
-            id: item.id || "external-" + idx,
-            city: item.city || item.location_label || "",
-            type: normalizeType(item.type),
-            title: item.title,
-            date: item.date || item.primary_date || "",
-            deadlineLabel:
-              item.deadlineLabel ||
-              item.deadline ||
-              item.registration_window ||
-              "",
-            provider: item.provider || item.org || "",
-            link: item.link || item.url || "",
-            notes: item.notes || "",
-            ageRange: item.ageRange || item.age_range,
-            cost: item.cost
-          };
-        }).filter(ev => ev.title && ev.link);
-
-        if (mapped.length) {
-          EVENTS = EVENTS.concat(mapped);
-          currentEvents = [...EVENTS];
-          renderEvents();
-          showToast(`Loaded ${mapped.length} extra programs from the web`);
-        }
-      } catch (e) {
-        console.warn("Failed to load external events", e);
-      } finally {
-        pendingSources--;
-        if (pendingSources <= 0) {
-          isLoadingEvents = false;
-        }
-        updateStatusUi();
-        renderEvents();
-      }
-    }
-
-    function loadRemindersFromStorage() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return [];
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? parsed : [];
-      } catch (e) {
-        console.warn("Could not load reminders", e);
-        return [];
-      }
-    }
-
-    function saveRemindersToStorage() {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(reminders));
-      } catch (e) {
-        console.warn("Could not save reminders", e);
-      }
-    }
-
-    function prettyType(type) {
-      const t = (type || "other").toLowerCase();
-      switch (t) {
-        case "school":
-          return "School";
-        case "sports":
-          return "Sports";
-        case "camp":
-          return "Camp / activity";
-        case "other":
-          return "Other / directory";
-        default:
-          return t.charAt(0).toUpperCase() + t.slice(1);
-      }
-    }
-
-    function updateStatusUi() {
-      const total = EVENTS.length;
-      const visible = currentEvents.length;
-
-      if (isLoadingEvents) {
-        eventsCounter.textContent = "Loading events…";
-        eventsCounter.classList.add("loading");
-      } else {
-        eventsCounter.classList.remove("loading");
-        if (visible === total) {
-          eventsCounter.textContent = `Showing ${visible} program${visible === 1 ? "" : "s"}`;
-        } else {
-          eventsCounter.textContent = `Showing ${visible} of ${total} program${total === 1 ? "" : "s"}`;
-        }
-      }
-    }
-
-    function renderEvents() {
-      eventsList.innerHTML = "";
-      const filterType = typeFilter.value;
-
-      const list = currentEvents.filter((ev) => {
-        if (filterType === "all") return true;
-        return (ev.type || "other").toLowerCase() === filterType;
-      });
-
+  // Fetch from Google Sheet CSV
+  async function fetchSheetData() {
+    try {
+      pendingSources++;
+      isLoadingEvents = true;
       updateStatusUi();
 
-      if (!list.length) {
-        eventsEmpty.style.display = "block";
+      const res = await fetch(SHEET_URL);
+      if (!res.ok) throw new Error("Network error fetching sheet");
+      const text = await res.text();
+      const parsed = parseCsv(text);
+
+      if (!parsed.rows || !parsed.rows.length) {
+        console.warn("Sheet has no rows; keeping sample events.");
         return;
       }
-      eventsEmpty.style.display = "none";
 
-      list.forEach((ev) => {
-        const li = document.createElement("li");
-        li.className = "event-item";
+      const mapped = parsed.rows
+        .map((row, idx) => {
+          const title = row.title;
+          const url = row.url;
 
-        const main = document.createElement("div");
-        main.className = "event-main";
+          if (!title || !url) return null;
 
-        const title = document.createElement("div");
-        title.className = "event-title";
-        title.textContent = ev.title || "(No title)";
+          const cityLabel = row.location_label || row.location_id || "";
+          const eventType = normalizeType(row.type);
+          const date = pickPrimaryDate(row);
+          const deadlineLabel = buildDeadlineLabel(row);
 
-        const meta = document.createElement("div");
-        meta.className = "event-meta";
+          return {
+            id: row.item_id || "sheet-" + idx,
+            city: cityLabel,
+            type: eventType,
+            title: title,
+            date: date,
+            deadlineLabel: deadlineLabel,
+            provider: row.org,
+            link: url,
+            notes: row.notes,
+            ageRange: row.age_range,
+            cost: row.cost,
+            zip: row.zip || row.location_zip || ""
+          };
+        })
+        .filter(Boolean);
 
-        const cityTag = document.createElement("span");
-        cityTag.className = "city-tag";
-        cityTag.textContent = ev.city || "Unknown area";
-
-        meta.appendChild(cityTag);
-
-        if (ev.provider) {
-          const providerSpan = document.createElement("span");
-          providerSpan.textContent = ev.provider;
-          meta.appendChild(providerSpan);
-        }
-
-        const deadline = document.createElement("div");
-        deadline.className = "event-deadline";
-        deadline.textContent = ev.deadlineLabel || "";
-
-        const notes = document.createElement("div");
-        notes.className = "event-notes";
-        if (ev.notes) {
-          notes.textContent = ev.notes;
-        }
-
-        const link = document.createElement("div");
-        link.className = "event-link";
-        if (ev.link) {
-          const a = document.createElement("a");
-          a.href = ev.link;
-          a.target = "_blank";
-          a.rel = "noopener noreferrer";
-          a.textContent = "Open registration / info →";
-          link.appendChild(a);
-        }
-
-        main.appendChild(title);
-        main.appendChild(meta);
-        if (ev.deadlineLabel) main.appendChild(deadline);
-        if (ev.notes) main.appendChild(notes);
-        main.appendChild(link);
-
-        const actions = document.createElement("div");
-        actions.className = "event-actions";
-
-        const typePill = document.createElement("div");
-        typePill.className = "type-pill " + (ev.type || "other");
-        typePill.textContent = prettyType(ev.type);
-
-        const btnAdd = document.createElement("button");
-        btnAdd.className = "btn btn-secondary btn-small";
-        btnAdd.textContent = "Add reminder";
-        btnAdd.addEventListener("click", () => addReminder(ev));
-
-        actions.appendChild(typePill);
-        actions.appendChild(btnAdd);
-
-        li.appendChild(main);
-        li.appendChild(actions);
-
-        eventsList.appendChild(li);
-      });
-    }
-
-    function renderReminders() {
-      remindersList.innerHTML = "";
-      if (!reminders.length) {
-        remindersEmpty.style.display = "block";
-        return;
-      }
-      remindersEmpty.style.display = "none";
-
-      reminders.forEach((r, index) => {
-        const li = document.createElement("li");
-        li.className = "reminder-item";
-
-        const main = document.createElement("div");
-        main.className = "reminder-main";
-
-        const title = document.createElement("div");
-        title.className = "reminder-title";
-        title.textContent = r.title || "(No title)";
-
-        const meta = document.createElement("div");
-        meta.className = "reminder-meta";
-        const bits = [];
-        if (r.deadlineLabel) bits.push(r.deadlineLabel);
-        if (r.city) bits.push(r.city);
-        if (r.provider) bits.push(r.provider);
-        meta.textContent = bits.join(" · ");
-
-        main.appendChild(title);
-        main.appendChild(meta);
-
-        const btnRemove = document.createElement("button");
-        btnRemove.className = "btn-icon";
-        btnRemove.textContent = "✕";
-        btnRemove.title = "Remove";
-        btnRemove.addEventListener("click", () => {
-          reminders.splice(index, 1);
-          saveRemindersToStorage();
-          renderReminders();
-          showToast("Removed from reminders");
-        });
-
-        li.appendChild(main);
-        li.appendChild(btnRemove);
-        remindersList.appendChild(li);
-      });
-    }
-
-    function addReminder(ev) {
-      const exists = reminders.some((r) => r.id === ev.id);
-      if (exists) {
-        showToast("Already in your reminders");
-        return;
-      }
-      reminders.push({
-        id: ev.id,
-        title: ev.title,
-        city: ev.city,
-        provider: ev.provider,
-        deadlineLabel: ev.deadlineLabel,
-        date: ev.date
-      });
-      saveRemindersToStorage();
-      renderReminders();
-      showToast("Added to your reminders");
-    }
-
-    function handleFind() {
-      const city = (cityInput.value || "").trim().toLowerCase();
-      if (!city) {
+      if (mapped.length) {
+        EVENTS = mapped;
         currentEvents = [...EVENTS];
-        cityFilterLabel.style.display = "none";
         renderEvents();
-        return;
+        showToast(`Loaded ${mapped.length} programs from KidCal sheet`);
+      } else {
+        console.warn("Sheet rows did not have required fields; keeping samples.");
       }
-      currentEvents = EVENTS.filter(
-        (ev) => (ev.city || "").toLowerCase().includes(city)
-      );
-      cityFilterLabel.style.display = "inline-flex";
-      cityFilterLabel.textContent = `Filter: “${cityInput.value.trim()}”`;
+    } catch (e) {
+      console.warn("Failed to load sheet data; keeping sample events.", e);
+    } finally {
+      pendingSources--;
+      if (pendingSources <= 0) {
+        isLoadingEvents = false;
+      }
+      updateStatusUi();
       renderEvents();
     }
+  }
 
-    function handleSample() {
-      cityInput.value = "";
+  // Fetch additional events from a JSON feed on the web (optional)
+  async function fetchExternalEvents() {
+    try {
+      pendingSources++;
+      isLoadingEvents = true;
+      updateStatusUi();
+
+      const res = await fetch(EXTRA_EVENTS_URL, { cache: "no-store" });
+      if (!res.ok) {
+        console.warn("External events feed not available", res.status);
+        return;
+      }
+
+      const data = await res.json();
+
+      const mapped = (data || []).map((item, idx) => {
+        return {
+          id: item.id || "external-" + idx,
+          city: item.city || item.location_label || "",
+          type: normalizeType(item.type),
+          title: item.title,
+          date: item.date || item.primary_date || "",
+          deadlineLabel:
+            item.deadlineLabel ||
+            item.deadline ||
+            item.registration_window ||
+            "",
+          provider: item.provider || item.org || "",
+          link: item.link || item.url || "",
+          notes: item.notes || "",
+          ageRange: item.ageRange || item.age_range,
+          cost: item.cost,
+          zip: item.zip || item.postal_code || ""
+        };
+      }).filter(ev => ev.title && ev.link);
+
+      if (mapped.length) {
+        EVENTS = EVENTS.concat(mapped);
+        currentEvents = [...EVENTS];
+        renderEvents();
+        showToast(`Loaded ${mapped.length} extra programs from the web`);
+      }
+    } catch (e) {
+      console.warn("Failed to load external events", e);
+    } finally {
+      pendingSources--;
+      if (pendingSources <= 0) {
+        isLoadingEvents = false;
+      }
+      updateStatusUi();
+      renderEvents();
+    }
+  }
+
+  function loadRemindersFromStorage() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      console.warn("Could not load reminders", e);
+      return [];
+    }
+  }
+
+  function saveRemindersToStorage() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(reminders));
+    } catch (e) {
+      console.warn("Could not save reminders", e);
+    }
+  }
+
+  function prettyType(type) {
+    const t = (type || "other").toLowerCase();
+    switch (t) {
+      case "school":
+        return "School";
+      case "sports":
+        return "Sports";
+      case "camp":
+        return "Camp / activity";
+      case "other":
+        return "Other / directory";
+      default:
+        return t.charAt(0).toUpperCase() + t.slice(1);
+    }
+  }
+
+  function isEventMatchingTime(ev) {
+    const mode = (timeFilter.value || "upcoming").toLowerCase();
+    if (mode === "all") return true;
+    if (!ev.date) return true;
+
+    const parts = ev.date.split("-");
+    if (parts.length !== 3) return true;
+    const y = Number(parts[0]);
+    const m = Number(parts[1]) - 1;
+    const d = Number(parts[2]);
+    const eventDate = new Date(y, m, d);
+    if (isNaN(eventDate.getTime())) return true;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    eventDate.setHours(0, 0, 0, 0);
+
+    if (mode === "upcoming") return eventDate >= today;
+    if (mode === "past") return eventDate < today;
+    return true;
+  }
+
+  function updateStatusUi() {
+    const total = EVENTS.length;
+    const visible = currentEvents.length;
+
+    if (isLoadingEvents) {
+      eventsCounter.textContent = "Loading events…";
+      eventsCounter.classList.add("loading");
+    } else {
+      eventsCounter.classList.remove("loading");
+      if (visible === total) {
+        eventsCounter.textContent = `Showing ${visible} program${visible === 1 ? "" : "s"}`;
+      } else {
+        eventsCounter.textContent = `Showing ${visible} of ${total} program${total === 1 ? "" : "s"}`;
+      }
+    }
+  }
+
+  function renderEvents() {
+    eventsList.innerHTML = "";
+    const filterType = typeFilter.value;
+
+    const list = currentEvents.filter((ev) => {
+      if (filterType !== "all" &&
+          (ev.type || "other").toLowerCase() !== filterType) {
+        return false;
+      }
+      return isEventMatchingTime(ev);
+    });
+
+    updateStatusUi();
+
+    if (!list.length) {
+      eventsEmpty.style.display = "block";
+      return;
+    }
+    eventsEmpty.style.display = "none";
+
+    list.forEach((ev) => {
+      const li = document.createElement("li");
+      li.className = "event-item";
+
+      const main = document.createElement("div");
+      main.className = "event-main";
+
+      const title = document.createElement("div");
+      title.className = "event-title";
+      title.textContent = ev.title || "(No title)";
+
+      const meta = document.createElement("div");
+      meta.className = "event-meta";
+
+      const cityTag = document.createElement("span");
+      cityTag.className = "city-tag";
+      cityTag.textContent = ev.city || "Unknown area";
+      meta.appendChild(cityTag);
+
+      if (ev.provider) {
+        const providerSpan = document.createElement("span");
+        providerSpan.textContent = ev.provider;
+        meta.appendChild(providerSpan);
+      }
+
+      // Show distance if search by ZIP was used
+      if (typeof ev.distanceFromSearch === "number") {
+        const distSpan = document.createElement("span");
+        distSpan.textContent = ` · ${ev.distanceFromSearch.toFixed(1)} mi`;
+        meta.appendChild(distSpan);
+      }
+
+      const deadline = document.createElement("div");
+      deadline.className = "event-deadline";
+      deadline.textContent = ev.deadlineLabel || "";
+
+      const notes = document.createElement("div");
+      notes.className = "event-notes";
+      if (ev.notes) {
+        notes.textContent = ev.notes;
+      }
+
+      const link = document.createElement("div");
+      link.className = "event-link";
+      if (ev.link) {
+        const a = document.createElement("a");
+        a.href = ev.link;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        a.textContent = "Open registration / info →";
+        link.appendChild(a);
+      }
+
+      main.appendChild(title);
+      main.appendChild(meta);
+      if (ev.deadlineLabel) main.appendChild(deadline);
+      if (ev.notes) main.appendChild(notes);
+      main.appendChild(link);
+
+      const actions = document.createElement("div");
+      actions.className = "event-actions";
+
+      const typePill = document.createElement("div");
+      typePill.className = "type-pill " + (ev.type || "other");
+      typePill.textContent = prettyType(ev.type);
+
+      const btnAdd = document.createElement("button");
+      btnAdd.className = "btn btn-secondary btn-small";
+      btnAdd.textContent = "Add reminder";
+      btnAdd.addEventListener("click", () => addReminder(ev));
+
+      actions.appendChild(typePill);
+      actions.appendChild(btnAdd);
+
+      li.appendChild(main);
+      li.appendChild(actions);
+
+      eventsList.appendChild(li);
+    });
+  }
+
+  function renderReminders() {
+    remindersList.innerHTML = "";
+    if (!reminders.length) {
+      remindersEmpty.style.display = "block";
+      return;
+    }
+    remindersEmpty.style.display = "none";
+
+    reminders.forEach((r, index) => {
+      const li = document.createElement("li");
+      li.className = "reminder-item";
+
+      const main = document.createElement("div");
+      main.className = "reminder-main";
+
+      const title = document.createElement("div");
+      title.className = "reminder-title";
+      title.textContent = r.title || "(No title)";
+
+      const meta = document.createElement("div");
+      meta.className = "reminder-meta";
+      const bits = [];
+      if (r.deadlineLabel) bits.push(r.deadlineLabel);
+      if (r.city) bits.push(r.city);
+      if (r.provider) bits.push(r.provider);
+      meta.textContent = bits.join(" · ");
+
+      main.appendChild(title);
+      main.appendChild(meta);
+
+      const btnRemove = document.createElement("button");
+      btnRemove.className = "btn-icon";
+      btnRemove.textContent = "✕";
+      btnRemove.title = "Remove";
+      btnRemove.addEventListener("click", () => {
+        reminders.splice(index, 1);
+        saveRemindersToStorage();
+        renderReminders();
+        showToast("Removed from reminders");
+      });
+
+      li.appendChild(main);
+      li.appendChild(btnRemove);
+      remindersList.appendChild(li);
+    });
+  }
+
+  function addReminder(ev) {
+    const exists = reminders.some((r) => r.id === ev.id);
+    if (exists) {
+      showToast("Already in your reminders");
+      return;
+    }
+    reminders.push({
+      id: ev.id,
+      title: ev.title,
+      city: ev.city,
+      provider: ev.provider,
+      deadlineLabel: ev.deadlineLabel,
+      date: ev.date
+    });
+    saveRemindersToStorage();
+    renderReminders();
+    showToast("Added to your reminders");
+  }
+
+  async function filterByZipRadius(centerZip, radiusMiles) {
+    const centerCoords = await getZipCoords(centerZip);
+    if (!centerCoords) {
+      showToast("Couldn't locate that ZIP; using text match instead.");
+      const q = centerZip.toLowerCase();
+      currentEvents = EVENTS.filter(
+        (ev) =>
+          (ev.city || "").toLowerCase().includes(q) ||
+          (ev.zip || "").includes(centerZip)
+      );
+      return;
+    }
+
+    const results = [];
+    const zipCoordsLocal = {};
+
+    for (const ev of EVENTS) {
+      const z = (ev.zip || "").trim();
+      if (!z) continue;
+      if (!zipCoordsLocal[z]) {
+        zipCoordsLocal[z] = await getZipCoords(z);
+      }
+      const c = zipCoordsLocal[z];
+      if (!c) continue;
+      const dist = distanceMiles(centerCoords, c);
+      if (dist <= radiusMiles) {
+        ev.distanceFromSearch = dist;
+        results.push(ev);
+      }
+    }
+
+    currentEvents = results.length ? results : [];
+  }
+
+  async function handleFind() {
+    const queryRaw = (cityInput.value || "").trim();
+    const query = queryRaw.toLowerCase();
+    const radiusMiles = parseFloat(radiusFilter.value || "0");
+
+    // Clear any old distance state
+    EVENTS.forEach(ev => { delete ev.distanceFromSearch; });
+
+    if (!queryRaw) {
       currentEvents = [...EVENTS];
       cityFilterLabel.style.display = "none";
       renderEvents();
+      return;
     }
 
-    function clearReminders() {
-      if (!reminders.length) return;
-      if (!confirm("Clear all reminders on this device?")) return;
-      reminders = [];
-      saveRemindersToStorage();
-      renderReminders();
-      showToast("All reminders cleared");
+    // If it's a 5-digit ZIP and radius > 0, use radius search
+    if (/^\d{5}$/.test(queryRaw) && radiusMiles > 0) {
+      await filterByZipRadius(queryRaw, radiusMiles);
+      cityFilterLabel.style.display = "inline-flex";
+      cityFilterLabel.textContent = `Within ${radiusMiles} mi of ${queryRaw}`;
+      renderEvents();
+      return;
     }
 
-    function escapeText(text) {
-      return String(text)
-        .replace(/,/g, "\\,")
-        .replace(/;/g, "\\;")
-        .replace(/\n/g, "\\n");
+    // Fallback: text match on city/ZIP
+    currentEvents = EVENTS.filter(
+      (ev) =>
+        (ev.city || "").toLowerCase().includes(query) ||
+        (ev.zip || "").includes(queryRaw)
+    );
+    cityFilterLabel.style.display = "inline-flex";
+    cityFilterLabel.textContent = `Filter: “${queryRaw}”`;
+    renderEvents();
+  }
+
+  function handleSample() {
+    cityInput.value = "";
+    EVENTS.forEach(ev => { delete ev.distanceFromSearch; });
+    currentEvents = [...EVENTS];
+    cityFilterLabel.style.display = "none";
+    renderEvents();
+  }
+
+  function clearReminders() {
+    if (!reminders.length) return;
+    if (!confirm("Clear all reminders on this device?")) return;
+    reminders = [];
+    saveRemindersToStorage();
+    renderReminders();
+    showToast("All reminders cleared");
+  }
+
+  function escapeText(text) {
+    return String(text)
+      .replace(/,/g, "\\,")
+      .replace(/;/g, "\\;")
+      .replace(/\n/g, "\\n");
+  }
+
+  function generateIcsContent() {
+    if (!reminders.length) {
+      alert("No reminders yet. Add one before downloading.");
+      return null;
     }
 
-    function generateIcsContent() {
-      if (!reminders.length) {
-        alert("No reminders yet. Add one before downloading.");
-        return null;
-      }
+    const lines = [];
+    lines.push("BEGIN:VCALENDAR");
+    lines.push("VERSION:2.0");
+    lines.push("PRODID:-//KidCal//App//EN");
 
-      const lines = [];
-      lines.push("BEGIN:VCALENDAR");
-      lines.push("VERSION:2.0");
-      lines.push("PRODID:-//KidCal//App//EN");
+    reminders.forEach((r, idx) => {
+      const dt = (r.date || "").replace(/-/g, "");
+      const start = dt || "20250101";
 
-      reminders.forEach((r, idx) => {
-        const dt = (r.date || "").replace(/-/g, "");
-        const start = dt || "20250101";
-
-        lines.push("BEGIN:VEVENT");
-        lines.push(`UID:kidcal-${r.id || idx}@kidcal`);
-        lines.push(`SUMMARY:${escapeText(r.title || "")}`);
-        lines.push(
-          `DESCRIPTION:${escapeText(
-            `${r.city || ""}${r.provider ? " · " + r.provider : ""}${
-              r.deadlineLabel ? " · " + r.deadlineLabel : ""
-            }`
-          )}`
-        );
-        lines.push(`DTSTART;VALUE=DATE:${start}`);
-        lines.push("END:VEVENT");
-      });
-
-      lines.push("END:VCALENDAR");
-      return lines.join("\r\n");
-    }
-
-    function downloadIcs() {
-      const content = generateIcsContent();
-      if (!content) return;
-
-      const blob = new Blob([content], { type: "text/calendar;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "kidcal-reminders.ics";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      showToast("Downloaded kidcal-reminders.ics");
-    }
-
-    // Event listeners
-    btnFind.addEventListener("click", handleFind);
-    btnSample.addEventListener("click", handleSample);
-    typeFilter.addEventListener("change", renderEvents);
-    btnClearReminders.addEventListener("click", clearReminders);
-    btnDownloadIcs.addEventListener("click", downloadIcs);
-
-    cityInput.addEventListener("keyup", (e) => {
-      if (e.key === "Enter") handleFind();
+      lines.push("BEGIN:VEVENT");
+      lines.push(`UID:kidcal-${r.id || idx}@kidcal`);
+      lines.push(`SUMMARY:${escapeText(r.title || "")}`);
+      lines.push(
+        `DESCRIPTION:${escapeText(
+          `${r.city || ""}${r.provider ? " · " + r.provider : ""}${
+            r.deadlineLabel ? " · " + r.deadlineLabel : ""
+          }`
+        )}`
+      );
+      lines.push(`DTSTART;VALUE=DATE:${start}`);
+      lines.push("END:VEVENT");
     });
 
-    // Initial render
-    handleSample();
-    renderReminders();
+    lines.push("END:VCALENDAR");
+    return lines.join("\r\n");
+  }
 
-    // Load from Google Sheet and external web feed
-    fetchSheetData();
-    fetchExternalEvents();
-  </script>
+  function downloadIcs() {
+    const content = generateIcsContent();
+    if (!content) return;
+
+    const blob = new Blob([content], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "kidcal-reminders.ics";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast("Downloaded kidcal-reminders.ics");
+  }
+
+  // Event listeners
+  btnFind.addEventListener("click", () => { handleFind(); });
+  btnSample.addEventListener("click", () => { handleSample(); });
+  typeFilter.addEventListener("change", () => renderEvents());
+  timeFilter.addEventListener("change", () => renderEvents());
+  radiusFilter.addEventListener("change", () => renderEvents());
+  btnClearReminders.addEventListener("click", () => clearReminders());
+  btnDownloadIcs.addEventListener("click", () => downloadIcs());
+
+  cityInput.addEventListener("keyup", (e) => {
+    if (e.key === "Enter") handleFind();
+  });
+
+  // Initial render
+  handleSample();
+  renderReminders();
+  fetchSheetData();
+  fetchExternalEvents(); // safe even if extra-events.json doesn't exist
+</script>
 </body>
 </html>
+
