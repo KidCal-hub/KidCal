@@ -1,0 +1,22 @@
+[
+  {
+    "id": "web-1",
+    "city": "Paso Robles CA 93446",
+    "type": "sports",
+    "title": "Paso Youth Baseball – Spring 2026",
+    "primary_date": "2026-02-15",
+    "provider": "Paso Youth Baseball",
+    "link": "https://pasoyouthbaseball.org/",
+    "notes": "Early-bird discount until Jan 10"
+  },
+  {
+    "id": "web-2",
+    "city": "Atascadero CA 93422",
+    "type": "camp",
+    "title": "Atascadero STEM Summer Camp",
+    "primary_date": "2026-06-01",
+    "provider": "STEM Creators",
+    "link": "https://stematown.org/camp",
+    "notes": "Registration opens March 1"
+  }
+]
