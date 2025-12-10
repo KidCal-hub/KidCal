@@ -611,20 +611,25 @@
           </p>
           <ul class="provider-list">
             <li>
-              Open the shared sheet:
+              Open the shared sheet to add or edit programs:
               <a
-                href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSTGyzF9lGXW8a1--CtEYzaQFhZnkU0Ye8InlnVPgbmyYaiYzy8wPEgGp2dVodt-GEbonPHKGRKQJwl/pub?output=csv"
+                href="https://docs.google.com/spreadsheets/d/1Q-8QiCBCiZ-0JBbsmsXQ9mJ6KnyLoCw7ZakKZYrpovA/edit?usp=sharing"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                KidCal programs sheet
+                KidCal programs sheet (editable)
               </a>
             </li>
             <li>One row per program or season.</li>
             <li>
               Fill in your location, title, type, dates, org name and a direct link.
             </li>
-            <li>KidCal reads from columns like <code>location_label</code>, <code>org</code>, <code>type</code>, <code>registration_open</code>, <code>registration_close</code>, <code>event_date</code>, <code>url</code>, <code>notes</code>.</li>
+            <li>
+              KidCal reads from columns like <code>location_label</code>, <code>org</code>,
+              <code>type</code>, <code>registration_open</code>, <code>registration_close</code>,
+              <code>event_date</code>, <code>url</code>, <code>notes</code>, and can also
+              merge in extra web feeds.
+            </li>
           </ul>
         </div>
 
@@ -639,9 +644,15 @@
   <div id="toast" class="toast"></div>
 
   <script>
-    // Google Sheet CSV URL
+    // Google Sheet CSV URL (published to web as CSV)
     const SHEET_URL =
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vSTGyzF9lGXW8a1--CtEYzaQFhZnkU0Ye8InlnVPgbmyYaiYzy8wPEgGp2dVodt-GEbonPHKGRKQJwl/pubhtml";
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vSTGyzF9lGXW8a1--CtEYzaQFhZnkU0Ye8InlnVPgbmyYaiYzy8wPEgGp2dVodt-GEbonPHKGRKQJwl/pub?gid=0&single=true&output=csv";
+
+    // NEW: External JSON feed URL (live web data)
+    // Create a file extra-events.json in your GitHub repo at /KidCal/extra-events.json
+    // with an array of events.
+    const EXTRA_EVENTS_URL =
+      "https://kidcal-hub.github.io/KidCal/extra-events.json";
 
     // Fallback sample events
     const SAMPLE_EVENTS = [
@@ -675,6 +686,9 @@
     const STORAGE_KEY = "kidcal-reminders-v1";
     let reminders = loadRemindersFromStorage();
     let isLoadingEvents = false;
+
+    // NEW: track how many async sources are loading
+    let pendingSources = 0;
 
     // DOM elements
     const cityInput = document.getElementById("cityInput");
@@ -776,20 +790,20 @@
       return t;
     }
 
+    // Fetch from Google Sheet CSV
     async function fetchSheetData() {
       try {
+        pendingSources++;
         isLoadingEvents = true;
         updateStatusUi();
 
         const res = await fetch(SHEET_URL);
-        if (!res.ok) throw new Error("Network error");
+        if (!res.ok) throw new Error("Network error fetching sheet");
         const text = await res.text();
         const parsed = parseCsv(text);
 
         if (!parsed.rows || !parsed.rows.length) {
-          console.warn("Sheet has no rows; using sample events.");
-          isLoadingEvents = false;
-          updateStatusUi();
+          console.warn("Sheet has no rows; keeping sample events.");
           return;
         }
 
@@ -822,17 +836,73 @@
           .filter(Boolean);
 
         if (mapped.length) {
-          EVENTS = mapped;
+          EVENTS = mapped; // base from sheet
           currentEvents = [...EVENTS];
           renderEvents();
-          showToast(`Loaded ${mapped.length} programs`);
+          showToast(`Loaded ${mapped.length} programs from KidCal sheet`);
         } else {
-          console.warn("Sheet rows did not have required fields; using samples.");
+          console.warn("Sheet rows did not have required fields; keeping samples.");
         }
       } catch (e) {
-        console.warn("Failed to load sheet data; using sample events.", e);
+        console.warn("Failed to load sheet data; keeping sample events.", e);
       } finally {
-        isLoadingEvents = false;
+        pendingSources--;
+        if (pendingSources <= 0) {
+          isLoadingEvents = false;
+        }
+        updateStatusUi();
+        renderEvents();
+      }
+    }
+
+    // NEW: Fetch additional events from a JSON feed on the web
+    async function fetchExternalEvents() {
+      try {
+        pendingSources++;
+        isLoadingEvents = true;
+        updateStatusUi();
+
+        const res = await fetch(EXTRA_EVENTS_URL, { cache: "no-store" });
+        if (!res.ok) {
+          console.warn("External events feed not available", res.status);
+          return;
+        }
+
+        const data = await res.json();
+
+        const mapped = (data || []).map((item, idx) => {
+          return {
+            id: item.id || "external-" + idx,
+            city: item.city || item.location_label || "",
+            type: normalizeType(item.type),
+            title: item.title,
+            date: item.date || item.primary_date || "",
+            deadlineLabel:
+              item.deadlineLabel ||
+              item.deadline ||
+              item.registration_window ||
+              "",
+            provider: item.provider || item.org || "",
+            link: item.link || item.url || "",
+            notes: item.notes || "",
+            ageRange: item.ageRange || item.age_range,
+            cost: item.cost
+          };
+        }).filter(ev => ev.title && ev.link);
+
+        if (mapped.length) {
+          EVENTS = EVENTS.concat(mapped);
+          currentEvents = [...EVENTS];
+          renderEvents();
+          showToast(`Loaded ${mapped.length} extra programs from the web`);
+        }
+      } catch (e) {
+        console.warn("Failed to load external events", e);
+      } finally {
+        pendingSources--;
+        if (pendingSources <= 0) {
+          isLoadingEvents = false;
+        }
         updateStatusUi();
         renderEvents();
       }
@@ -1151,11 +1221,10 @@
     // Initial render
     handleSample();
     renderReminders();
+
+    // Load from Google Sheet and external web feed
     fetchSheetData();
+    fetchExternalEvents();
   </script>
 </body>
 </html>
-
-
-
-
