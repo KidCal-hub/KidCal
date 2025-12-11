@@ -249,6 +249,15 @@
       color: #ffffff;
     }
 
+    .btn-accent {
+  background: var(--yellow);
+  color: #111827; /* dark text for contrast */
+}
+
+.btn-accent:hover {
+  filter: brightness(0.95);
+}
+    
     .btn-secondary {
       background: #e5e7eb;
       color: var(--text-main);
@@ -681,37 +690,31 @@
   </p>
 
   <ul class="provider-list" style="padding-left:0; list-style:none;">
-    <li style="margin-bottom:8px; display:flex; align-items:flex-start; gap:8px;">
-      <span style="font-size:1.1rem;">📄</span>
-      <span>
-        Open the shared sheet to add or edit programs:
-        <li style="margin-bottom:8px; display:flex; align-items:flex-start; gap:8px;">
-  <span style="font-size:1.1rem;">📄</span>
-  <span>
-    Add your programs on the shared sheet:
-    <a
-      class="btn btn-primary btn-small"
-      href="href="https://docs.google.com/spreadsheets/d/1Um6YHIKfc0L918-Xx3_TJyBCuX5KXVBoH4JUOjwqlZM/edit?gid=0#gid=0""
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      ✏️ Add your programs
-    </a>
-  </span>
-</li>
-      </span>
-    </li>
+  <li style="margin-bottom:8px; display:flex; align-items:flex-start; gap:8px;">
+    <span style="font-size:1.1rem;">📄</span>
+    <span>
+      Add your programs on the shared sheet:
+      <a
+        class="btn btn-accent btn-small"
+        href="https://docs.google.com/spreadsheets/d/1Um6YHIKfc0L918-Xx3_TJyBCuX5KXVBoH4JUOjwqlZM/edit?gid=0#gid=0"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        ✏️ Add your programs
+      </a>
+    </span>
+  </li>
 
-    <li style="margin-bottom:8px; display:flex; align-items:flex-start; gap:8px;">
-      <span style="font-size:1.1rem;">📝</span>
-      <span>One row per program or season.</span>
-    </li>
+  <li style="margin-bottom:8px; display:flex; align-items:flex-start; gap:8px;">
+    <span style="font-size:1.1rem;">📝</span>
+    <span>One row per program or season.</span>
+  </li>
 
-    <li style="margin-bottom:8px; display:flex; align-items:flex-start; gap:8px;">
-      <span style="font-size:1.1rem;">💡</span>
-      <span>Fill in your location, title, type, dates, org name and a direct link.</span>
-    </li>
-  </ul>
+  <li style="margin-bottom:8px; display:flex; align-items:flex-start; gap:8px;">
+    <span style="font-size:1.1rem;">💡</span>
+    <span>Fill in your location, title, type, dates, org name and a direct link.</span>
+  </li>
+</ul>
 </div>
 
         <footer>
@@ -1458,6 +1461,7 @@
 </script>
 </body>
 </html>
+
 
 
 
