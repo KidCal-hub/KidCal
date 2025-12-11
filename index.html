@@ -134,7 +134,44 @@
       flex-direction: column;
       gap: 8px;
     }
-
+    
+    .step-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--blue-dark);
+      margin-bottom: 4px;
+    }
+    
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: var(--yellow);
+      color: #111827;
+      font-size: 0.8rem;
+    }
+    
+    .step-text {
+      letter-spacing: 0.01em;
+    }
+    
+    .step-label--subtle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    
+    .step-label--inline {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
     .controls label {
       font-size: 0.85rem;
       color: var(--text-muted);
@@ -527,8 +564,11 @@
     </p>
 
 <div class="controls">
-  <label for="cityInput">Step 1: Search by city or ZIP</label>
-  <div class="search-row">
+  <div class="step-label">
+  <span class="step-number">1</span>
+  <span class="step-text">Search by city or ZIP</span>
+</div>
+<div class="search-row">
     <input
       id="cityInput"
       type="text"
@@ -541,8 +581,11 @@
 
   <div class="filters-row">
     <div class="filters-left">
-      <span>Step 2: Type & distance</span>
-      <select id="typeFilter">
+      <div class="step-label step-label--inline">
+      <span class="step-number">2</span>
+      <span class="step-text">Type and distance</span>
+    </div>
+    <select id="typeFilter">
         <option value="all">All</option>
         <option value="school">School</option>
         <option value="sports">Sports</option>
@@ -581,8 +624,12 @@
         </div>
 
         <div class="card">
-          <p class="list-title">Kids’ signups & events</p>
-          <p class="list-sub">Step 3: Add things you don’t want to miss.</p>
+          <div class="step-label">
+          <span class="step-number">3</span>
+          <span class="step-text">Add things you do not want to miss</span>
+        </div>
+        <p class="list-title">Kids’ signups and events</p>
+        <p class="list-sub">Tap “Add reminder” next to anything important.</p>
 
           <ul id="eventsList" class="events-list"></ul>
           <p id="eventsEmpty" class="no-events" style="display:none;">
@@ -594,17 +641,21 @@
       <!-- RIGHT: Reminders + provider info -->
       <section>
         <div class="card">
-          <p class="list-title">My reminders</p>
-          <p class="list-sub">
-            Saved on this device. Download a calendar file when you’re ready.
-          </p>
+          <div class="step-label">
+  <span class="step-number">4</span>
+  <span class="step-text">Download your calendar</span>
+</div>
+<p class="list-title">My reminders</p>
+<p class="list-sub">
+  Saved on this device. Download a simple .ics file to add to your calendar.
+</p>
 
-          <div class="filters-row" style="margin-top:0;">
-            <div class="filters-left">
-              <span class="badge">
-                <span>📅</span> Step 4: Download .ics
-              </span>
-            </div>
+<div class="filters-row" style="margin-top:0;">
+  <div class="filters-left">
+    <span class="badge">
+      <span>📅</span> Download .ics when you are ready
+    </span>
+  </div>
             <div class="filters-right">
               <button class="btn btn-outline btn-small" id="btnDownloadIcs">
                 ⬇️ Download .ics
@@ -669,7 +720,7 @@
  <script>
   // Google Sheet CSV URL (published to web as CSV)
   const SHEET_URL =
-    "https://docs.google.com/spreadsheets/d/e/2PACX-1vRqaqwSrHg96BxHlWOmg1_ZpvVuQT_HXa7PUhxrAPGBq1JjGdY5GfnH7fjLFJvN2cnbd2Yjr8EvVKPw/pub?gid=0&single=true&output=csv";
+    "https://docs.google.com/spreadsheets/d/1Um6YHIKfc0L918-Xx3_TJyBCuX5KXVBoH4JUOjwqlZM/edit?usp=sharing";
 
   // Optional external JSON feed URL (extra web data)
   const EXTRA_EVENTS_URL =
@@ -902,7 +953,7 @@
             ageRange: row.age_range,
             cost: row.cost,
             // NEW: try to get a ZIP from an explicit column, then fall back to the city string
-            zip: row.zip || row.location_zip || extractZip(cityLabel)
+            zip: row.zip || row.location_zip || row.location_area || extractZip(cityLabel)
           };
         })
         .filter(Boolean);
@@ -1400,6 +1451,7 @@
 </script>
 </body>
 </html>
+
 
 
 
