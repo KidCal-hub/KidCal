@@ -560,11 +560,11 @@
 
     <div class="filters-right">
       <!-- NEW: time filter: upcoming / past / all -->
-      <select id="timeFilter">
-        <option value="upcoming">Upcoming only</option>
-        <option value="past">Past only</option>
-        <option value="all">All dates</option>
-      </select>
+    <select id="timeFilter">
+      <option value="all">All dates</option>
+      <option value="upcoming">Upcoming only</option>
+      <option value="past">Past only</option>
+    </select>
 
       <span class="badge" style="background:#fef9c3;">
         <span>⭐</span> Tap “Add reminder” to save
@@ -1263,7 +1263,6 @@
         showToast("No ZIP-radius matches; showing text matches instead.");
       }
     }
-  }
 
   async function handleFind() {
     const queryRaw = (cityInput.value || "").trim();
@@ -1394,6 +1393,7 @@
 </script>
 </body>
 </html>
+
 
 
 
