@@ -730,7 +730,7 @@
  <script>
   // Google Sheet CSV URL (published to web as CSV)
   const SHEET_URL =
-    "https://docs.google.com/spreadsheets/d/1Um6YHIKfc0L918-Xx3_TJyBCuX5KXVBoH4JUOjwqlZM/export?format=csv&gid=952020057";
+    "https://docs.google.com/spreadsheets/d/e/2PACX-1vRqaqwSrHg96BxHlWOmg1_ZpvVuQT_HXa7PUhxrAPGBq1JjGdY5GfnH7fjLFJvN2cnbd2Yjr8EvVKPw/pub?gid=952020057&single=true&output=csv";
 
   // Optional external JSON feed URL (extra web data)
   const EXTRA_EVENTS_URL =
@@ -805,21 +805,36 @@
 
   // CSV parser (simple, no commas inside cells)
   function parseCsv(text) {
-    const lines = text.trim().split(/\r?\n/);
-    if (!lines.length) return { headers: [], rows: [] };
+  const rows = [];
+  let row = [], cur = "", inQuotes = false;
 
-    const headers = lines[0].split(",").map((h) => h.trim());
-    const rows = lines.slice(1).map((line) => {
-      const cells = line.split(",").map((c) => c.trim());
-      const obj = {};
-      headers.forEach((h, i) => {
-        obj[h] = cells[i] || "";
-      });
-      return obj;
-    });
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    const next = text[i + 1];
 
-    return { headers, rows };
+    if (ch === '"' && inQuotes && next === '"') { cur += '"'; i++; continue; }
+    if (ch === '"') { inQuotes = !inQuotes; continue; }
+
+    if (ch === "," && !inQuotes) { row.push(cur.trim()); cur = ""; continue; }
+    if ((ch === "\n" || ch === "\r") && !inQuotes) {
+      if (cur.length || row.length) { row.push(cur.trim()); rows.push(row); }
+      cur = ""; row = [];
+      if (ch === "\r" && next === "\n") i++;
+      continue;
+    }
+
+    cur += ch;
   }
+  if (cur.length || row.length) { row.push(cur.trim()); rows.push(row); }
+
+  const headers = (rows.shift() || []).map(h => h.trim());
+  const outRows = rows.map(r => {
+    const obj = {};
+    headers.forEach((h, idx) => obj[h] = r[idx] || "");
+    return obj;
+  });
+  return { headers, rows: outRows };
+}
 
   function pickPrimaryDate(row) {
     return (
@@ -928,7 +943,7 @@
       isLoadingEvents = true;
       updateStatusUi();
 
-      const res = await fetch(SHEET_URL);
+      const res = await fetch(`${SHEET_URL}&t=${Date.now()}`, { cache: "no-store" });
       if (!res.ok) throw new Error("Network error fetching sheet");
       const text = await res.text();
       const parsed = parseCsv(text);
@@ -1461,6 +1476,7 @@
 </script>
 </body>
 </html>
+
 
 
 
