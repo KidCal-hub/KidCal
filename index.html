@@ -1,1498 +1,711 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>KidCal – Kids’ Signups in One Place</title>
+  <meta charset="utf-8" />
+  <title>KidCal – SLO County kids signups in one place</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta
-    name="description"
-    content="KidCal helps parents see all kids’ signups and events in one simple list."
-  />
+  <meta name="description" content="Search kid activities, enrollments, sports, camps, and family events across San Luis Obispo County. Save and export to your calendar." />
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#1d4ed8">
+
   <style>
-    :root {
-      --blue: #1d4ed8;
-      --blue-dark: #1e3a8a;
-      --blue-soft: #dbeafe;
-      --yellow: #facc15;
-      --bg: #f3f4ff;
-      --card-bg: #ffffff;
-      --text-main: #0f172a;
-      --text-muted: #6b7280;
-      --border: #e5e7eb;
-      --radius-lg: 14px;
-      --radius-md: 10px;
-      --shadow-soft: 0 10px 25px rgba(15, 23, 42, 0.15);
-      --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: var(--font-main);
-      background: #ffffff;
-      color: var(--text-main);
-    }
-
-    .page {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 16px 16px 32px;
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-    }
-
-    .brand {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .logo {
-      font-weight: 800;
-      font-size: 1.6rem;
-      letter-spacing: 0.04em;
-      color: var(--blue-dark);
-    }
-
-    .logo span {
-      color: var(--yellow);
-    }
-
-    .tagline {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-    }
-
-    .badge {
-      background: var(--blue-soft);
-      color: var(--blue-dark);
-      border-radius: 999px;
-      padding: 4px 10px;
-      font-size: 0.8rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .badge span {
-      font-size: 1rem;
-    }
-
-    main {
-      display: grid;
-      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.4fr);
-      gap: 16px;
-      align-items: flex-start;
-    }
-
-    @media (max-width: 880px) {
-      main {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .card {
-      background: var(--card-bg);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-soft);
-      padding: 16px 16px 14px;
-    }
-
-    .card + .card {
-      margin-top: 12px;
-    }
-
-    .hero-title {
-      font-size: 1.5rem;
-      margin: 0 0 4px;
-      color: var(--blue-dark);
-    }
-
-    .hero-sub {
-      margin: 0 0 10px;
-      color: var(--text-muted);
-      font-size: 0.95rem;
-    }
-
-    .hero-sub strong {
-      color: var(--text-main);
-    }
-
-    .controls {
-      margin-top: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    
-    .step-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--blue-dark);
-      margin-bottom: 4px;
-    }
-    
-    .step-number {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 22px;
-      height: 22px;
-      border-radius: 999px;
-      background: var(--yellow);
-      color: #111827;
-      font-size: 0.8rem;
-    }
-    
-    .step-text {
-      letter-spacing: 0.01em;
-    }
-    
-    .step-label--subtle {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-    
-    .step-label--inline {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .controls label {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    .search-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .search-row input {
-      flex: 1 1 180px;
-      padding: 10px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      font-size: 0.95rem;
-    }
-
-    .search-row input:focus {
-      outline: none;
-      border-color: var(--blue);
-      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.35);
-    }
-
-    .filters-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 6px;
-      align-items: center;
-    }
-
-    .filters-left {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      align-items: center;
-      font-size: 0.82rem;
-      color: var(--text-muted);
-    }
-
-    .filters-right {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    select {
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      padding: 6px 10px;
-      font-size: 0.85rem;
-      background: #f9fafb;
-    }
-
-    .btn {
-      border: none;
-      border-radius: 999px;
-      padding: 10px 14px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      font-weight: 500;
-      text-decoration: none;
-      white-space: nowrap;
-    }
-
-    .btn-primary {
-      background: var(--blue);
-      color: #ffffff;
-    }
-
-    .btn-accent {
-  background: var(--yellow);
-  color: #111827; /* dark text for contrast */
-}
-
-.btn-accent:hover {
-  filter: brightness(0.95);
-}
-    
-    .btn-secondary {
-      background: #e5e7eb;
-      color: var(--text-main);
-    }
-
-    .btn-danger {
-      background: #fee2e2;
-      color: #b91c1c;
-    }
-
-    .btn-outline {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text-main);
-    }
-
-    .btn-small {
-      padding: 6px 10px;
-      font-size: 0.8rem;
-    }
-
-    /* Mobile tweaks */
-    @media (max-width: 600px) {
-      .search-row {
-        flex-direction: column;
-      }
-
-      .filters-row {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .filters-right {
-        width: 100%;
-      }
-
-      .filters-right .btn {
-        flex: 1 1 auto;
-        width: 100%;
-      }
-
-      .btn {
-        width: 100%;
-      }
-    }
-
-    .status-line {
-      margin-top: 8px;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .status-pill {
-      padding: 3px 8px;
-      border-radius: 999px;
-      font-size: 0.78rem;
-      background: var(--blue-soft);
-      color: var(--blue-dark);
-    }
-
-    .status-pill.loading {
-      background: #fee2e2;
-      color: #b91c1c;
-    }
-
-    .list-title {
-      font-size: 1rem;
-      margin: 0 0 4px;
-    }
-
-    .list-sub {
-      margin: 0 0 10px;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    .events-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      max-height: 380px;
-      overflow-y: auto;
-    }
-
-    .event-item {
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border);
-      padding: 10px 10px;
-      margin-bottom: 8px;
-      display: grid;
-      grid-template-columns: minmax(0, 3fr) auto;
-      gap: 8px;
-    }
-
-    @media (max-width: 600px) {
-      .event-item {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .event-main {
-      font-size: 0.9rem;
-    }
-
-    .event-title {
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .event-meta {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-
-    .city-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: #eff6ff;
-      color: var(--blue-dark);
-      font-size: 0.75rem;
-      margin-right: 6px;
-    }
-
-    .event-deadline {
-      font-size: 0.8rem;
-      margin-bottom: 2px;
-    }
-
-    .event-notes {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    .event-link a {
-      font-size: 0.8rem;
-      color: var(--blue);
-      text-decoration: none;
-    }
-
-    .event-link a:hover {
-      text-decoration: underline;
-    }
-
-    .event-actions {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 6px;
-      text-align: right;
-    }
-
-    .type-pill {
-      font-size: 0.75rem;
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: #e5e7eb;
-      color: #374151;
-      text-transform: capitalize;
-    }
-
-    .type-pill.school {
-      background: #dbeafe;
-      color: #1e3a8a;
-    }
-
-    .type-pill.sports {
-      background: #dcfce7;
-      color: #166534;
-    }
-
-    .type-pill.camp {
-      background: #fef9c3;
-      color: #854d0e;
-    }
-
-    .no-events {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    .reminders-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      font-size: 0.9rem;
-      max-height: 220px;
-      overflow-y: auto;
-    }
-
-    .reminder-item {
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border);
-      padding: 8px 9px;
-      margin-bottom: 6px;
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      align-items: center;
-      background: #f9fafb;
-    }
-
-    .reminder-main {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .reminder-title {
-      font-weight: 600;
-    }
-
-    .reminder-meta {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    .btn-icon {
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: #ffffff;
-      font-size: 0.8rem;
-      cursor: pointer;
-      padding: 4px 8px;
-    }
-
-    .empty-hint {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-    }
-
-    .provider-list {
-      margin: 6px 0 0;
-      padding-left: 18px;
-      font-size: 0.86rem;
-      color: var(--text-muted);
-    }
-
-    .provider-list li {
-      margin-bottom: 4px;
-    }
-
-    .provider-list a {
-      color: var(--blue);
-      text-decoration: none;
-    }
-
-    .provider-list a:hover {
-      text-decoration: underline;
-    }
-
-    footer {
-      margin-top: 14px;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    /* Toast */
-    .toast {
-      position: fixed;
-      bottom: 14px;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: var(--blue-dark);
-      color: #f9fafb;
-      padding: 8px 16px;
-      border-radius: 999px;
-      font-size: 0.86rem;
-      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.4);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s ease, transform 0.2s ease;
-      z-index: 40;
-    }
-
-    .toast.toast--visible {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
+    :root{
+      --blue:#1d4ed8; --blue2:#1e3a8a; --yellow:#facc15;
+      --bg:#f7f9ff; --card:#fff; --text:#0f172a; --muted:#475569; --border:#e2e8f0;
+      --r:16px; --shadow:0 10px 25px rgba(15,23,42,.12);
+      --font: system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:var(--font);background:var(--bg);color:var(--text)}
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}
+    header{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+    .brand{display:flex;flex-direction:column;gap:4px}
+    .logo{font-weight:900;font-size:1.7rem;letter-spacing:.02em;color:var(--blue2)}
+    .logo span{color:var(--yellow)}
+    .tag{color:var(--muted);font-size:.95rem}
+    .pill{display:inline-flex;align-items:center;gap:8px;background:#eaf0ff;border:1px solid #dbeafe;color:var(--blue2);padding:6px 10px;border-radius:999px;font-size:.85rem}
+    main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1.2fr);gap:14px;margin-top:12px}
+    @media (max-width:900px){main{grid-template-columns:1fr}}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);padding:14px}
+    h1{margin:0 0 8px;font-size:1.35rem;color:var(--blue2)}
+    .sub{margin:0 0 10px;color:var(--muted);font-size:.95rem}
+    .row{display:flex;gap:8px;flex-wrap:wrap}
+    input,select,textarea{
+      width:100%; border:1px solid var(--border);border-radius:12px;padding:10px 12px;
+      font-size:.95rem;background:#fff; color:var(--text)
+    }
+    input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,78,216,.15)}
+    .row .grow{flex:1 1 220px}
+    .btn{border:none;border-radius:999px;padding:10px 14px;font-size:.92rem;cursor:pointer;font-weight:650;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+    .btn.primary{background:var(--blue);color:#fff}
+    .btn.ghost{background:#fff;border:1px solid var(--border);color:var(--text)}
+    .btn.accent{background:var(--yellow);color:#111827}
+    .btn.danger{background:#fee2e2;color:#b91c1c}
+    .small{font-size:.82rem;color:var(--muted)}
+    .status{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
+    .status .pill{background:#fff;border:1px solid var(--border);color:var(--muted)}
+    .status .pill.loading{background:#fff1f2;border-color:#fecdd3;color:#9f1239}
+    .list{list-style:none;padding:0;margin:0;max-height:520px;overflow:auto}
+    .item{border:1px solid var(--border);border-radius:14px;padding:10px;margin-bottom:8px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px}
+    @media (max-width:600px){.item{grid-template-columns:1fr}}
+    .title{font-weight:800;margin:0 0 4px}
+    .meta{font-size:.85rem;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .badge{font-size:.75rem;border-radius:999px;padding:3px 8px;border:1px solid var(--border);background:#f8fafc;color:#334155}
+    .badge.school{background:#e0f2fe;border-color:#bae6fd;color:#075985}
+    .badge.sports{background:#dcfce7;border-color:#bbf7d0;color:#166534}
+    .badge.camp{background:#fef9c3;border-color:#fde68a;color:#854d0e}
+    .badge.other{background:#f1f5f9;border-color:#e2e8f0;color:#334155}
+    .line{margin-top:6px;font-size:.88rem}
+    .line strong{color:var(--text)}
+    .actions{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+    .actions label{display:flex;gap:8px;align-items:center;font-size:.85rem;color:var(--muted);user-select:none}
+    .link a{color:var(--blue);text-decoration:none;font-weight:700}
+    .link a:hover{text-decoration:underline}
+    .toast{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);background:var(--blue2);color:#fff;padding:10px 14px;border-radius:999px;opacity:0;pointer-events:none;transition:.2s;box-shadow:0 10px 20px rgba(15,23,42,.35)}
+    .toast.show{opacity:1}
+    .divider{height:1px;background:var(--border);margin:12px 0}
   </style>
 </head>
 <body>
-  <div class="page">
-    <header>
-      <div class="brand">
-        <div class="logo">KidCal<span>.</span></div>
-        <div class="tagline">All your kids’ signups in one place</div>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo">KidCal<span>.</span></div>
+      <div class="tag">San Luis Obispo County kids signups, deadlines & family events</div>
+    </div>
+    <div class="pill">📍 SLO County • Web + App</div>
+  </header>
+
+  <main>
+    <!-- LEFT: Search + Results -->
+    <section class="card">
+      <h1>Find signups you don’t want to miss</h1>
+      <p class="sub">Search by <strong>ZIP</strong> or <strong>city</strong>. Pick a radius, filter by type/date, then select items to export to your calendar.</p>
+
+      <div class="row">
+        <div class="grow">
+          <input id="q" placeholder="Try: 93422 or Atascadero" autocomplete="off" />
+        </div>
+        <button class="btn primary" id="btnSearch">Search</button>
+        <button class="btn ghost" id="btnClear">Show all</button>
       </div>
-      <div class="badge">
-        <span>📍</span> San Luis Obispo County
+
+      <div class="row" style="margin-top:8px">
+        <select id="type">
+          <option value="all">All types</option>
+          <option value="school">School</option>
+          <option value="sports">Sports</option>
+          <option value="camp">Camps / activities</option>
+          <option value="other">Other</option>
+        </select>
+        <select id="time">
+          <option value="all">All dates</option>
+          <option value="upcoming">Upcoming only</option>
+          <option value="past">Past only</option>
+        </select>
+        <select id="radius">
+          <option value="0">Exact ZIP / city</option>
+          <option value="5">Within 5 miles</option>
+          <option value="10">Within 10 miles</option>
+          <option value="25">Within 25 miles</option>
+        </select>
       </div>
-    </header>
 
-    <main>
-      <!-- LEFT: Search + Event list -->
-      <section>
-        <div class="card">
-    <h1 class="hero-title">
-      Find every signup your kids shouldn’t miss!
-    </h1>
-    <p class="hero-sub">
-      Never miss a moment&mdash;organize every signup into your own simple calendar.
-    </p>
+      <div class="status">
+        <span id="count" class="pill loading">Loading…</span>
+        <span id="filterLabel" class="pill" style="display:none"></span>
+      </div>
 
-<div class="controls">
-  <div class="step-label">
-  <span class="step-number">1</span>
-  <span class="step-text">Search by city or ZIP</span>
-</div>
-<div class="search-row">
-    <input
-      id="cityInput"
-      type="text"
-      placeholder="Try: 93422 or Atascadero…"
-      autocomplete="off"
-    />
-    <button class="btn btn-primary" id="btnFind">Search</button>
-    <button class="btn btn-secondary" id="btnSample">Show everything</button>
-  </div>
+      <div class="divider"></div>
 
-  <div class="filters-row">
-    <div class="filters-left">
-      <div class="step-label step-label--inline">
-      <span class="step-number">2</span>
-      <span class="step-text">Type and distance</span>
-    </div>
-    <select id="typeFilter">
-        <option value="all">All</option>
-        <option value="school">School</option>
-        <option value="sports">Sports</option>
-        <option value="camp">Camps / activities</option>
-        <option value="other">Other / directories</option>
-      </select>
-
-      <!-- NEW: distance radius filter -->
-      <select id="radiusFilter">
-        <option value="0">Exact ZIP / city</option>
-        <option value="5">Within 5 miles</option>
-        <option value="10">Within 10 miles</option>
-        <option value="25">Within 25 miles</option>
-      </select>
-    </div>
-
-    <div class="filters-right">
-      <!-- NEW: time filter: upcoming / past / all -->
-    <select id="timeFilter">
-      <option value="all">All dates</option>
-      <option value="upcoming">Upcoming only</option>
-      <option value="past">Past only</option>
-    </select>
-
-      <span class="badge" style="background:#fef9c3;">
-        <span>⭐</span> Tap “Add reminder” to save
-      </span>
-    </div>
-  </div>
-
-  <div class="status-line">
-    <span id="eventsCounter" class="status-pill">Loading events…</span>
-    <span id="cityFilterLabel" class="status-pill" style="display:none;"></span>
-  </div>
-</div>
+      <div class="row" style="align-items:center;justify-content:space-between">
+        <div class="small"><strong>Select</strong> events, then download .ics</div>
+        <div class="row">
+          <button class="btn ghost" id="btnSelectAll">Select all</button>
+          <button class="btn ghost" id="btnSelectNone">Select none</button>
         </div>
+      </div>
 
-        <div class="card">
-          <div class="step-label">
-          <span class="step-number">3</span>
-          <span class="step-text">Add things you do not want to miss</span>
-        </div>
-        <p class="list-title">Kids’ signups and events</p>
-        <p class="list-sub">Tap “Add reminder” next to anything important.</p>
+      <ul id="list" class="list"></ul>
+      <p id="empty" class="small" style="display:none">No matches. Try a different ZIP/city or “Show all”.</p>
+    </section>
 
-          <ul id="eventsList" class="events-list"></ul>
-          <p id="eventsEmpty" class="no-events" style="display:none;">
-            No matches right now. Try a different area or “Show everything”.
-          </p>
-        </div>
-      </section>
+    <!-- RIGHT: Calendar + Submit -->
+    <section class="card">
+      <h1>Calendar + Submissions</h1>
+      <p class="sub">Selections are saved on this device. Download an <strong>.ics</strong> file and add to Apple/Google/Outlook.</p>
 
-      <!-- RIGHT: Reminders + provider info -->
-      <section>
-        <div class="card">
-          <div class="step-label">
-  <span class="step-number">4</span>
-  <span class="step-text">Download your calendar</span>
-</div>
-<p class="list-title">My reminders</p>
-<p class="list-sub">
-  Saved on this device. Download a simple .ics file to add to your calendar.
-</p>
+      <div class="row">
+        <button class="btn accent" id="btnIcs">⬇️ Download selected .ics</button>
+        <button class="btn danger" id="btnClearSel">🧹 Clear selections</button>
+      </div>
 
-<div class="filters-row" style="margin-top:0;">
-  <div class="filters-left">
-    <span class="badge">
-      <span>📅</span> Download .ics when you are ready
-    </span>
-  </div>
-            <div class="filters-right">
-              <button class="btn btn-outline btn-small" id="btnDownloadIcs">
-                ⬇️ Download .ics
-              </button>
-              <button class="btn btn-danger btn-small" id="btnClearReminders">
-                🧹 Clear
-              </button>
-            </div>
-          </div>
+      <div class="divider"></div>
 
-          <ul id="remindersList" class="reminders-list"></ul>
-          <p id="remindersEmpty" class="empty-hint">
-            No reminders yet. Add one from the list on the left.
-          </p>
-        </div>
+      <h1 style="font-size:1.1rem">Submit a program</h1>
+      <p class="sub">Submissions go to you for review first (not auto-posted).</p>
 
-        <div class="card">
-  <p class="list-title" style="color:#1d4ed8; font-weight:700; font-size:1.05rem;">
-    📣 For schools & youth programs
-  </p>
-  <p class="list-sub" style="margin-bottom:12px;">
-    Add your programs so local families can find you.
-  </p>
+      <div class="row">
+        <input id="s_name" placeholder="Your name (optional)" />
+        <input id="s_email" placeholder="Your email (optional)" />
+      </div>
+      <div class="row" style="margin-top:8px">
+        <input id="s_location" placeholder="City or area (include ZIP if possible)" />
+        <input id="s_zip" placeholder="ZIP (optional)" />
+      </div>
+      <div class="row" style="margin-top:8px">
+        <input id="s_title" placeholder="Program / event title *" />
+        <input id="s_org" placeholder="Organization" />
+      </div>
+      <div class="row" style="margin-top:8px">
+        <select id="s_type">
+          <option value="school">School</option>
+          <option value="sports">Sports</option>
+          <option value="camp">Camp / activity</option>
+          <option value="other" selected>Other</option>
+        </select>
+        <input id="s_url" placeholder="Direct link *" />
+      </div>
+      <div class="row" style="margin-top:8px">
+        <input id="s_open" placeholder="Registration opens (YYYY-MM-DD)" />
+        <input id="s_close" placeholder="Registration deadline (YYYY-MM-DD)" />
+      </div>
+      <div class="row" style="margin-top:8px">
+        <input id="s_event" placeholder="Event date (YYYY-MM-DD)" />
+        <input id="s_age" placeholder="Ages (e.g., 4–6)" />
+      </div>
+      <div class="row" style="margin-top:8px">
+        <input id="s_cost" placeholder="Cost (e.g., Free / $120)" />
+      </div>
+      <div class="row" style="margin-top:8px">
+        <textarea id="s_notes" rows="3" placeholder="Short description for parents"></textarea>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button class="btn primary" id="btnSubmit">Submit for review</button>
+      </div>
 
-  <ul class="provider-list" style="padding-left:0; list-style:none;">
-  <li style="margin-bottom:8px; display:flex; align-items:flex-start; gap:8px;">
-    <span style="font-size:1.1rem;">📄</span>
-    <span>
-      Add your programs on the shared sheet:
-      <a
-        class="btn btn-accent btn-small"
-        href="https://docs.google.com/spreadsheets/d/1Um6YHIKfc0L918-Xx3_TJyBCuX5KXVBoH4JUOjwqlZM/edit?gid=0#gid=0"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        ✏️ Add your programs
-      </a>
-    </span>
-  </li>
-
-  <li style="margin-bottom:8px; display:flex; align-items:flex-start; gap:8px;">
-    <span style="font-size:1.1rem;">📝</span>
-    <span>One row per program or season.</span>
-  </li>
-
-  <li style="margin-bottom:8px; display:flex; align-items:flex-start; gap:8px;">
-    <span style="font-size:1.1rem;">💡</span>
-    <span>Fill in your location, title, type, dates, org name and a direct link.</span>
-  </li>
-</ul>
+      <p class="small" style="margin-top:10px">Tip: install this as an app from your browser menu → “Add to Home Screen”.</p>
+    </section>
+  </main>
 </div>
 
-        <footer>
-          KidCal collects local kids’ signups and events in one place so parents
-          don’t have to dig through flyers, emails and websites.
-        </footer>
-      </section>
-    </main>
-  </div>
+<div id="toast" class="toast"></div>
 
-  <div id="toast" class="toast"></div>
+<script>
+  /***********************
+   * CONFIG – FILL THESE
+   ***********************/
+  // 1) Apps Script Web App URL (deployed) – used for public JSON + submissions
+  const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx4x7qEmgfJOWeuN_ny4dalkUBf9J9l-KvXGkY9ZJx5STBFMqMHe9tp3lUbstCWfHx3/exec";
 
- <script>
-  // Google Sheet CSV URL (published to web as CSV)
-  const SHEET_URL =
-    "https://docs.google.com/spreadsheets/d/e/2PACX-1vRqaqwSrHg96BxHlWOmg1_ZpvVuQT_HXa7PUhxrAPGBq1JjGdY5GfnH7fjLFJvN2cnbd2Yjr8EvVKPw/pub?gid=952020057&single=true&output=csv";
+  // 2) Optional fallback CSV (published kidcal_public as CSV). If you use WEBAPP_URL?public=1, you can skip this.
+  const PUBLIC_CSV_URL = "";
 
-  // Optional external JSON feed URL (extra web data)
-  const EXTRA_EVENTS_URL =
-    "https://kidcal-hub.github.io/KidCal/extra-events.json";
+  const EXTRA_EVENTS_URL = "./extra-events.json"; // optional
 
-  // Fallback sample events
-  const SAMPLE_EVENTS = [
-    {
-      id: "sample-1",
-      city: "Atascadero CA 93422",
-      type: "school",
-      title: "AUSD TK & Kinder Enrollment 2025–26",
-      date: "2025-03-31",
-      deadlineLabel: "Register between Mar 1 and Mar 31 2025",
-      provider: "Atascadero Unified School District",
-      link: "https://atascaderousd.aeries.net/air/",
-      notes: "Online enrollment for new TK and Kindergarten students.",
-      zip: "93422"
-    },
-    {
-      id: "sample-2",
-      city: "Atascadero CA 93422",
-      type: "sports",
-      title: "Atascadero Youth Soccer League Fall 2025",
-      date: "2025-06-16",
-      deadlineLabel: "Register between Apr 8 and Jun 16 2025",
-      provider: "Atascadero Youth Soccer League",
-      link: "https://www.atascaderosoccer.org/",
-      notes: "Games start in early September.",
-      zip: "93422"
-    }
-  ];
+  /***********************
+   * State
+   ***********************/
+  const el = (id) => document.getElementById(id);
 
-  let EVENTS = [...SAMPLE_EVENTS];
-  let currentEvents = [...EVENTS];
+  let EVENTS = [];
+  let current = [];
+  let selected = loadSelected();
 
-  const STORAGE_KEY = "kidcal-reminders-v1";
-  let reminders = loadRemindersFromStorage();
-  let isLoadingEvents = false;
-  let pendingSources = 0;
-
-  // ZIP → {lat,lng} cache
   const ZIP_COORD_CACHE = {};
+  const STORAGE_KEY = "kidcal-selected-v2";
 
-  // DOM elements
-  const cityInput = document.getElementById("cityInput");
-  const typeFilter = document.getElementById("typeFilter");
-  const radiusFilter = document.getElementById("radiusFilter");
-  const timeFilter = document.getElementById("timeFilter");
-  const btnFind = document.getElementById("btnFind");
-  const btnSample = document.getElementById("btnSample");
-  const eventsList = document.getElementById("eventsList");
-  const eventsEmpty = document.getElementById("eventsEmpty");
-  const eventsCounter = document.getElementById("eventsCounter");
-  const cityFilterLabel = document.getElementById("cityFilterLabel");
-
-  const remindersList = document.getElementById("remindersList");
-  const remindersEmpty = document.getElementById("remindersEmpty");
-  const btnClearReminders = document.getElementById("btnClearReminders");
-  const btnDownloadIcs = document.getElementById("btnDownloadIcs");
-
-  function showToast(message) {
-    const toast = document.getElementById("toast");
-    if (!toast) return;
-    toast.textContent = message;
-    toast.classList.add("toast--visible");
-    clearTimeout(window._kidcalToastTimeout);
-    window._kidcalToastTimeout = setTimeout(() => {
-      toast.classList.remove("toast--visible");
-    }, 2000);
+  function toast(msg){
+    const t = el("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(window.__t);
+    window.__t = setTimeout(()=>t.classList.remove("show"), 2200);
   }
 
-  // CSV parser (simple, no commas inside cells)
-  function parseCsv(text) {
-  const rows = [];
-  let row = [], cur = "", inQuotes = false;
-
-  for (let i = 0; i < text.length; i++) {
-    const ch = text[i];
-    const next = text[i + 1];
-
-    if (ch === '"' && inQuotes && next === '"') { cur += '"'; i++; continue; }
-    if (ch === '"') { inQuotes = !inQuotes; continue; }
-
-    if (ch === "," && !inQuotes) { row.push(cur.trim()); cur = ""; continue; }
-    if ((ch === "\n" || ch === "\r") && !inQuotes) {
-      if (cur.length || row.length) { row.push(cur.trim()); rows.push(row); }
-      cur = ""; row = [];
-      if (ch === "\r" && next === "\n") i++;
-      continue;
-    }
-
-    cur += ch;
+  function loadSelected(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    }catch{ return []; }
   }
-  if (cur.length || row.length) { row.push(cur.trim()); rows.push(row); }
-
-  const headers = (rows.shift() || []).map(h => h.trim());
-  const outRows = rows.map(r => {
-    const obj = {};
-    headers.forEach((h, idx) => obj[h] = r[idx] || "");
-    return obj;
-  });
-  return { headers, rows: outRows };
-}
-
-  function pickPrimaryDate(row) {
-    return (
-      row.registration_close ||
-      row.registration_open ||
-      row.event_date ||
-      ""
-    );
+  function saveSelected(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(selected));
   }
 
-  function formatDate(iso) {
-    if (!iso) return "";
-    const parts = iso.split("-");
-    if (parts.length !== 3) return iso;
-    const [y, m, d] = parts;
-    const monthNames = [
-      "Jan","Feb","Mar","Apr","May","Jun",
-      "Jul","Aug","Sep","Oct","Nov","Dec"
-    ];
-    const monthIndex = parseInt(m, 10) - 1;
-    const monthName = monthNames[monthIndex] || m;
-    const day = String(parseInt(d, 10));
-    return `${monthName} ${day} ${y}`;
+  /***********************
+   * Fetch Data
+   ***********************/
+  async function fetchPublicData(){
+    el("count").classList.add("loading");
+    el("count").textContent = "Loading…";
+
+    // Prefer WEBAPP public JSON
+    if (WEBAPP_URL && WEBAPP_URL.startsWith("http")) {
+      const res = await fetch(`${WEBAPP_URL}?public=1&t=${Date.now()}`, { cache:"no-store" });
+      if (res.ok){
+        const data = await res.json();
+        const mapped = (data || []).map((r, idx)=>mapRowToEvent(r, "pub-" + idx)).filter(Boolean);
+        if (mapped.length){
+          EVENTS = mapped;
+          current = [...EVENTS];
+          render();
+          toast(`Loaded ${EVENTS.length} programs`);
+          return;
+        }
+      }
+    }
+
+    // Fallback CSV
+    if (PUBLIC_CSV_URL) {
+      const res = await fetch(`${PUBLIC_CSV_URL}&t=${Date.now()}`, { cache:"no-store" });
+      if (res.ok){
+        const text = await res.text();
+        const parsed = parseCsv(text);
+        const mapped = parsed.rows.map((r, idx)=>mapRowToEvent(r, "csv-" + idx)).filter(Boolean);
+        EVENTS = mapped;
+        current =_togglecopy();
+        render();
+        toast(`Loaded ${EVENTS.length} programs`);
+        return;
+      }
+    }
+
+    toast("Could not load data yet. Check your WEBAPP_URL deployment.");
+    el("count").classList.remove("loading");
   }
 
-  function buildDeadlineLabel(row) {
-    const open = row.registration_open;
-    const close = row.registration_close;
-    const event = row.event_date;
-    const notes = row.notes;
+  function _togglecopy(){ return [...EVENTS]; }
 
-    if (open && close) {
-      return `Register between ${formatDate(open)} and ${formatDate(close)}`;
-    }
+  function mapRowToEvent(row, fallbackId){
+    const title = row.title || "";
+    const url = row.url || row.link || "";
+    if (!title || !url) return null;
 
-    if (close) {
-      return `Register by ${formatDate(close)}`;
-    }
+    const location_label = row.location_label || row.city || row.location || "";
+    const zip = row.zip || extractZip(location_label) || "";
 
-    if (open) {
-      return `Registration opens ${formatDate(open)}`;
-    }
-
-    if (event) {
-      return `Event on ${formatDate(event)}`;
-    }
-
-    return notes || "";
+    const date = pickPrimaryDate(row);
+    return {
+      id: row.item_id || row.id || fallbackId,
+      location_label,
+      zip,
+      title,
+      org: row.org || row.provider || "",
+      type: normalizeType(row.type),
+      registration_open: row.registration_open || "",
+      registration_close: row.registration_close || "",
+      event_date: row.event_date || row.primary_date || row.date || "",
+      date, // used for filtering
+      url,
+      notes: row.notes || "",
+      age_range: row.age_range || row.ageRange || "",
+      cost: row.cost || ""
+    };
   }
 
-  function normalizeType(raw) {
-    const t = (raw || "").toLowerCase().trim();
+  async function fetchExtra(){
+    try{
+      const res = await fetch(`${EXTRA_EVENTS_URL}?t=${Date.now()}`, { cache:"no-store" });
+      if (!res.ok) return;
+      const data = await res.json();
+      const mapped = (data || []).map((r, idx)=>mapRowToEvent(r, "extra-" + idx)).filter(Boolean);
+      if (mapped.length){
+        EVENTS = EVENTS.concat(mapped);
+        current = [...EVENTS];
+        render();
+        toast(`Loaded ${mapped.length} extra items`);
+      }
+    }catch{}
+  }
+
+  /***********************
+   * Search + Filters
+   ***********************/
+  function normalizeType(v){
+    const t = String(v || "").toLowerCase().trim();
     if (!t) return "other";
     if (t === "event") return "other";
-    return t;
+    if (["school","sports","camp","other"].includes(t)) return t;
+    return "other";
   }
 
-   function extractZip(str) {
-  if (!str) return "";
-  const match = String(str).match(/\b\d{5}\b/);
-  return match ? match[0] : "";
-}
-
-   async function getZipCoords(zip) {
-    if (!zip) return null;
-    if (ZIP_COORD_CACHE[zip]) return ZIP_COORD_CACHE[zip];
-
-    try {
-      const res = await fetch(`https://api.zippopotam.us/us/${zip}`);
-      if (!res.ok) return null;
-      const data = await res.json();
-      const place = data.places && data.places[0];
-      if (!place) return null;
-      const coords = {
-        lat: parseFloat(place.latitude),
-        lng: parseFloat(place.longitude)
-      };
-      ZIP_COORD_CACHE[zip] = coords;
-      return coords;
-    } catch (e) {
-      console.warn("Could not look up ZIP", zip, e);
-      return null;
-    }
+  function extractZip(str){
+    const m = String(str || "").match(/\b\d{5}\b/);
+    return m ? m[0] : "";
   }
 
-  function distanceMiles(a, b) {
-    if (!a || !b) return Infinity;
-    const R = 3958.8;
-    const toRad = (deg) => (deg * Math.PI) / 180;
-    const dLat = toRad(b.lat - a.lat);
-    const dLng = toRad(b.lng - a.lng);
-    const lat1 = toRad(a.lat);
-    const lat2 = toRad(b.lat);
-    const h =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1) * Math.cos(lat2) *
-      Math.sin(dLng / 2) * Math.sin(dLng / 2);
-    const c = 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
-    return R * c;
+  function pickPrimaryDate(row){
+    return row.registration_close || row.registration_open || row.event_date || row.primary_date || row.date || "";
   }
 
-  // Fetch from Google Sheet CSV
-  async function fetchSheetData() {
-    try {
-      pendingSources++;
-      isLoadingEvents = true;
-      updateStatusUi();
-
-      const res = await fetch(`${SHEET_URL}&t=${Date.now()}`, { cache: "no-store" });
-      if (!res.ok) throw new Error("Network error fetching sheet");
-      const text = await res.text();
-      const parsed = parseCsv(text);
-
-      if (!parsed.rows || !parsed.rows.length) {
-        console.warn("Sheet has no rows; keeping sample events.");
-        return;
-      }
-
-      const mapped = parsed.rows
-        .map((row, idx) => {
-          const title = row.title;
-          const url = row.url;
-
-          if (!title || !url) return null;
-
-          const cityLabel = row.location_label || row.location_id || "";
-          const eventType = normalizeType(row.type);
-          const date = pickPrimaryDate(row);
-          const deadlineLabel = buildDeadlineLabel(row);
-
-          return {
-            id: row.item_id || "sheet-" + idx,
-            city: cityLabel,
-            type: eventType,
-            title: title,
-            date: date,
-            deadlineLabel: deadlineLabel,
-            provider: row.org,
-            link: url,
-            notes: row.notes,
-            ageRange: row.age_range,
-            cost: row.cost,
-            // NEW: try to get a ZIP from an explicit column, then fall back to the city string
-            zip: row.zip || row.location_zip || row.location_area || extractZip(cityLabel)
-          };
-        })
-        .filter(Boolean);
-
-      if (mapped.length) {
-        EVENTS = mapped;
-        currentEvents = [...EVENTS];
-        renderEvents();
-        showToast(`Loaded ${mapped.length} programs from KidCal sheet`);
-      } else {
-        console.warn("Sheet rows did not have required fields; keeping samples.");
-      }
-    } catch (e) {
-      console.warn("Failed to load sheet data; keeping sample events.", e);
-    } finally {
-      pendingSources--;
-      if (pendingSources <= 0) {
-        isLoadingEvents = false;
-      }
-      updateStatusUi();
-      renderEvents();
-    }
-  }
-
-  // Fetch additional events from a JSON feed on the web (optional)
-  async function fetchExternalEvents() {
-    try {
-      pendingSources++;
-      isLoadingEvents = true;
-      updateStatusUi();
-
-      const res = await fetch(EXTRA_EVENTS_URL, { cache: "no-store" });
-      if (!res.ok) {
-        console.warn("External events feed not available", res.status);
-        return;
-      }
-
-      const data = await res.json();
-
-      const mapped = (data || []).map((item, idx) => {
-        const cityLabel = item.city || item.location_label || "";
-
-        return {
-          id: item.id || "external-" + idx,
-          city: cityLabel,
-          type: normalizeType(item.type),
-          title: item.title,
-          date: item.date || item.primary_date || "",
-          deadlineLabel:
-            item.deadlineLabel ||
-            item.deadline ||
-            item.registration_window ||
-            "",
-          provider: item.provider || item.org || "",
-          link: item.link || item.url || "",
-          notes: item.notes || "",
-          ageRange: item.ageRange || item.age_range,
-          cost: item.cost,
-          zip: item.zip || item.postal_code || extractZip(cityLabel)
-        };
-      }).filter(ev => ev.title && ev.link);
-
-      if (mapped.length) {
-        EVENTS = EVENTS.concat(mapped);
-        currentEvents = [...EVENTS];
-        renderEvents();
-        showToast(`Loaded ${mapped.length} extra programs from the web`);
-      }
-    } catch (e) {
-      console.warn("Failed to load external events", e);
-    } finally {
-      pendingSources--;
-      if (pendingSources <= 0) {
-        isLoadingEvents = false;
-      }
-      updateStatusUi();
-      renderEvents();
-    }
-  }
-
-  function loadRemindersFromStorage() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return [];
-      const parsed = JSON.parse(raw);
-      return Array.isArray(parsed) ? parsed : [];
-    } catch (e) {
-      console.warn("Could not load reminders", e);
-      return [];
-    }
-  }
-
-  function saveRemindersToStorage() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(reminders));
-    } catch (e) {
-      console.warn("Could not save reminders", e);
-    }
-  }
-
-  function prettyType(type) {
-    const t = (type || "other").toLowerCase();
-    switch (t) {
-      case "school":
-        return "School";
-      case "sports":
-        return "Sports";
-      case "camp":
-        return "Camp / activity";
-      case "other":
-        return "Other / directory";
-      default:
-        return t.charAt(0).toUpperCase() + t.slice(1);
-    }
-  }
-
-  function isEventMatchingTime(ev) {
-    const mode = (timeFilter.value || "upcoming").toLowerCase();
+  function isDateOk(ev){
+    const mode = el("time").value;
     if (mode === "all") return true;
-    if (!ev.date) return true;
-
-    const parts = ev.date.split("-");
+    const iso = ev.date;
+    if (!iso) return true;
+    const parts = iso.split("-");
     if (parts.length !== 3) return true;
-    const y = Number(parts[0]);
-    const m = Number(parts[1]) - 1;
-    const d = Number(parts[2]);
-    const eventDate = new Date(y, m, d);
-    if (isNaN(eventDate.getTime())) return true;
+    const d = new Date(Number(parts[0]), Number(parts[1])-1, Number(parts[2]));
+    if (isNaN(d.getTime())) return true;
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    eventDate.setHours(0, 0, 0, 0);
+    const today = new Date(); today.setHours(0,0,0,0);
+    d.setHours(0,0,0,0);
 
-    if (mode === "upcoming") return eventDate >= today;
-    if (mode === "past") return eventDate < today;
+    if (mode === "upcoming") return d >= today;
+    if (mode === "past") return d < today;
     return true;
   }
 
-  function updateStatusUi() {
-    const total = EVENTS.length;
-    const visible = currentEvents.length;
-
-    if (isLoadingEvents) {
-      eventsCounter.textContent = "Loading events…";
-      eventsCounter.classList.add("loading");
-    } else {
-      eventsCounter.classList.remove("loading");
-      if (visible === total) {
-        eventsCounter.textContent = `Showing ${visible} program${visible === 1 ? "" : "s"}`;
-      } else {
-        eventsCounter.textContent = `Showing ${visible} of ${total} program${total === 1 ? "" : "s"}`;
-      }
-    }
+  async function getZipCoords(zip){
+    if (!zip) return null;
+    if (ZIP_COORD_CACHE[zip]) return ZIP_COORD_CACHE[zip];
+    const res = await fetch(`https://api.zippopotam.us/us/${zip}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const p = data.places && data.places[0];
+    if (!p) return null;
+    const c = { lat: parseFloat(p.latitude), lng: parseFloat(p.longitude) };
+    ZIP_COORD_CACHE[zip] = c;
+    return c;
   }
 
-  function renderEvents() {
-    eventsList.innerHTML = "";
-    const filterType = typeFilter.value;
+  function distanceMiles(a,b){
+    const R=3958.8, toRad=(x)=>x*Math.PI/180;
+    const dLat=toRad(b.lat-a.lat), dLng=toRad(b.lng-a.lng);
+    const lat1=toRad(a.lat), lat2=toRad(b.lat);
+    const h=Math.sin(dLat/2)**2 + Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLng/2)**2;
+    return 2*R*Math.atan2(Math.sqrt(h), Math.sqrt(1-h));
+  }
 
-    const list = currentEvents.filter((ev) => {
-      if (filterType !== "all" &&
-          (ev.type || "other").toLowerCase() !== filterType) {
-        return false;
-      }
-      return isEventMatchingTime(ev);
-    });
+  async function runSearch(){
+    const qRaw = (el("q").value || "").trim();
+    const q = qRaw.toLowerCase();
+    const radius = Number(el("radius").value || 0);
 
-    updateStatusUi();
+    // clear distance flags
+    EVENTS.forEach(e => delete e.distanceFromSearch);
 
-    if (!list.length) {
-      eventsEmpty.style.display = "block";
+    if (!qRaw){
+      current = [...EVENTS];
+      el("filterLabel").style.display = "none";
+      render();
       return;
     }
-    eventsEmpty.style.display = "none";
 
-    list.forEach((ev) => {
+    // ZIP radius mode
+    if (/^\d{5}$/.test(qRaw) && radius > 0){
+      const center = await getZipCoords(qRaw);
+      if (!center){
+        current = EVENTS.filter(e => (e.zip||"").includes(qRaw) || (e.location_label||"").toLowerCase().includes(q));
+        el("filterLabel").style.display = "inline-flex";
+        el("filterLabel").textContent = `Filter: ${qRaw}`;
+        render();
+        return;
+      }
+
+      const out = [];
+      for (const ev of EVENTS){
+        if (!ev.zip) continue;
+        const c = await getZipCoords(ev.zip);
+        if (!c) continue;
+        const dist = distanceMiles(center, c);
+        if (dist <= radius){
+          ev.distanceFromSearch = dist;
+          out.push(ev);
+        }
+      }
+      current = out.length ? out : EVENTS.filter(e => (e.zip||"").includes(qRaw) || (e.location_label||"").toLowerCase().includes(q));
+      el("filterLabel").style.display = "inline-flex";
+      el("filterLabel").textContent = `Within ${radius} mi of ${qRaw}`;
+      render();
+      return;
+    }
+
+    // text match city/zip/org/title
+    current = EVENTS.filter(e =>
+      (e.location_label||"").toLowerCase().includes(q) ||
+      (e.zip||"").includes(qRaw) ||
+      (e.title||"").toLowerCase().includes(q) ||
+      (e.org||"").toLowerCase().includes(q)
+    );
+    el("filterLabel").style.display = "inline-flex";
+    el("filterLabel").textContent = `Filter: “${qRaw}”`;
+    render();
+  }
+
+  function applyFilters(list){
+    const type = el("type").value;
+    return list.filter(ev => {
+      if (type !== "all" && ev.type !== type) return false;
+      if (!isDateOk(ev)) return false;
+      return true;
+    });
+  }
+
+  /***********************
+   * Render
+   ***********************/
+  function render(){
+    const list = applyFilters(current);
+    const ul = el("list");
+    ul.innerHTML = "";
+
+    el("count").classList.remove("loading");
+    el("count").textContent = `Showing ${list.length} of ${EVENTS.length}`;
+
+    el("empty").style.display = list.length ? "none" : "block";
+    if (!list.length) return;
+
+    list.forEach(ev => {
       const li = document.createElement("li");
-      li.className = "event-item";
+      li.className = "item";
 
-      const main = document.createElement("div");
-      main.className = "event-main";
+      const left = document.createElement("div");
 
-      const title = document.createElement("div");
-      title.className = "event-title";
-      title.textContent = ev.title || "(No title)";
+      const t = document.createElement("div");
+      t.className = "title";
+      t.textContent = ev.title;
 
       const meta = document.createElement("div");
-      meta.className = "event-meta";
+      meta.className = "meta";
 
-      const cityTag = document.createElement("span");
-      cityTag.className = "city-tag";
-      cityTag.textContent = ev.city || "Unknown area";
-      meta.appendChild(cityTag);
+      const b = document.createElement("span");
+      b.className = "badge " + (ev.type || "other");
+      b.textContent = ev.type.toUpperCase();
 
-      if (ev.provider) {
-        const providerSpan = document.createElement("span");
-        providerSpan.textContent = ev.provider;
-        meta.appendChild(providerSpan);
+      const loc = document.createElement("span");
+      loc.textContent = ev.location_label || "SLO County";
+
+      const org = document.createElement("span");
+      org.textContent = ev.org ? `• ${ev.org}` : "";
+
+      meta.appendChild(b);
+      meta.appendChild(loc);
+      if (ev.org) meta.appendChild(org);
+
+      if (typeof ev.distanceFromSearch === "number"){
+        const d = document.createElement("span");
+        d.textContent = `• ${ev.distanceFromSearch.toFixed(1)} mi`;
+        meta.appendChild(d);
       }
 
-      // Show distance if search by ZIP was used
-      if (typeof ev.distanceFromSearch === "number") {
-        const distSpan = document.createElement("span");
-        distSpan.textContent = ` · ${ev.distanceFromSearch.toFixed(1)} mi`;
-        meta.appendChild(distSpan);
-      }
+      const line = document.createElement("div");
+      line.className = "line";
+      const dl = deadlineLabel(ev);
+      line.innerHTML = dl ? `<strong>${dl}</strong>` : "";
 
-      const deadline = document.createElement("div");
-      deadline.className = "event-deadline";
-      deadline.textContent = ev.deadlineLabel || "";
-
-      const notes = document.createElement("div");
-      notes.className = "event-notes";
-      if (ev.notes) {
-        notes.textContent = ev.notes;
-      }
+      const desc = document.createElement("div");
+      desc.className = "small";
+      desc.textContent = ev.notes || "";
 
       const link = document.createElement("div");
-      link.className = "event-link";
-      if (ev.link) {
-        const a = document.createElement("a");
-        a.href = ev.link;
-        a.target = "_blank";
-        a.rel = "noopener noreferrer";
-        a.textContent = "Open registration / info →";
-        link.appendChild(a);
-      }
+      link.className = "link";
+      link.innerHTML = `<a href="${ev.url}" target="_blank" rel="noopener noreferrer">Open info / registration →</a>`;
 
-      main.appendChild(title);
-      main.appendChild(meta);
-      if (ev.deadlineLabel) main.appendChild(deadline);
-      if (ev.notes) main.appendChild(notes);
-      main.appendChild(link);
+      left.appendChild(t);
+      left.appendChild(meta);
+      if (dl) left.appendChild(line);
+      if (ev.notes) left.appendChild(desc);
+      left.appendChild(link);
 
-      const actions = document.createElement("div");
-      actions.className = "event-actions";
+      const right = document.createElement("div");
+      right.className = "actions";
 
-      const typePill = document.createElement("div");
-      typePill.className = "type-pill " + (ev.type || "other");
-      typePill.textContent = prettyType(ev.type);
-
-      const btnAdd = document.createElement("button");
-      btnAdd.className = "btn btn-secondary btn-small";
-      btnAdd.textContent = "Add reminder";
-      btnAdd.addEventListener("click", () => addReminder(ev));
-
-      actions.appendChild(typePill);
-      actions.appendChild(btnAdd);
-
-      li.appendChild(main);
-      li.appendChild(actions);
-
-      eventsList.appendChild(li);
-    });
-  }
-
-  function renderReminders() {
-    remindersList.innerHTML = "";
-    if (!reminders.length) {
-      remindersEmpty.style.display = "block";
-      return;
-    }
-    remindersEmpty.style.display = "none";
-
-    reminders.forEach((r, index) => {
-      const li = document.createElement("li");
-      li.className = "reminder-item";
-
-      const main = document.createElement("div");
-      main.className = "reminder-main";
-
-      const title = document.createElement("div");
-      title.className = "reminder-title";
-      title.textContent = r.title || "(No title)";
-
-      const meta = document.createElement("div");
-      meta.className = "reminder-meta";
-      const bits = [];
-      if (r.deadlineLabel) bits.push(r.deadlineLabel);
-      if (r.city) bits.push(r.city);
-      if (r.provider) bits.push(r.provider);
-      meta.textContent = bits.join(" · ");
-
-      main.appendChild(title);
-      main.appendChild(meta);
-
-      const btnRemove = document.createElement("button");
-      btnRemove.className = "btn-icon";
-      btnRemove.textContent = "✕";
-      btnRemove.title = "Remove";
-      btnRemove.addEventListener("click", () => {
-        reminders.splice(index, 1);
-        saveRemindersToStorage();
-        renderReminders();
-        showToast("Removed from reminders");
+      const lab = document.createElement("label");
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = selected.some(s => s.id === ev.id);
+      cb.addEventListener("change", () => {
+        if (cb.checked) addSelected(ev);
+        else removeSelected(ev.id);
       });
+      lab.appendChild(cb);
+      lab.appendChild(document.createTextNode(" Select"));
 
-      li.appendChild(main);
-      li.appendChild(btnRemove);
-      remindersList.appendChild(li);
+      right.appendChild(lab);
+
+      li.appendChild(left);
+      li.appendChild(right);
+      ul.appendChild(li);
     });
   }
 
-  function addReminder(ev) {
-    const exists = reminders.some((r) => r.id === ev.id);
-    if (exists) {
-      showToast("Already in your reminders");
-      return;
-    }
-    reminders.push({
-      id: ev.id,
-      title: ev.title,
-      city: ev.city,
-      provider: ev.provider,
-      deadlineLabel: ev.deadlineLabel,
-      date: ev.date
+  function deadlineLabel(ev){
+    const open = ev.registration_open;
+    const close = ev.registration_close;
+    const date = ev.event_date || ev.date;
+
+    if (open && close) return `Register: ${open} → ${close}`;
+    if (close) return `Register by: ${close}`;
+    if (open) return `Registration opens: ${open}`;
+    if (date) return `Date: ${date}`;
+    return "";
+  }
+
+  function addSelected(ev){
+    if (selected.some(s => s.id === ev.id)) return;
+    selected.push({
+      id: ev.id, title: ev.title, location_label: ev.location_label, org: ev.org,
+      date: ev.date, registration_close: ev.registration_close, registration_open: ev.registration_open, event_date: ev.event_date
     });
-    saveRemindersToStorage();
-    renderReminders();
-    showToast("Added to your reminders");
+    saveSelected();
+    toast("Selected");
+  }
+  function removeSelected(id){
+    selected = selected.filter(s => s.id !== id);
+    saveSelected();
+    toast("Unselected");
   }
 
-  async function filterByZipRadius(centerZip, radiusMiles) {
-    const centerCoords = await getZipCoords(centerZip);
-    if (!centerCoords) {
-      showToast("Couldn't locate that ZIP; using text match instead.");
-      const q = centerZip.toLowerCase();
-      currentEvents = EVENTS.filter(
-        (ev) =>
-          (ev.city || "").toLowerCase().includes(q) ||
-          (ev.zip || "").includes(centerZip)
-      );
+  /***********************
+   * ICS export
+   ***********************/
+  function escIcs(s){
+    return String(s||"").replace(/\\/g,"\\\\").replace(/,/g,"\\,").replace(/;/g,"\\;").replace(/\n/g,"\\n");
+  }
+  function icsDate(iso){
+    if (!iso) return "20250101";
+    return String(iso).replace(/-/g,"").slice(0,8);
+  }
+  function downloadIcs(){
+    if (!selected.length){
+      toast("Select at least one item first");
       return;
     }
+    const lines = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//KidCal//SLO//EN"
+    ];
 
-    const results = [];
-    const zipCoordsLocal = {};
-
-    for (const ev of EVENTS) {
-      const z = (ev.zip || "").trim();
-      if (!z) continue;
-      if (!zipCoordsLocal[z]) {
-        zipCoordsLocal[z] = await getZipCoords(z);
-      }
-      const c = zipCoordsLocal[z];
-      if (!c) continue;
-      const dist = distanceMiles(centerCoords, c);
-      if (dist <= radiusMiles) {
-        ev.distanceFromSearch = dist;
-        results.push(ev);
-      }
-    }
-
-      // After the for-loop:
-      if (results.length) {
-        currentEvents = results;
-      } else {
-        // Fallback: no ZIP matches, so use basic city/ZIP text filter
-        const q = centerZip.toLowerCase();
-        currentEvents = EVENTS.filter(
-          (ev) =>
-            (ev.city || "").toLowerCase().includes(q) ||
-            (ev.zip || "").includes(centerZip)
-        );
-        showToast("No ZIP-radius matches; showing text matches instead.");
-      }
-    }
-
-  async function handleFind() {
-    const queryRaw = (cityInput.value || "").trim();
-    const query = queryRaw.toLowerCase();
-    const radiusMiles = parseFloat(radiusFilter.value || "0");
-
-    // Clear any old distance state
-    EVENTS.forEach(ev => { delete ev.distanceFromSearch; });
-
-    if (!queryRaw) {
-      currentEvents = [...EVENTS];
-      cityFilterLabel.style.display = "none";
-      renderEvents();
-      return;
-    }
-
-    // If it's a 5-digit ZIP and radius > 0, use radius search
-    if (/^\d{5}$/.test(queryRaw) && radiusMiles > 0) {
-      await filterByZipRadius(queryRaw, radiusMiles);
-      cityFilterLabel.style.display = "inline-flex";
-      cityFilterLabel.textContent = `Within ${radiusMiles} mi of ${queryRaw}`;
-      renderEvents();
-      return;
-    }
-
-    // Fallback: text match on city/ZIP
-    currentEvents = EVENTS.filter(
-      (ev) =>
-        (ev.city || "").toLowerCase().includes(query) ||
-        (ev.zip || "").includes(queryRaw)
-    );
-    cityFilterLabel.style.display = "inline-flex";
-    cityFilterLabel.textContent = `Filter: “${queryRaw}”`;
-    renderEvents();
-  }
-
-  function handleSample() {
-    cityInput.value = "";
-    EVENTS.forEach(ev => { delete ev.distanceFromSearch; });
-    currentEvents = [...EVENTS];
-    cityFilterLabel.style.display = "none";
-    renderEvents();
-  }
-
-  function clearReminders() {
-    if (!reminders.length) return;
-    if (!confirm("Clear all reminders on this device?")) return;
-    reminders = [];
-    saveRemindersToStorage();
-    renderReminders();
-    showToast("All reminders cleared");
-  }
-
-  function escapeText(text) {
-    return String(text)
-      .replace(/,/g, "\\,")
-      .replace(/;/g, "\\;")
-      .replace(/\n/g, "\\n");
-  }
-
-  function generateIcsContent() {
-    if (!reminders.length) {
-      alert("No reminders yet. Add one before downloading.");
-      return null;
-    }
-
-    const lines = [];
-    lines.push("BEGIN:VCALENDAR");
-    lines.push("VERSION:2.0");
-    lines.push("PRODID:-//KidCal//App//EN");
-
-    reminders.forEach((r, idx) => {
-      const dt = (r.date || "").replace(/-/g, "");
-      const start = dt || "20250101";
-
+    selected.forEach((s, i) => {
+      const dt = icsDate(s.registration_close || s.event_date || s.date || s.registration_open);
       lines.push("BEGIN:VEVENT");
-      lines.push(`UID:kidcal-${r.id || idx}@kidcal`);
-      lines.push(`SUMMARY:${escapeText(r.title || "")}`);
-      lines.push(
-        `DESCRIPTION:${escapeText(
-          `${r.city || ""}${r.provider ? " · " + r.provider : ""}${
-            r.deadlineLabel ? " · " + r.deadlineLabel : ""
-          }`
-        )}`
-      );
-      lines.push(`DTSTART;VALUE=DATE:${start}`);
+      lines.push(`UID:kidcal-${s.id || i}@kidcal`);
+      lines.push(`SUMMARY:${escIcs(s.title)}`);
+      const desc = `${s.location_label || ""}${s.org ? " · " + s.org : ""}`;
+      lines.push(`DESCRIPTION:${escIcs(desc)}`);
+      lines.push(`DTSTART;VALUE=DATE:${dt}`);
       lines.push("END:VEVENT");
     });
 
     lines.push("END:VCALENDAR");
-    return lines.join("\r\n");
-  }
-
-  function downloadIcs() {
-    const content = generateIcsContent();
-    if (!content) return;
-
-    const blob = new Blob([content], { type: "text/calendar;charset=utf-8" });
+    const blob = new Blob([lines.join("\r\n")], { type:"text/calendar;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "kidcal-reminders.ics";
+    a.download = "kidcal-selected.ics";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    showToast("Downloaded kidcal-reminders.ics");
+    toast("Downloaded .ics");
   }
 
-  // Event listeners
-  btnFind.addEventListener("click", () => { handleFind(); });
-  btnSample.addEventListener("click", () => { handleSample(); });
-  typeFilter.addEventListener("change", () => renderEvents());
-  timeFilter.addEventListener("change", () => renderEvents());
-  radiusFilter.addEventListener("change", () => renderEvents());
-  btnClearReminders.addEventListener("click", () => clearReminders());
-  btnDownloadIcs.addEventListener("click", () => downloadIcs());
+  /***********************
+   * Submission
+   ***********************/
+  async function submit(){
+    if (!WEBAPP_URL || !WEBAPP_URL.startsWith("http")){
+      toast("Set WEBAPP_URL first (Apps Script deployment)");
+      return;
+    }
+    const payload = {
+      name: el("s_name").value.trim(),
+      email: el("s_email").value.trim(),
+      location_label: el("s_location").value.trim(),
+      zip: el("s_zip").value.trim(),
+      title: el("s_title").value.trim(),
+      org: el("s_org").value.trim(),
+      type: el("s_type").value,
+      url: el("s_url").value.trim(),
+      registration_open: el("s_open").value.trim(),
+      registration_close: el("s_close").value.trim(),
+      event_date: el("s_event").value.trim(),
+      age_range: el("s_age").value.trim(),
+      cost: el("s_cost").value.trim(),
+      notes: el("s_notes").value.trim()
+    };
+    if (!payload.title || !payload.url){
+      toast("Title and link are required");
+      return;
+    }
 
-  cityInput.addEventListener("keyup", (e) => {
-    if (e.key === "Enter") handleFind();
+    const res = await fetch(WEBAPP_URL, {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json().catch(()=>null);
+    if (data && data.ok){
+      toast("Submitted for review ✅");
+      ["s_location","s_zip","s_title","s_org","s_url","s_open","s_close","s_event","s_age","s_cost","s_notes"].forEach(id=>el(id).value="");
+    } else {
+      toast("Submit failed. Check Apps Script permissions.");
+    }
+  }
+
+  /***********************
+   * CSV fallback parser
+   ***********************/
+  function parseCsv(text){
+    const rows = [];
+    let row=[], cur="", inQuotes=false;
+    for (let i=0;i<text.length;i++){
+      const ch=text[i], next=text[i+1];
+      if (ch === '"' && inQuotes && next === '"'){ cur+='"'; i++; continue; }
+      if (ch === '"'){ inQuotes=!inQuotes; continue; }
+      if (ch === "," && !inQuotes){ row.push(cur.trim()); cur=""; continue; }
+      if ((ch === "\n" || ch === "\r") && !inQuotes){
+        if (cur.length || row.length){ row.push(cur.trim()); rows.push(row); }
+        cur=""; row=[];
+        if (ch === "\r" && next === "\n") i++;
+        continue;
+      }
+      cur += ch;
+    }
+    if (cur.length || row.length){ row.push(cur.trim()); rows.push(row); }
+
+    const headers = (rows.shift() || []).map(h=>h.trim());
+    const out = rows.map(r=>{
+      const o={}; headers.forEach((h,idx)=>o[h]=r[idx]||""); return o;
+    });
+    return { headers, rows: out };
+  }
+
+  /***********************
+   * UI wiring
+   ***********************/
+  el("btnSearch").addEventListener("click", runSearch);
+  el("btnClear").addEventListener("click", ()=>{ el("q").value=""; current=[...EVENTS]; el("filterLabel").style.display="none"; render(); });
+  el("q").addEventListener("keyup", (e)=>{ if (e.key==="Enter") runSearch(); });
+  el("type").addEventListener("change", render);
+  el("time").addEventListener("change", render);
+  el("radius").addEventListener("change", render);
+  el("btnSelectAll").addEventListener("click", ()=>{
+    const list = applyFilters(current);
+    list.forEach(addSelected);
+    render();
+    toast("Selected all on screen");
   });
+  el("btnSelectNone").addEventListener("click", ()=>{ selected=[]; saveSelected(); render(); toast("Cleared selections"); });
+  el("btnIcs").addEventListener("click", downloadIcs);
+  el("btnClearSel").addEventListener("click", ()=>{ selected=[]; saveSelected(); render(); toast("Cleared selections"); });
+  el("btnSubmit").addEventListener("click", submit);
 
-  // Initial render
-  handleSample();
-  renderReminders();
-  fetchSheetData();
-  fetchExternalEvents(); // safe even if extra-events.json doesn't exist
+  // Init
+  fetchPublicData().then(fetchExtra);
+</script>
+
+<script>
+  // PWA service worker (optional)
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./sw.js").catch(()=>{});
+  }
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
